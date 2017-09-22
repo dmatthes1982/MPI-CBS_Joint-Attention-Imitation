@@ -59,7 +59,7 @@ for i = numOfPart
   file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
                      '.mat');
                    
-  fprintf('The automatic selected artifacts of dyad %d will be saved in:\n', i); 
+  fprintf('\nThe automatic selected artifacts of dyad %d will be saved in:\n', i); 
   fprintf('%s ...\n', file_path);
   JAI_saveData(cfg, 'cfg_autoArt', cfg_autoArt);
   fprintf('Data stored!\n');
