@@ -15,10 +15,16 @@ function JAI_loadData( cfg )
 
 % Copyright (C) 2017, Daniel Matthes, MPI CBS
 
+% -------------------------------------------------------------------------
+% Get config options
+% -------------------------------------------------------------------------
 srcFolder   = ft_getopt(cfg, 'srcFolder', '/data/pt_01826/eegData/DualEEG_JAI_processedData/01_raw/');
 filename    = ft_getopt(cfg, 'filename', 'JAI_p01_01_raw');
 sessionStr  = ft_getopt(cfg, 'sessionStr', '001');
 
+% -------------------------------------------------------------------------
+% Load data and assign it to the base workspace
+% -------------------------------------------------------------------------
 file_path = strcat(srcFolder, filename, '_', sessionStr, '.mat');
 file_num = length(dir(file_path));
 

@@ -24,7 +24,6 @@ function [ data ] = JAI_preprocessing( cfg, data )
 
 % -------------------------------------------------------------------------
 % Get and check config options
-% Get number of participants
 % -------------------------------------------------------------------------
 bpfreq            = ft_getopt(cfg, 'bpfreq', [0.1 48]);
 bpfilttype        = ft_getopt(cfg, 'bpfilttype', 'fir');

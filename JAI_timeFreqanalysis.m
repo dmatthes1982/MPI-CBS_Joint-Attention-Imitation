@@ -20,7 +20,6 @@ function [ data ] = JAI_timeFreqanalysis( cfg, data )
 
 % -------------------------------------------------------------------------
 % Get and check config options
-% Get number of participants
 % -------------------------------------------------------------------------
 foi       = ft_getopt(cfg, 'foi', 2:1:50);
 toi       = ft_getopt(cfg, 'toi', 4:0.5:176);

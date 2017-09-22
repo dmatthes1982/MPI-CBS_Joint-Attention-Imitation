@@ -21,7 +21,6 @@ function [ cfgAutoArt ] = JAI_autoArtifact( cfg, data )
 % -------------------------------------------------------------------------
 % Get and check config options
 % -------------------------------------------------------------------------
-
 chan      = ft_getopt(cfg, 'channel', {'Cz', 'O1', 'O2'});
 minVal    = ft_getopt(cfg, 'min', -75);
 maxVal    = ft_getopt(cfg, 'max', 75);
@@ -69,4 +68,3 @@ fprintf('%d artifacts detected!\n', cfgAutoArt.bad2Num);
 ft_info on;
 
 end
-

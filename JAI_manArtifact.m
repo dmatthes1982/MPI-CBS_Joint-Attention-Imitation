@@ -20,14 +20,12 @@ function [ cfgAllArt ] = JAI_manArtifact( cfg, data )
 % -------------------------------------------------------------------------
 % Get and check config options
 % -------------------------------------------------------------------------
-
 artifact  = ft_getopt(cfg, 'artifact', []);
 
 % -------------------------------------------------------------------------
 % Initialize settings, build output structure
 % -------------------------------------------------------------------------
 cfg             = [];
-
 cfgAllArt.part1 = [];                                       
 cfgAllArt.part2 = [];
 

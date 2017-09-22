@@ -16,10 +16,16 @@ function JAI_saveData( cfg, varargin )
 
 % Copyright (C) 2017, Daniel Matthes, MPI CBS
 
+% -------------------------------------------------------------------------
+% Get config options
+% -------------------------------------------------------------------------
 desFolder   = ft_getopt(cfg, 'desFolder', '/data/pt_01826/eegData/DualEEG_JAI_processedData/01_raw/');
 filename    = ft_getopt(cfg, 'filename', 'JAI_p01_01_raw');
 sessionStr  = ft_getopt(cfg, 'sessionStr', '001');
 
+% -------------------------------------------------------------------------
+% Save data
+% -------------------------------------------------------------------------
 file_path = strcat(desFolder, filename, '_', sessionStr, '.mat');
 inputElements = length(varargin);
 
