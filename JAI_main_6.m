@@ -132,7 +132,7 @@ for i = numOfPart
   fprintf('Saving PLVs (2Hz) of dyad %d in:\n', i); 
   fprintf('%s ...\n', file_path);
   JAI_saveData(cfg, 'data_plv_2Hz', data_plv_2Hz);
-  fprintf('Data stored!\n\n');
+  fprintf('Data stored!\n');
   clear data_plv_2Hz
   
   % export the mean PLVs into a *.mat file
@@ -170,7 +170,7 @@ for i = numOfPart
   fprintf('Saving PLVs (10Hz) of dyad %d in:\n', i); 
   fprintf('%s ...\n', file_path);
   JAI_saveData(cfg, 'data_plv_10Hz', data_plv_10Hz);
-  fprintf('Data stored!\n\n');
+  fprintf('Data stored!\n');
   clear data_plv_10Hz
   
   % export the mean PLVs into a *.mat file
@@ -208,12 +208,12 @@ for i = numOfPart
   fprintf('Saving PLVs (20Hz) of dyad %d in:\n', i); 
   fprintf('%s ...\n', file_path);
   JAI_saveData(cfg, 'data_plv_20Hz', data_plv_20Hz);
-  fprintf('Data stored!\n\n');
+  fprintf('Data stored!\n');
   clear data_plv_20Hz
   
   % export the mean PLVs into a *.mat file
   cfg             = [];
-  cfg.desFolder   = strcat(desPath, '20_mplv/');
+  cfg.desFolder   = strcat(desPath, '10_mplv/');
   cfg.filename    = sprintf('JAI_p%02d_10c_mplv20Hz', i);
   cfg.sessionStr  = sessionStr;
 
@@ -246,12 +246,12 @@ for i = numOfPart
   fprintf('Saving PLVs (40Hz) of dyad %d in:\n', i); 
   fprintf('%s ...\n', file_path);
   JAI_saveData(cfg, 'data_plv_40Hz', data_plv_40Hz);
-  fprintf('Data stored!\n\n');
+  fprintf('Data stored!\n');
   clear data_plv_40Hz
   
   % export the mean PLVs into a *.mat file
   cfg             = [];
-  cfg.desFolder   = strcat(desPath, '40_mplv/');
+  cfg.desFolder   = strcat(desPath, '10_mplv/');
   cfg.filename    = sprintf('JAI_p%02d_10d_mplv40Hz', i);
   cfg.sessionStr  = sessionStr;
 
