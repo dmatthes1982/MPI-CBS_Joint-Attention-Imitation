@@ -105,7 +105,7 @@ else
     fprintf('[1] - Import and basic preprocessing\n');
     cprintf([0.5,0.5,0.5], '[2] - Rejection of eye artifacts (not available yet)\n');
     fprintf('[3] - Segmentation of the data\n');
-    cprintf('[4] - Automatic and manual rejection of further artifacts\n');
+    cprintf('[4] - Automatic and manual detection of artifacts\n');
     fprintf('[5] - Application of narrow band filtering and Hilbert transform\n'); 
     fprintf('[6] - Calculation of PLV\n');
     fprintf('[7] - Quit data processing\n\n');
@@ -160,29 +160,29 @@ switch part
   case 1
     fileNamePre = [];
     tmpPath = strcat(desPath, '02_preproc/');
-    fileNamePost = strcat(tmpPath, 'JAI_p01_02_preproc_', sessionStr, '.mat');
+    fileNamePost = strcat(tmpPath, 'JAI_p*_02_preproc_', sessionStr, '.mat');
   case 2
     error('This option is currently unsupported!');
   case 3
     tmpPath = strcat(desPath, '02_preproc/');
-    fileNamePre = strcat(tmpPath, 'JAI_p01_02_preproc_', sessionStr, '.mat');
+    fileNamePre = strcat(tmpPath, 'JAI_p*_02_preproc_', sessionStr, '.mat');
     tmpPath = strcat(desPath, '04_seg1/');
-    fileNamePost = strcat(tmpPath, 'JAI_p01_04_seg1_', sessionStr, '.mat');
+    fileNamePost = strcat(tmpPath, 'JAI_p*_04_seg1_', sessionStr, '.mat');
   case 4
     tmpPath = strcat(desPath, '04_seg1/');
-    fileNamePre = strcat(tmpPath, 'JAI_p01_04_seg1_', sessionStr, '.mat');
+    fileNamePre = strcat(tmpPath, 'JAI_p*_04_seg1_', sessionStr, '.mat');
     tmpPath = strcat(desPath, '06_allArt/');
-    fileNamePost = strcat(tmpPath, 'JAI_p01_06_allArt_', sessionStr, '.mat');
+    fileNamePost = strcat(tmpPath, 'JAI_p*_06_allArt_', sessionStr, '.mat');
   case 5
     tmpPath = strcat(desPath, '04_seg1/');
-    fileNamePre = strcat(tmpPath, 'JAI_p01_04_seg1_', sessionStr, '.mat');
+    fileNamePre = strcat(tmpPath, 'JAI_p*_04_seg1_', sessionStr, '.mat');
     tmpPath = strcat(desPath, '08_hilbert/');
-    fileNamePost = strcat(tmpPath, 'JAI_p01_08d_hilbert40Hz_', sessionStr, '.mat');
+    fileNamePost = strcat(tmpPath, 'JAI_p*_08d_hilbert40Hz_', sessionStr, '.mat');
   case 6
     tmpPath = strcat(desPath, '08_hilbert/');
-    fileNamePre = strcat(tmpPath, 'JAI_p01_08a_hilbert2Hz_', sessionStr, '.mat');
+    fileNamePre = strcat(tmpPath, 'JAI_p*_08a_hilbert2Hz_', sessionStr, '.mat');
     tmpPath = strcat(desPath, '10_mplv/');
-    fileNamePost = strcat(tmpPath, 'JAI_p01_10d_mplv40Hz_', sessionStr, '.mat');
+    fileNamePost = strcat(tmpPath, 'JAI_p*_10d_mplv40Hz_', sessionStr, '.mat');
   otherwise
     error('Something unexpected happend. part = %d is not defined' ...
           , part);
@@ -196,8 +196,13 @@ else
     error(['Selected part [%d] can not be executed, no input data '...
            'available\n Please choose a previous part.']);
   else
-    load(fileNamePre, 'dyads');
-    numOfPrePart = squeeze(cell2mat(struct2cell(dyads)))';
+    fileListPre = struct2cell(fileListPre);
+    fileListPre = fileListPre(1,:);
+    numOfFiles  = length(fileListPre);
+    numOfPrePart = zeros(1, numOfFiles);
+    for i=1:1:numOfFiles
+      numOfPrePart(i) = sscanf(fileListPre{i}, strcat('JAI_p%d*', sessionStr, '.mat'));
+    end
   end
 end
 
@@ -229,8 +234,13 @@ elseif strcmp(dyadsSpec, 'new')                                             % pr
     if isempty(fileListPost)
       numOfPostPart = [];
     else
-      load(fileNamePost, 'dyads');
-      numOfPostPart = squeeze(cell2mat(struct2cell(dyads)))';
+      fileListPost = struct2cell(fileListPost);
+      fileListPost = fileListPost(1,:);
+      numOfFiles  = length(fileListPost);
+      numOfPostPart = zeros(1, numOfFiles);
+      for i=1:1:numOfFiles
+        numOfPostPart(i) = sscanf(fileListPost{i}, strcat('JAI_p%d*', sessionStr, '.mat'));
+      end
     end
   
     numOfPart = numOfPrePart(~ismember(numOfPrePart, numOfPostPart));
@@ -239,8 +249,9 @@ elseif strcmp(dyadsSpec, 'new')                                             % pr
       fprintf('Data processing aborted.\n');
       clear desPath fileNamePost fileNamePre fileNum i numOfPrePart ...
           numOfSources selection sourceList srcPath x y dyadsSpec ...
-          fileListPost fileListPre numOfPostPart sessionList ...
-          sessionNum numOfSessions session numOfPart part sessionStr dyads
+          fileListPost fileListPre numOfPostPart sessionList numOfFiles ...
+          sessionNum numOfSessions session numOfPart part sessionStr ...
+          dyads tmpPath
       return;
     end
   end
@@ -254,7 +265,7 @@ fprintf('%s\n\n', y);
 clear fileNamePost fileNamePre fileNum i numOfPrePart ...
       numOfSources selection sourceList x y dyads fileListPost ...
       fileListPre numOfPostPart sessionList sessionNum numOfSessions ...
-      session dyadsSpec
+      session dyadsSpec numOfFiles tmpPath
 
 % -------------------------------------------------------------------------
 % Data processing main loop
@@ -289,7 +300,7 @@ while sessionStatus == true
       selection = false;
       while selection == false
         fprintf('\nContinue data processing with:\n');
-        fprintf('[4] - Automatic and manual rejection of further artifacts?\n');
+        fprintf('[4] - Automatic and manual detection of artifacts?\n');
         x = input('\nSelect [y/n]: ','s');
         if strcmp('y', x)
           selection = true;
@@ -324,7 +335,7 @@ while sessionStatus == true
       JAI_main_5;
       selection = false;
       while selection == false
-        fprintf('\nContinue data processing with:\n');
+        fprintf('Continue data processing with:\n');
         fprintf('[6] - Calculation of PLV?\n');
         x = input('\nSelect [y/n]: ','s');
         if strcmp('y', x)

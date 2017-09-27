@@ -28,7 +28,7 @@ end
 %% general adjustment
 selection = false;
 while selection == false
-  cprintf([0,0.6,0], '\nShould rejection of detected artifacts be applied before PLV estimation?\n');
+  cprintf([0,0.6,0], 'Should rejection of detected artifacts be applied before PLV estimation?\n');
   x = input('Select [y/n]: ','s');
   if strcmp('y', x)
     selection = true;
