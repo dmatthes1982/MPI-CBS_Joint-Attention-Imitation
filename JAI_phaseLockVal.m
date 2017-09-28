@@ -57,47 +57,48 @@ function [data_out] = phaseLockingValue(cfgPLV, dataPart1, dataPart2)
 
 numOfTrials             = length(dataPart1.trial);
 numOfElec               = length(dataPart1.label);
+shifts                  = numOfElec - 1;
 timeOrg                 = dataPart1.time;
-trial1                  = dataPart1.trial;
-trial2                  = dataPart2.trial;
+trial_p1                = dataPart1.trial;
+trial_p2                = dataPart2.trial;
 
-trialdiff{numOfTrials}  = [];
-for i=1:1:numOfTrials
-  trialdiff{i}          = trial1{i} - trial2{i};
-end
+N                                 = cfgPLV.winlen * dataPart1.fsample;
+PLV{shifts+1, numOfTrials}        = []; 
+time{shifts+1, numOfTrials}       = [];
 
-
-N                       = cfgPLV.winlen * dataPart1.fsample;
-PLV{numOfTrials}        = []; 
-time{numOfTrials}       = [];
-
-for i=1:1:numOfTrials
-  lenOfTrial = length(trialdiff{i}(1,:));
-  if N > lenOfTrial
-    error('PLV window length is larger than the trial length, choose another size!');
-  else
-    numOfPLV = fix(lenOfTrial/N);
-    for j=1:1:numOfPLV
-      if mod(N, 2) == 0
-        time{i}(1,j) = timeOrg{i}((j-1)*N + (N./2+1));
-      else
-        time{i}(1,j) = (timeOrg{i}((j-1)*N + (fix(N./2)+1)) + ...
-                        timeOrg{i}((j-1)*N + (fix(N./2)+2))) / 2;
+for i = 1:1:numOfTrials
+  VarA = trial_p1{i};
+  VarB = trial_p2{i};
+  for j = 0:1:shifts
+    VarB_shifted = circshift(VarB, -j);
+    trialdiff = VarA - VarB_shifted;
+    lenOfTrial = length(trialdiff(1,:));
+    if N > lenOfTrial
+      error('PLV window length is larger than the trial length, choose another size!');
+    else
+      numOfPLV = fix(lenOfTrial/N);
+      for k = 1:1:numOfPLV
+        if mod(N, 2) == 0
+          time{j+1, i}(1,k) = timeOrg{i}((k-1)*N + (N./2+1));
+        else
+          time{j+1, i}(1,k) = (timeOrg{i}((k-1)*N + (fix(N./2)+1)) + ...
+                                timeOrg{i}((k-1)*N + (fix(N./2)+2))) / 2;
+        end
       end
     end
-  end
-  for k=1:1:numOfElec
-    for l=1:1:numOfPLV
-      window = trialdiff{i}(k,(l-1)*N + 1:l*N);
-      PLV{i}(k,l) = abs(sum(exp(1i*window))/N);
+    for l=1:1:numOfElec
+      for m=1:1:numOfPLV
+        window = trialdiff(l,(m-1)*N + 1:m*N);
+        PLV{j+1,i}(l,m) = abs(sum(exp(1i*window))/N);
+      end
     end
-  end
+  end  
 end
 
 numOfDiffTrials = length(unique(dataPart1.trialinfo));                      % merge all PLV values of one condition in one trial
 trialinfo = zeros(numOfDiffTrials, 1);
-condPLV{numOfDiffTrials} = [];
-condTime{numOfDiffTrials} = [];
+condPLV{shifts+1, numOfDiffTrials} = [];
+condTime{shifts+1, numOfDiffTrials} = [];
 
 begsample = 1;
 
@@ -105,8 +106,10 @@ for i=1:1:numOfDiffTrials
   stim = dataPart1.trialinfo(begsample);
   endsample = find(dataPart1.trialinfo == stim, 1, 'last');
   trialinfo(i) = stim;
-  condPLV{i} = cell2mat(PLV(begsample:endsample));
-  condTime{i} = cell2mat(time(begsample:endsample));
+  for j=0:1:shifts
+    condPLV{j+1, i} = cell2mat(PLV(j+1, begsample:endsample));
+    condTime{j+1, i} = cell2mat(time(j+1, begsample:endsample));
+  end
   begsample = endsample + 1;
 end
 
@@ -115,6 +118,7 @@ data_out.trialinfo        = trialinfo;
 data_out.PLV              = condPLV;
 data_out.time             = condTime;
 data_out.label            = dataPart1.label;
+data_out.labelCircShift   = 0:-1:-(length(data_out.label)-1);
 data_out.cfg              = cfgPLV;
 data_out.cfg.previous{1}  = dataPart1.cfg;
 data_out.cfg.previous{2}  = dataPart2.cfg;
