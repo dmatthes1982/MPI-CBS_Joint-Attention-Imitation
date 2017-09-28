@@ -103,29 +103,7 @@ for i = numOfPart
   fprintf('%s ...\n', file_path);
   JAI_saveData(cfg, 'data_bpfilt_20Hz', data_bpfilt_20Hz);
   fprintf('Data stored!\n\n');
-  clear data_bpfilt_20Hz
-
-  % bandpass filter data at 40Hz
-  cfg           = [];
-  cfg.bpfreq    = [39 41];
-  cfg.filtorder = fix(250 / filtCoeffDiv);
-  
-  data_bpfilt_40Hz = JAI_bpFiltering(cfg, data_seg1);
-  
-  % export the filtered data into a *.mat file
-  cfg             = [];
-  cfg.desFolder   = strcat(desPath, '07_bpfilt/');
-  cfg.filename    = sprintf('JAI_p%02d_07d_bpfilt40Hz', i);
-  cfg.sessionStr  = sessionStr;
-
-  file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
-                     '.mat');
-                   
-  fprintf('Saving bandpass filtered data (40Hz) of dyad %d in:\n', i); 
-  fprintf('%s ...\n', file_path);
-  JAI_saveData(cfg, 'data_bpfilt_40Hz', data_bpfilt_40Hz);
-  fprintf('Data stored!\n\n');
-  clear data_bpfilt_40Hz data_seg1
+  clear data_bpfilt_20Hz data_seg1
   
 end
 
@@ -149,10 +127,6 @@ for i = numOfPart
   
   cfg.filename    = sprintf('JAI_p%02d_07c_bpfilt20Hz', i);
   fprintf('Load the at 20 Hz bandpass filtered data ...\n');
-  JAI_loadData( cfg );
-  
-  cfg.filename    = sprintf('JAI_p%02d_07d_bpfilt40Hz', i);
-  fprintf('Load the at 40 Hz bandpass filtered data ...\n\n');
   JAI_loadData( cfg );
   
   % calculate hilbert phase at 2Hz
@@ -208,24 +182,6 @@ for i = numOfPart
   JAI_saveData(cfg, 'data_hilbert_20Hz', data_hilbert_20Hz);
   fprintf('Data stored!\n\n');
   clear data_hilbert_20Hz data_bpfilt_20Hz
-  
-  % calculate hilbert phase at 40Hz
-  data_hilbert_40Hz = JAI_hilbertPhase(data_bpfilt_40Hz);
-  
-  % export the hilbert phase data into a *.mat file
-  cfg             = [];
-  cfg.desFolder   = strcat(desPath, '08_hilbert/');
-  cfg.filename    = sprintf('JAI_p%02d_08d_hilbert40Hz', i);
-  cfg.sessionStr  = sessionStr;
-
-  file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
-                     '.mat');
-                   
-  fprintf('Saving Hilbert phase data (40Hz) of dyad %d in:\n', i); 
-  fprintf('%s ...\n', file_path);
-  JAI_saveData(cfg, 'data_hilbert_40Hz', data_hilbert_40Hz);
-  fprintf('Data stored!\n\n');
-  clear data_hilbert_40Hz data_bpfilt_40Hz
 end
 
 %% clear workspace

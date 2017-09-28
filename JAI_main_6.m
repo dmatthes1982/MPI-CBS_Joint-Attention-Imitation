@@ -2,7 +2,7 @@
 if ~exist('sessionStr', 'var')
   cfg           = [];
   cfg.subFolder = '08_hilbert/';
-  cfg.filename  = 'JAI_p01_08d_hilbert40Hz';
+  cfg.filename  = 'JAI_p01_08c_hilbert20Hz';
   sessionStr    = sprintf('%03d', JAI_getSessionNum( cfg ));                % estimate current session number
 end
 
@@ -12,7 +12,7 @@ end
 
 if ~exist('numOfPart', 'var')                                               % estimate number of participants in segmented data folder
   sourceList    = dir([strcat(desPath, '08_hilbert/'), ...
-                       strcat('*40Hz_', sessionStr, '.mat')]);
+                       strcat('*20Hz_', sessionStr, '.mat')]);
   sourceList    = struct2cell(sourceList);
   sourceList    = sourceList(1,:);
   numOfSources  = length(sourceList);
@@ -20,7 +20,7 @@ if ~exist('numOfPart', 'var')                                               % es
 
   for i=1:1:numOfSources
     numOfPart(i)  = sscanf(sourceList{i}, ...
-                    strcat('JAI_p%d_08d_hilbert40Hz_', sessionStr, '.mat'));
+                    strcat('JAI_p%d_08c_hilbert20Hz_', sessionStr, '.mat'));
   end
 end
 
@@ -83,10 +83,6 @@ for i = numOfPart
   fprintf('Load hilbert phase data at 20 Hz...\n');
   JAI_loadData( cfg );
   
-  cfg.filename    = sprintf('JAI_p%02d_08d_hilbert40Hz', i);
-  fprintf('Load hilbert phase data at 40 Hz...\n\n');
-  JAI_loadData( cfg );
-  
   if artifactRejection == true                                              % artifact rejection
     if artifactAvailable == true
       cfg           = [];
@@ -102,10 +98,6 @@ for i = numOfPart
       
       fprintf('Artifact Rejection of Hilbert phase data at 20 Hz.\n');
       data_hilbert_20Hz = JAI_rejectArtifacts(cfg, data_hilbert_20Hz);
-      fprintf('\n');
-      
-      fprintf('Artifact Rejection of Hilbert phase data at 40 Hz.\n');
-      data_hilbert_40Hz = JAI_rejectArtifacts(cfg, data_hilbert_40Hz);
       fprintf('\n');
       
       clear cfg_allArt
@@ -225,44 +217,6 @@ for i = numOfPart
   JAI_saveData(cfg, 'data_mplv_20Hz', data_mplv_20Hz);
   fprintf('Data stored!\n\n');
   clear data_mplv_20Hz
-  
-  % calculate PLV and meanPLV at 40Hz %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  cfg           = [];
-  cfg.winlen    = 1;                                                        % window length for one PLV value in seconds
-  
-  data_plv_40Hz  = JAI_phaseLockVal(cfg, data_hilbert_40Hz);
-  data_mplv_40Hz = JAI_calcMeanPLV(data_plv_40Hz);
-  clear data_hilbert_40Hz
-  
-  % export the PLVs into a *.mat file
-  cfg             = [];
-  cfg.desFolder   = strcat(desPath, '09_plv/');
-  cfg.filename    = sprintf('JAI_p%02d_09d_plv40Hz', i);
-  cfg.sessionStr  = sessionStr;
-
-  file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
-                     '.mat');
-                   
-  fprintf('Saving PLVs (40Hz) of dyad %d in:\n', i); 
-  fprintf('%s ...\n', file_path);
-  JAI_saveData(cfg, 'data_plv_40Hz', data_plv_40Hz);
-  fprintf('Data stored!\n');
-  clear data_plv_40Hz
-  
-  % export the mean PLVs into a *.mat file
-  cfg             = [];
-  cfg.desFolder   = strcat(desPath, '10_mplv/');
-  cfg.filename    = sprintf('JAI_p%02d_10d_mplv40Hz', i);
-  cfg.sessionStr  = sessionStr;
-
-  file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
-                     '.mat');
-                   
-  fprintf('Saving mean PLVs (40Hz) of dyad %d in:\n', i); 
-  fprintf('%s ...\n', file_path);
-  JAI_saveData(cfg, 'data_mplv_40Hz', data_mplv_40Hz);
-  fprintf('Data stored!\n\n');
-  clear data_mplv_40Hz
 end
 
 %% clear workspace

@@ -182,7 +182,7 @@ switch part
     tmpPath = strcat(desPath, '08_hilbert/');
     fileNamePre = strcat(tmpPath, 'JAI_p*_08a_hilbert2Hz_', sessionStr, '.mat');
     tmpPath = strcat(desPath, '10_mplv/');
-    fileNamePost = strcat(tmpPath, 'JAI_p*_10d_mplv40Hz_', sessionStr, '.mat');
+    fileNamePost = strcat(tmpPath, 'JAI_p*_10c_mplv20Hz_', sessionStr, '.mat');
   otherwise
     error('Something unexpected happend. part = %d is not defined' ...
           , part);
