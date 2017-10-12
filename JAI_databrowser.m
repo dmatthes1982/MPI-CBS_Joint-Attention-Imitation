@@ -1,6 +1,6 @@
 function cfgArtifacts = JAI_databrowser( cfg, data )
-% JAI_DATABROWSER displays a certain hyperscanning pilot project dataset 
-% using a appropriate scaling.
+% JAI_DATABROWSER displays a certain joint attention imitation project 
+% dataset using a appropriate scaling.
 %
 % Use as
 %   JAI_databrowser( data )

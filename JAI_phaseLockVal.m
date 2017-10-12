@@ -54,71 +54,94 @@ data = dataTmp;
 end
 
 function [data_out] = phaseLockingValue(cfgPLV, dataPart1, dataPart2)
+%--------------------------------------------------------------------------
+% Initialze variables
+%--------------------------------------------------------------------------
+numOfTrials             = length(dataPart1.trial);                          % number of trials
+numOfElec               = length(dataPart1.label);                          % number of electrodes
+connections             = numOfElec;                                        % number of connections
+timeOrg                 = dataPart1.time;                                   % extract original time vector
+trial_p1                = dataPart1.trial;                                  % extract trials of participant 1  
+trial_p2                = dataPart2.trial;                                  % extract trials of participant 2 
 
-numOfTrials             = length(dataPart1.trial);
-numOfElec               = length(dataPart1.label);
-shifts                  = numOfElec - 1;
-timeOrg                 = dataPart1.time;
-trial_p1                = dataPart1.trial;
-trial_p2                = dataPart2.trial;
+N                               = cfgPLV.winlen * dataPart1.fsample;        % Number of samples in one PLV window
+PLV{connections, numOfTrials}   = [];                                       % PLV matrix 
+time{connections, numOfTrials}  = [];                                       % time matrix
 
-N                                 = cfgPLV.winlen * dataPart1.fsample;
-PLV{shifts+1, numOfTrials}        = []; 
-time{shifts+1, numOfTrials}       = [];
-
-for i = 1:1:numOfTrials
-  VarA = trial_p1{i};
-  VarB = trial_p2{i};
-  for j = 0:1:shifts
-    VarB_shifted = circshift(VarB, -j);
-    trialdiff = VarA - VarB_shifted;
-    lenOfTrial = length(trialdiff(1,:));
-    if N > lenOfTrial
+%--------------------------------------------------------------------------
+% Calculate PLV values
+%--------------------------------------------------------------------------
+for i = 1:1:numOfTrials                                                     % for all trials
+  VarA = trial_p1{i};                                                       % extract i-th trial of participant 1
+  VarB = trial_p2{i};                                                       % extract i-th trial of participant 2
+  for j = 1:1:connections                                                   % for all connections
+    VarB_shifted = circshift(VarB, -(j-1));                                 % rotate trial matrix of participant 2
+    phasediff = VarA - VarB_shifted;                                        % calculate phase difference
+    lenOfTrial = length(phasediff(1,:));                                    % estimate trial length
+    if N > lenOfTrial                                                       % error if PLV window length exceeds the trial length
       error('PLV window length is larger than the trial length, choose another size!');
     else
-      numOfPLV = fix(lenOfTrial/N);
-      for k = 1:1:numOfPLV
-        if mod(N, 2) == 0
-          time{j+1, i}(1,k) = timeOrg{i}((k-1)*N + (N./2+1));
-        else
-          time{j+1, i}(1,k) = (timeOrg{i}((k-1)*N + (fix(N./2)+1)) + ...
-                                timeOrg{i}((k-1)*N + (fix(N./2)+2))) / 2;
+      numOfPLV = fix(lenOfTrial/N);                                         % calculate number of PLV values within one trial
+      for k = 1:1:numOfPLV                                                  % estimate time points for each PLV value
+        if mod(N, 2) == 0                                                   % if PLV window length is even 
+          time{j, i}(1,k) = timeOrg{i}((k-1)*N + (N./2+1));
+        else                                                                % if PLV window length is odd
+          time{j, i}(1,k) = (timeOrg{i}((k-1)*N + (fix(N./2)+1)) + ...
+                             timeOrg{i}((k-1)*N + (fix(N./2)+2))) / 2;
         end
       end
     end
-    for l=1:1:numOfElec
-      for m=1:1:numOfPLV
-        window = trialdiff(l,(m-1)*N + 1:m*N);
-        PLV{j+1,i}(l,m) = abs(sum(exp(1i*window))/N);
+    for l=1:1:numOfElec                                                     % for all electrodes
+      for m=1:1:numOfPLV                                                    % for all windows in one trial
+        window = phasediff(l,(m-1)*N + 1:m*N);
+        PLV{j,i}(l,m) = abs(sum(exp(1i*window))/N);
       end
     end
   end  
 end
 
-numOfDiffTrials = length(unique(dataPart1.trialinfo));                      % merge all PLV values of one condition in one trial
-trialinfo = zeros(numOfDiffTrials, 1);
-condPLV{shifts+1, numOfDiffTrials} = [];
-condTime{shifts+1, numOfDiffTrials} = [];
+%--------------------------------------------------------------------------
+% concatenate all trials with equal condition numbers
+%--------------------------------------------------------------------------
+uniqueTrials = unique(dataPart1.trialinfo, 'stable');                       % estimate unique phases                                
+diffPhases = length(uniqueTrials);                                          % estimate number of different phases 
+trialinfo = zeros(diffPhases, 1);                                           % build new trialinfo
+catPLV{connections, diffPhases} = [];                                       % concatenated PLV matrix                                 
+catTime{connections, diffPhases} = [];                                      % concatenated Time matrix   
 
-begsample = 1;
-
-for i=1:1:numOfDiffTrials
-  stim = dataPart1.trialinfo(begsample);
-  endsample = find(dataPart1.trialinfo == stim, 1, 'last');
-  trialinfo(i) = stim;
-  for j=0:1:shifts
-    condPLV{j+1, i} = cell2mat(PLV(j+1, begsample:endsample));
-    condTime{j+1, i} = cell2mat(time(j+1, begsample:endsample));
+for i=1:1:diffPhases                                                        % for all phases
+  marker = uniqueTrials(i);                                                 % estimate i-th phase marker
+  trials = find(dataPart1.trialinfo == marker);                             % extract all trials with this marker
+  trialinfo(i) = marker;                                                    % put phase marker into new trialinfo
+  for j=1:1:connections
+    catPLV{j, i} = cell2mat(PLV(j, trials));                                % concatenate trials
+    catTime{j, i} = cell2mat(time(j, trials));                              % concatenate time elements
   end
-  begsample = endsample + 1;
+end
+
+%--------------------------------------------------------------------------
+% reorganize catPLV matrix in a mor logic form
+%--------------------------------------------------------------------------
+elecA = 1:1:numOfElec;
+elecB = 1:1:numOfElec;
+temp{length(elecA), length(elecB)} = [];
+numOfTrials = size(catPLV, 2);
+
+for i=1:1:numOfTrials
+  reorgCatPLV{i} = temp;                                                    %#ok<AGROW>
+  for j=1:1:connections
+    elecBshift = circshift(elecB, -(j-1));
+    for k=1:1:numOfElec
+      reorgCatPLV{i}{elecA(k), elecBshift(k)} = catPLV{j,i}(k,:);
+    end
+  end
 end
 
 data_out                  = keepfields(dataPart1, {'hdr', 'fsample'});
 data_out.trialinfo        = trialinfo;
-data_out.PLV              = condPLV;
-data_out.time             = condTime;
+data_out.PLV              = reorgCatPLV;
+data_out.time             = catTime;
 data_out.label            = dataPart1.label;
-data_out.labelCircShift   = 0:-1:-(length(data_out.label)-1);
 data_out.cfg              = cfgPLV;
 data_out.cfg.previous{1}  = dataPart1.cfg;
 data_out.cfg.previous{2}  = dataPart2.cfg;

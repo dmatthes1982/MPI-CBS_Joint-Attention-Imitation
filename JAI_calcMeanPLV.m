@@ -20,12 +20,16 @@ function [ data ] = JAI_calcMeanPLV( data )
 fprintf('Calc mean PLVs with a center frequency of %d Hz...\n', ...           
           data.centerFreq);
 numOfTrials = size(data.dyad.PLV, 2);
-shifts = size(data.dyad.PLV, 1);
+numOfElecA = size(data.dyad.PLV{1}, 1);
+numOfElecB = size(data.dyad.PLV{1}, 2);
 
-data.dyad.mPLV{shifts, numOfTrials} = [];
+data.dyad.mPLV{1, numOfTrials} = [];
 for i=1:1:numOfTrials
-  for j=1:1:shifts
-    data.dyad.mPLV{j,i} = mean(data.dyad.PLV{j,i}, 2);
+  data.dyad.mPLV{i} = zeros(numOfElecA, numOfElecB);
+  for j=1:1:numOfElecA
+    for k=1:1:numOfElecB
+    data.dyad.mPLV{i}(j,k) = mean(cell2mat(data.dyad.PLV{i}(j,k)));
+    end
   end
 end
 data.dyad = rmfield(data.dyad, {'time', 'PLV'});
