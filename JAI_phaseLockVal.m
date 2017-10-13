@@ -139,6 +139,7 @@ end
 
 data_out                  = keepfields(dataPart1, {'hdr', 'fsample'});
 data_out.trialinfo        = trialinfo;
+data_out.dimord           = 'trl_chan1_chan2';
 data_out.PLV              = reorgCatPLV;
 data_out.time             = catTime;
 data_out.label            = dataPart1.label;
