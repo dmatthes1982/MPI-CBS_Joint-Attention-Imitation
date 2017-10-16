@@ -9,7 +9,8 @@ function JAI_easyPLVplot( cfg, data )
 %
 % The configuration options are
 %   cfg.condition = condition (default: 111 or 'SameObject', see JAI data structure)
-%   cfg.electrode = number of electrode (default: 'Cz')
+%   cfg.elecPart1 = number of electrode of participant 1 (default: 'Cz')
+%   cfg.elecPart2 = number of electrode of participant 2 (default: 'Cz')
 %
 % This function requires the fieldtrip toolbox.
 %
@@ -21,7 +22,8 @@ function JAI_easyPLVplot( cfg, data )
 % Get and check config options
 % -------------------------------------------------------------------------
 cond = ft_getopt(cfg, 'condition', 111);
-elec = ft_getopt(cfg, 'electrode', 'Cz');
+elecPart1 = ft_getopt(cfg, 'elecPart1', 'Cz');
+elecPart2 = ft_getopt(cfg, 'elecPart2', 'Cz');
 
 trialinfo = data.dyad.trialinfo;                                            % get trialinfo
 
@@ -33,23 +35,35 @@ end
 
 label = data.dyad.label;                                                    % get labels
 
-if isnumeric(elec)                                                          % check cfg.electrode definition
-  if elec < 1 || elec > 32
-    error('cfg.elec hast to be a number between 1 and 32 or a existing label like ''Cz''.');
+if isnumeric(elecPart1)                                                     % check cfg.electrode definition
+  if elecPart1 < 1 || elecPart1 > 32
+    error('cfg.elecPart1 hast to be a number between 1 and 32 or a existing label like ''Cz''.');
   end
 else
-  elec = find(strcmp(label, elec));
-  if isempty(elec)
-    error('cfg.elec hast to be a existing label like ''Cz''or a number between 1 and 32.');
+  elecPart1 = find(strcmp(label, elecPart1));                            
+  if isempty(elecPart1)
+    error('cfg.elecPart1 hast to be a existing label like ''Cz''or a number between 1 and 32.');
+  end
+end
+
+if isnumeric(elecPart2)                                                     % check cfg.electrode definition
+  if elecPart2 < 1 || elecPart2 > 32
+    error('cfg.elecPart2 hast to be a number between 1 and 32 or a existing label like ''Cz''.');
+  end
+else
+  elecPart2 = find(strcmp(label, elecPart2));
+  if isempty(elecPart2)
+    error('cfg.elecPart2 hast to be a existing label like ''Cz''or a number between 1 and 32.');
   end
 end
 
 % -------------------------------------------------------------------------
 % Plot PLV course
 % -------------------------------------------------------------------------
-plot(data.dyad.time{trl}, data.dyad.PLV{trl}(elec,:));
-title(sprintf(' Cond.: %d - Elec.: %s', cond, ...
-              strrep(data.dyad.label{elec}, '_', '\_')));      
+plot(data.dyad.time{trl}, data.dyad.PLV{trl}{elecPart1,elecPart2}(:));
+title(sprintf(' Cond.: %d - Elec.: %s - %s', cond, ...
+              strrep(data.dyad.label{elecPart1}, '_', '\_'), ...
+              strrep(data.dyad.label{elecPart2}, '_', '\_')));   
 
 xlabel('time in seconds');
 ylabel('phase locking value');
