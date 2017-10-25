@@ -1,7 +1,7 @@
 function JAI_easyTFRplot(cfg, data)
 % JAI_EASYTFRPLOT is a function, which makes it easier to plot a
 % time-frequency-spectrum of a specific condition and trial from the 
-% JAI-data-structure.
+% JAI_DATASTRUCTURE.
 %
 % Use as
 %   JAI_easyTFRPlot(cfg, data)
@@ -10,7 +10,7 @@ function JAI_easyTFRplot(cfg, data)
 %
 % The configuration options are 
 %   cfg.part        = number of participant (default: 1)
-%   cfg.condition   = condition (default: 111 or 'SameObject', see JAI data structure)
+%   cfg.condition   = condition (default: 111 or 'SameObject', see JAI_DATASTRUCTURE)
 %   cfg.electrode   = number of electrode (default: 'Cz')
 %   cfg.trial       = number of trial (default: 1)
 %   cfg.freqlimits  = [begin end] (default: [2 50])
@@ -18,7 +18,7 @@ function JAI_easyTFRplot(cfg, data)
 %
 % This function requires the fieldtrip toolbox
 %
-% See also FT_SINGLEPLOTTFR, JAI_TIMEFREQANALYSIS
+% See also FT_SINGLEPLOTTFR, JAI_TIMEFREQANALYSIS, JAI_DATASTRUCTURE
 
 % Copyright (C) 2017, Daniel Matthes, MPI CBS
 

@@ -1,8 +1,8 @@
 %% check if basic variables are defined and import segmented data
 if ~exist('sessionStr', 'var')
   cfg           = [];
-  cfg.subFolder = '04_seg1/';
-  cfg.filename  = 'JAI_p01_04_seg1';
+  cfg.subFolder = '02_preproc/';
+  cfg.filename  = 'JAI_p01_02_preproc';
   sessionStr    = sprintf('%03d', JAI_getSessionNum( cfg ));                % estimate current session number
 end
 
@@ -11,7 +11,7 @@ if ~exist('desPath', 'var')
 end
 
 if ~exist('numOfPart', 'var')                                               % estimate number of participants in segmented data folder
-  sourceList    = dir([strcat(desPath, '04_seg1/'), ...
+  sourceList    = dir([strcat(desPath, '02_preproc/'), ...
                        strcat('*_', sessionStr, '.mat')]);
   sourceList    = struct2cell(sourceList);
   sourceList    = sourceList(1,:);
@@ -20,7 +20,7 @@ if ~exist('numOfPart', 'var')                                               % es
 
   for i=1:1:numOfSources
     numOfPart(i)  = sscanf(sourceList{i}, ...
-                    strcat('JAI_p%d_04_seg1_', sessionStr, '.mat'));
+                    strcat('JAI_p%d_02_preproc_', sessionStr, '.mat'));
   end
 end
 
@@ -29,22 +29,22 @@ end
 
 for i = numOfPart
   cfg             = [];
-  cfg.srcFolder   = strcat(desPath, '04_seg1/');
-  cfg.filename    = sprintf('JAI_p%02d_04_seg1', i);
+  cfg.srcFolder   = strcat(desPath, '02_preproc/');
+  cfg.filename    = sprintf('JAI_p%02d_02_preproc', i);
   cfg.sessionStr  = sessionStr;
   
   fprintf('Dyad %d\n', i);
   fprintf('Load segmented data...\n\n');
   JAI_loadData( cfg );
   
-  filtCoeffDiv = 500 / data_seg1.part1.fsample;                             % estimate sample frequency dependent divisor of filter length
+  filtCoeffDiv = 500 / data_preproc.part1.fsample;                             % estimate sample frequency dependent divisor of filter length
 
   % bandpass filter data at 2Hz
   cfg           = [];
   cfg.bpfreq    = [1.9 2.1];
   cfg.filtorder = fix(500 / filtCoeffDiv);
 
-  data_bpfilt_2Hz = JAI_bpFiltering(cfg, data_seg1);
+  data_bpfilt_2Hz = JAI_bpFiltering(cfg, data_preproc);
   
   % export the filtered data into a *.mat file
   cfg             = [];
@@ -66,7 +66,7 @@ for i = numOfPart
   cfg.bpfreq    = [9 11];
   cfg.filtorder = fix(250 / filtCoeffDiv);
   
-  data_bpfilt_10Hz = JAI_bpFiltering(cfg, data_seg1);
+  data_bpfilt_10Hz = JAI_bpFiltering(cfg, data_preproc);
   
   % export the filtered data into a *.mat file
   cfg             = [];
@@ -88,7 +88,7 @@ for i = numOfPart
   cfg.bpfreq    = [19 21];
   cfg.filtorder = fix(250 / filtCoeffDiv);
   
-  data_bpfilt_20Hz = JAI_bpFiltering(cfg, data_seg1);
+  data_bpfilt_20Hz = JAI_bpFiltering(cfg, data_preproc);
 
   % export the filtered data into a *.mat file
   cfg             = [];
@@ -103,7 +103,7 @@ for i = numOfPart
   fprintf('%s ...\n', file_path);
   JAI_saveData(cfg, 'data_bpfilt_20Hz', data_bpfilt_20Hz);
   fprintf('Data stored!\n\n');
-  clear data_bpfilt_20Hz data_seg1
+  clear data_bpfilt_20Hz data_preproc
   
 end
 

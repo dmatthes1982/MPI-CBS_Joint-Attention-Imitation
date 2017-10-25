@@ -49,7 +49,7 @@ cfgAutoArt.trialsNum = [];
 
 cfgAutoArt.trialsNum = length(data.part1.trial);                    
   
-cfg.trl = data.part1.cfg.previous.trl;
+cfg.trl = data.part1.cfg.trl;
 fprintf('Estimate artifacts in participant 1...\n');
 cfgAutoArt.part1    = ft_artifact_threshold(cfg, data.part1);
 cfgAutoArt.part1    = keepfields(cfgAutoArt.part1, ...
@@ -57,7 +57,7 @@ cfgAutoArt.part1    = keepfields(cfgAutoArt.part1, ...
 cfgAutoArt.bad1Num  = length(cfgAutoArt.part1.artfctdef.threshold.artifact);
 fprintf('%d artifacts detected!\n', cfgAutoArt.bad1Num);
   
-cfg.trl = data.part2.cfg.previous.trl;
+cfg.trl = data.part2.cfg.trl;
 fprintf('Estimate artifacts in participant 2...\n');
 cfgAutoArt.part2    = ft_artifact_threshold(cfg, data.part2);
 cfgAutoArt.part2    = keepfields(cfgAutoArt.part2, ...

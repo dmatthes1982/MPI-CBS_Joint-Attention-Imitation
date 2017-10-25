@@ -10,7 +10,7 @@ if ~exist('desPath', 'var')
   desPath       = '/data/pt_01826/eegData/DualEEG_JAI_processedData/';      % destination path for processed data  
 end
 
-if ~exist('numOfPart', 'var')                                               % estimate number of participants in raw data folder
+if ~exist('numOfPart', 'var')                                               % estimate number of participants in preprocessed data folder
   sourceList    = dir([strcat(desPath, '02_preproc/'), ...
                        strcat('*_', sessionStr, '.mat')]);
   sourceList    = struct2cell(sourceList);
@@ -26,7 +26,6 @@ end
 
 %% segmentation of the preprocessed trials
 % split the data of every condition into subtrials with a length of 5 secs
-% export the segmented data into a *.mat file
 
 for i = numOfPart
   cfg             = [];
@@ -38,8 +37,12 @@ for i = numOfPart
   fprintf('Load preproc data...\n');
   JAI_loadData( cfg );
   
-  data_seg1  = JAI_segmentation( data_preproc );
+  cfg         = [];
+  cfg.length  = 5;
   
+  data_seg1 = JAI_segmentation( cfg, data_preproc );
+  
+  % export the segmented data into a *.mat file
   cfg             = [];
   cfg.desFolder   = strcat(desPath, '04_seg1/');
   cfg.filename    = sprintf('JAI_p%02d_04_seg1', i);
