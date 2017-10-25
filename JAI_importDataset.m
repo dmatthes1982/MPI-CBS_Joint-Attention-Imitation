@@ -42,14 +42,14 @@ headerfile = sprintf('%sDualEEG_JAI_%02d.vhdr', path, part);
 % definition of all possible stimuli, two for each condition, the first on 
 % is the original one and the second one handles the 'video trigger bug'
 eventvalues = { 'S111','S239', ...                                          % Same object (Duration: 120 sec)
-                'S2','S130', ...                                            % View motion (Duration: 120 sec)
-                'S3','S131', ...                                            % Same motion (Duration: 120 sec)
-                'S31','S159', ...                                           % Contingent Imitation 1 imitates 2 (Duration: 180 sec)
-                'S32','S160', ...                                           % Contingent Imitation 2 imitates 1 (Duration: 180 sec)
-                'S41','S169', ...                                           % Contingent Other Action 1 reacts on 2 (Duration: 180 sec)
-                'S42','S170', ...                                           % Contingent Other Action 2 reacts on 1 (Duration: 180 sec)
-                'S51','S179', ...                                           % Spontaneous Imitation I (Duration: 180 sec)
-                'S52','S180', ...                                           % Spontaneous Imitation II (Duration: 180 sec)
+                'S  2','S130', ...                                          % View motion (Duration: 120 sec)
+                'S  3','S131', ...                                          % Same motion (Duration: 120 sec)
+                'S 31','S159', ...                                          % Contingent Imitation 1 imitates 2 (Duration: 180 sec)
+                'S 32','S160', ...                                          % Contingent Imitation 2 imitates 1 (Duration: 180 sec)
+                'S 41','S169', ...                                          % Contingent Other Action 1 reacts on 2 (Duration: 180 sec)
+                'S 42','S170', ...                                          % Contingent Other Action 2 reacts on 1 (Duration: 180 sec)
+                'S 51','S179', ...                                          % Spontaneous Imitation I (Duration: 180 sec)
+                'S 52','S180', ...                                          % Spontaneous Imitation II (Duration: 180 sec)
                 'S105','S233', ...                                          % Conversation (Duration: 300 sec)
                 };
 
@@ -76,7 +76,7 @@ cfg.trialdef.eventvalue = eventvalues;
 cfg = ft_definetrial(cfg);                                                  % generate config for segmentation
 cfg = rmfield(cfg, {'notification'});                                       % workarround for mergeconfig bug                       
 
-for i = 1:1:length(cfg.trl)                                                 % set specific trial lengths
+for i = 1:1:size(cfg.trl, 1)                                                % set specific trial lengths
   cfg.trl(i, 2) = duration(cfg.trl(i, 4)) + cfg.trl(i, 1) - 1;
 end
 
