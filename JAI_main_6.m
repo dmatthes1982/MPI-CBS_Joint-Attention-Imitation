@@ -61,7 +61,7 @@ for i = numOfPart
   JAI_loadData( cfg );
   
   cfg.filename    = sprintf('JAI_p%02d_08c_hilbert20Hz', i);
-  fprintf('Load hilbert phase data at 20 Hz...\n');
+  fprintf('Load hilbert phase data at 20 Hz...\n\n');
   JAI_loadData( cfg );
   
   % Segmentation of the hilbert phase data trials for PLV estimation %%%%%%
@@ -71,15 +71,15 @@ for i = numOfPart
   cfg.length    = 5;
   
   fprintf('Segmentation of Hilbert phase data at 2 Hz.\n');
-  data_hseg_2Hz  = HSP_segmentation( cfg, data_hilbert_2Hz );
+  data_hseg_2Hz  = JAI_segmentation( cfg, data_hilbert_2Hz );
   fprintf('\n');
   
   fprintf('Segmentation of Hilbert phase data at 10 Hz.\n');
-  data_hseg_10Hz  = HSP_segmentation( cfg, data_hilbert_10Hz );
+  data_hseg_10Hz  = JAI_segmentation( cfg, data_hilbert_10Hz );
   fprintf('\n');
   
   fprintf('Segmentation of Hilbert phase data at 20 Hz.\n');
-  data_hseg_20Hz  = HSP_segmentation( cfg, data_hilbert_20Hz );
+  data_hseg_20Hz  = JAI_segmentation( cfg, data_hilbert_20Hz );
   fprintf('\n');
   
   % export the segmented hilbert (2 Hz, 10 Hz, 20 Hz) data into a *.mat file

@@ -34,10 +34,10 @@ for i = numOfPart
   cfg.sessionStr  = sessionStr;
   
   fprintf('Dyad %d\n', i);
-  fprintf('Load segmented data...\n\n');
+  fprintf('Load preprocessed data...\n\n');
   JAI_loadData( cfg );
   
-  filtCoeffDiv = 500 / data_preproc.part1.fsample;                             % estimate sample frequency dependent divisor of filter length
+  filtCoeffDiv = 500 / data_preproc.part1.fsample;                          % estimate sample frequency dependent divisor of filter length
 
   % bandpass filter data at 2Hz
   cfg           = [];
@@ -104,7 +104,6 @@ for i = numOfPart
   JAI_saveData(cfg, 'data_bpfilt_20Hz', data_bpfilt_20Hz);
   fprintf('Data stored!\n\n');
   clear data_bpfilt_20Hz data_preproc
-  
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -126,7 +125,7 @@ for i = numOfPart
   JAI_loadData( cfg );
   
   cfg.filename    = sprintf('JAI_p%02d_07c_bpfilt20Hz', i);
-  fprintf('Load the at 20 Hz bandpass filtered data ...\n');
+  fprintf('Load the at 20 Hz bandpass filtered data ...\n\n');
   JAI_loadData( cfg );
   
   % calculate hilbert phase at 2Hz

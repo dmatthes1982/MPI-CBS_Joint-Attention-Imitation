@@ -290,7 +290,7 @@ while sessionStatus == true
       JAI_main_1;
       selection = false;
       while selection == false
-        fprintf('\nContinue data processing with:\n');
+        fprintf('Continue data processing with:\n');
         fprintf('[3] - Segmentation of the data?\n');
         x = input('\nSelect [y/n]: ','s');
         if strcmp('y', x)
@@ -308,7 +308,7 @@ while sessionStatus == true
       JAI_main_3;
       selection = false;
       while selection == false
-        fprintf('\nContinue data processing with:\n');
+        fprintf('Continue data processing with:\n');
         fprintf('[4] - Automatic and manual detection of artifacts?\n');
         x = input('\nSelect [y/n]: ','s');
         if strcmp('y', x)
@@ -326,7 +326,7 @@ while sessionStatus == true
       JAI_main_4;
       selection = false;
       while selection == false
-        fprintf('\nContinue data processing with:\n');
+        fprintf('Continue data processing with:\n');
         fprintf('[5] - Application of narrow band filtering and Hilbert transform?\n');
         x = input('\nSelect [y/n]: ','s');
         if strcmp('y', x)

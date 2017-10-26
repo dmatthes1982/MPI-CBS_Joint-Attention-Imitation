@@ -53,7 +53,7 @@ for i = numOfPart
   cfg.sessionStr  = sessionStr;
   cfg.filename    = sprintf('JAI_p%02d_02_preproc', i);
   
-  fprintf('Load preprocessed data...\n');
+  fprintf('Load preprocessed data...\n\n');
   JAI_loadData( cfg );
   
   % Segmentation of the preprocessed trials for ITPC estimation %%%%%%%%%%%
