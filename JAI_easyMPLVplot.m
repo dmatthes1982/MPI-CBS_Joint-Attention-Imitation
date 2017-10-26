@@ -41,7 +41,7 @@ imagesc(components, components, data.dyad.mPLV{trl});
 set(gca, 'XTick', components,'XTickLabel', label);                          % use labels instead of numbers for the axis description
 set(gca, 'YTick', components,'YTickLabel', label);
 set(gca,'xaxisLocation','top');                                             % move xlabel to the top
-title(sprintf(' mean Phase-Locking-Values in Condition: %d', cond));   
+title(sprintf(' mean Phase Locking Values in Condition: %d', cond));   
 colorbar;
 
 end

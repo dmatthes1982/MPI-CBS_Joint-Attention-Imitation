@@ -1,6 +1,6 @@
 % JAI_DATASTRUCTURE
 %
-% The data in the --- Joint Attention Imitation Projekt --- ist structured 
+% The data in the --- Joint Attention Imitation Project --- ist structured 
 % as follows:
 %
 % Every step of the data processing pipeline (i.e. 01_raw, 02_preproc, 
