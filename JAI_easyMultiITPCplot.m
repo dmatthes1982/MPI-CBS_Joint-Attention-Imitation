@@ -12,7 +12,7 @@ function JAI_easyMultiITPCplot(cfg, data)
 %   cfg.part        = number of participant (default: 1)
 %   cfg.condition   = condition (default: 111 or 'SameObject', see JAI_DATASTRUCTURE)
 %   cfg.freqlimits  = [begin end] (default: [1 48])
-%   cfg.timelimits  = [begin end] (default: [0 9.8])
+%   cfg.timelimits  = [begin end] (default: [0.2 9.8])
 %  
 % This function requires the fieldtrip toolbox
 %
@@ -26,7 +26,7 @@ function JAI_easyMultiITPCplot(cfg, data)
 cfg.part    = ft_getopt(cfg, 'part', 1);
 cfg.cond    = ft_getopt(cfg, 'condition', 111);
 freqlim = ft_getopt(cfg, 'freqlimits', [1 48]);
-timelim = ft_getopt(cfg, 'timelimits', [0 9.8]);
+timelim = ft_getopt(cfg, 'timelimits', [0.2 9.8]);
 
 if cfg.part < 1 || cfg.part > 2                                             % check cfg.participant definition
   error('cfg.part has to be 1 or 2');
@@ -174,19 +174,14 @@ info  = guidata(gcf);
 cfg   = info.(ident).cfg;
 data  = info.(ident).data;
 if ~isempty(label)
-  if length(label) ~= 1
-    cprintf([1,0.5,0], 'Selection of more than one label {%s} is currently not supported.\n', ...
-            join_str(', ', label));
+  if any(ismember(label, {'SCALE', 'F9', 'F10', 'V1', 'V2'}))
+    cprintf([1,0.5,0], 'Selection of SCALE, F9, F10, V1, or V2 is currently not supported.\n');
   else
-    if strcmp(label, 'SCALE')
-      cprintf([1,0.5,0], 'Selection of SCALE is currently not supported.\n');
-    else
-      cfg.electrode = label;
-      fprintf('selected cfg.electrode = {%s}\n', join_str(', ', cfg.electrode));
-      % ensure that the new figure appears at the same position
-      figure('Position', get(gcf, 'Position'));
-      JAI_easyITPCplot(cfg, data);
-    end
+    cfg.electrode = label;
+    fprintf('selected cfg.electrode = {%s}\n', join_str(', ', cfg.electrode));
+    % ensure that the new figure appears at the same position
+    figure('Position', get(gcf, 'Position'));
+    JAI_easyITPCplot(cfg, data);
   end
 end
 

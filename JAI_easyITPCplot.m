@@ -11,7 +11,8 @@ function JAI_easyITPCplot(cfg, data)
 % The configuration options are 
 %   cfg.part        = number of participant (default: 1)
 %   cfg.condition   =  condition (default: 111 or 'SameObject', see JAI_DATASTRUCTURE)
-%   cfg.electrode   = number of electrode (default: 'Cz')
+%   cfg.electrode   = number of electrodes (default: {'Cz'} repsectively [7])
+%                     examples: {'Cz'}, {'F3', 'Fz', 'F4'}, [7] or [2, 1, 27] 
 %  
 % This function requires the fieldtrip toolbox
 %
@@ -24,7 +25,7 @@ function JAI_easyITPCplot(cfg, data)
 % -------------------------------------------------------------------------
 part    = ft_getopt(cfg, 'part', 1);
 cond    = ft_getopt(cfg, 'condition', 111);
-elec    = ft_getopt(cfg, 'electrode', 'Cz');
+elec    = ft_getopt(cfg, 'electrode', {'Cz'});
 
 if part < 1 || part > 2                                                     % check cfg.participant definition
   error('cfg.part has to be 1 or 2');
@@ -49,15 +50,21 @@ elseif part == 2
   label = data.part2.label;
 end
 
-if isnumeric(elec)
-  if elec < 1 || elec > 32
-    error('cfg.elec hast to be a number between 1 and 32 or a existing label like ''Cz''.');
+if isnumeric(elec)                                                          % check cfg.electrode
+  for i=1:length(elec)
+    if elec(i) < 1 || elec(i) > 32
+      error('cfg.elec has to be a numbers between 1 and 32 or a existing labels like {''Cz''}.');
+    end
   end
 else
-  elec = find(strcmp(label, elec));
-  if isempty(elec)
-    error('cfg.elec hast to be a existing label like ''Cz''or a number between 1 and 32.');
+  tmpElec = zeros(1, length(elec));
+  for i=1:length(elec)
+    tmpElec(i) = find(strcmp(label, elec{i}));
+    if isempty(tmpElec(i))
+      error('cfg.elec has to be a cell array of existing labels like ''Cz''or a vector of numbers between 1 and 32.');
+    end
   end
+  elec = tmpElec;
 end
 
 % -------------------------------------------------------------------------
@@ -65,17 +72,17 @@ end
 % -------------------------------------------------------------------------
 switch part
   case 1
-    imagesc(data.part1.time{trialNum}, data.part1.freq, ...
-              squeeze(data.part1.itpc{trialNum}(elec,:,:)));
+    imagesc(data.part1.time{trialNum}(2:end), data.part1.freq, ...
+              squeeze(mean(data.part1.itpc{trialNum}(elec,:,2:end),1)));
+    labelString = elec2string(elec, data.part2.label);
     title(sprintf('ITPC - Part.: %d - Cond.: %d - Elec.: %s', ...
-          part, cond, ...
-          strrep(data.part1.label{elec}, '_', '\_')));
+          part, cond, labelString));
   case 2
-    imagesc(data.part2.time{trialNum}, data.part2.freq, ...
-              squeeze(data.part2.itpc{trialNum}(elec,:,:)));
+    imagesc(data.part2.time{trialNum}(2:end), data.part2.freq, ...
+              squeeze(mean(data.part2.itpc{trialNum}(elec,:,2:end),1)));
+    labelString = elec2string(elec, data.part2.label);        
     title(sprintf('ITPC - Part.: %d - Cond.: %d - Elec.: %s', ...
-          part, cond, ...
-          strrep(data.part2.label{elec}, '_', '\_')));
+          part, cond, labelString));
 end
 
 axis xy;
@@ -83,4 +90,15 @@ xlabel('time in sec');                                                      % se
 ylabel('frequency in Hz');                                                  % set ylabel
 colorbar;
 
+end
+
+function elecsString = elec2string (elecs, labels)
+  elecsString = labels{elecs(1)};
+  
+  if length(elecs) > 1
+    for i = 2:1:length(elecs)
+      elecsString = [elecsString, ', ', labels{elecs(i)}];                  %#ok<AGROW>
+    end
+  end
+  
 end
