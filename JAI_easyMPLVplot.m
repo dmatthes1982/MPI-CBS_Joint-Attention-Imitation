@@ -6,14 +6,14 @@ function JAI_easyMPLVplot( cfg, data )
 % Use as
 %   JAI_easyPLVplot( cfg, data )
 %
-% where the input data has to be the result of JAI_PHASELOCKVAL
+% where the input data has to be the result of JAI_CALCMEANPLV
 %
 % The configuration options are
 %   cfg.condition = condition (default: 111 or 'SameObject', see JAI_DATASTRUCTURE)
 %
 % This function requires the fieldtrip toolbox.
 %
-% See also JAI_DATASTRUCTURE, PLOT, JAI_PHASELOCKVAL, JAI_CALCMEANPLV
+% See also JAI_DATASTRUCTURE, PLOT, JAI_CALCMEANPLV
 
 % Copyright (C) 2017, Daniel Matthes, MPI CBS
 

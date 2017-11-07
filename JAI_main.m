@@ -55,7 +55,6 @@ while selection == false
     end
   end
 end
-  
 
 % -------------------------------------------------------------------------
 % General selection of dyads

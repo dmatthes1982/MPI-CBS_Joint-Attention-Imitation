@@ -16,7 +16,7 @@ function JAI_easyMultiITPCplot(cfg, data)
 %  
 % This function requires the fieldtrip toolbox
 %
-% See also JAI_INTERTRAILPHASECOH, JAI_DATASTRUCTURE
+% See also JAI_INTERTRIALPHASECOH, JAI_DATASTRUCTURE
 
 % Copyright (C) 2017, Daniel Matthes, MPI CBS
 

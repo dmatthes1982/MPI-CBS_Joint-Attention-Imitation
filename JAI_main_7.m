@@ -83,13 +83,15 @@ for i = numOfPart
   % artifact rejection
   if artifactRejection == true                                              % load artifact definitions
     cfg             = [];
-    cfg.desFolder   = desPath;
-    cfg.filename    = 'JAI_06_allArt';
+    cfg.srcFolder   = strcat(desPath, '06_allArt/');
+    cfg.filename    = sprintf('JAI_p%02d_06_allArt', i);
     cfg.sessionStr  = sessionStr;
 
-    file_path = strcat(desPath, cfg.filename, '_', sessionStr, '.mat');
+    file_path = strcat(cfg.srcFolder, cfg.filename, '_', cfg.sessionStr, ...
+                       '.mat');
+                     
     if ~isempty(dir(file_path))
-      fprintf('Loading %s ...\n\n', file_path);
+      fprintf('Loading %s ...\n', file_path);
       JAI_loadData( cfg );                                                    
     else
       fprintf('File %s is not existent,\n', file_path);
