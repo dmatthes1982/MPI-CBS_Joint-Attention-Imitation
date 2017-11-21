@@ -19,7 +19,7 @@ selection = false;
 
 tmpPath = strcat(desPath, '02_preproc/');
 
-sessionList    = dir([tmpPath, 'JAI_p01_02_preproc_*.mat']);
+sessionList    = dir([tmpPath, 'JAI_p*_02_preproc_*.mat']);
 sessionList    = struct2cell(sessionList);
 sessionList    = sessionList(1,:);
 numOfSessions  = length(sessionList);
@@ -27,9 +27,12 @@ numOfSessions  = length(sessionList);
 sessionNum     = zeros(1, numOfSessions);
 
 for i=1:1:numOfSessions
-  sessionNum(i) = sscanf(sessionList{i}, 'JAI_p01_02_preproc_%d.mat');
+  sessionList{i} = strsplit(sessionList{i}, '02_preproc_');
+  sessionList{i} = sessionList{i}{end};
+  sessionNum(i) = sscanf(sessionList{i}, '%d.mat');
 end
 
+sessionNum = unique(sessionNum);
 y = sprintf('%d ', sessionNum);
 
 while selection == false
@@ -49,7 +52,11 @@ while selection == false
     elseif x == 0  
       selection = true;
       session = x;
-      sessionStr = sprintf('%03d', max(sessionNum) + 1);
+      if ~isempty(max(sessionNum))
+        sessionStr = sprintf('%03d', max(sessionNum) + 1);
+      else
+        sessionStr = sprintf('%03d', 1);
+      end
     else
       cprintf([1,0.5,0], 'Wrong input, session does not exist!\n');
     end

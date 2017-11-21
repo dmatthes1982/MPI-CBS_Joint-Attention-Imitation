@@ -17,7 +17,7 @@ function [ num ] = JAI_getSessionNum( cfg )
 % -------------------------------------------------------------------------
 % Get config options
 % -------------------------------------------------------------------------
-desFolder   = ft_getopt(cfg, 'srcFolder', '/data/pt_01826/eegData/DualEEG_JAI_processedData/');
+desFolder   = ft_getopt(cfg, 'desFolder', '/data/pt_01826/eegData/DualEEG_JAI_processedData/');
 subFolder   = ft_getopt(cfg, 'subFolder', '01_raw/');
 filename    = ft_getopt(cfg, 'filename', 'JAI_p01_01_raw');
 
