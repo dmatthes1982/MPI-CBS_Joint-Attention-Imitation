@@ -5,12 +5,79 @@ fprintf('Copyright (C) 2017, Daniel Matthes, MPI CBS\n');
 fprintf('------------------------------------------------\n');
 
 % -------------------------------------------------------------------------
-% General definitions
+% Path settings
 % -------------------------------------------------------------------------
 srcPath = '/data/pt_01826/eegData/DualEEG_JAI_rawData/';
 desPath = '/data/pt_01826/eegData/DualEEG_JAI_processedData/';
 
-clear sessionStr numOfPart part
+fprintf('\nThe default paths are:\n');
+fprintf('Source: %s\n',srcPath);
+fprintf('Destination: %s\n',desPath);
+
+selection = false;
+while selection == false
+  fprintf('\nDo you want to select the default paths?\n');
+  x = input('Select [y/n]: ','s');
+  if strcmp('y', x)
+    selection = true;
+    newPaths = false;
+  elseif strcmp('n', x)
+    selection = true;
+    newPaths = true;
+  else
+    selection = false;
+  end
+end
+
+if newPaths == true
+  srcPath = uigetdir(pwd, 'Select Source Folder...');
+  desPath = uigetdir(strcat(srcPath,'/..'), ...
+                      'Select Destination Folder...');
+  srcPath = strcat(srcPath, '/');
+  desPath = strcat(desPath, '/');
+end
+
+if ~exist(strcat(desPath, '01_raw'), 'dir')
+  mkdir(strcat(desPath, '01_raw'));
+end
+if ~exist(strcat(desPath, '02_preproc'), 'dir')
+  mkdir(strcat(desPath, '02_preproc'));
+end
+if ~exist(strcat(desPath, '03_tfr1'), 'dir')
+  mkdir(strcat(desPath, '03_tfr1'));
+end
+if ~exist(strcat(desPath, '04_seg1'), 'dir')
+  mkdir(strcat(desPath, '04_seg1'));
+end
+if ~exist(strcat(desPath, '05_autoArt'), 'dir')
+  mkdir(strcat(desPath, '05_autoArt'));
+end
+if ~exist(strcat(desPath, '06_allArt'), 'dir')
+  mkdir(strcat(desPath, '06_allArt'));
+end
+if ~exist(strcat(desPath, '07_bpfilt'), 'dir')
+  mkdir(strcat(desPath, '07_bpfilt'));
+end
+if ~exist(strcat(desPath, '08_hilbert'), 'dir')
+  mkdir(strcat(desPath, '08_hilbert'));
+end
+if ~exist(strcat(desPath, '09_hseg'), 'dir')
+  mkdir(strcat(desPath, '09_hseg'));
+end
+if ~exist(strcat(desPath, '10_plv'), 'dir')
+  mkdir(strcat(desPath, '10_plv'));
+end
+if ~exist(strcat(desPath, '11_mplv'), 'dir')
+  mkdir(strcat(desPath, '11_mplv'));
+end
+if ~exist(strcat(desPath, '12_iseg'), 'dir')
+  mkdir(strcat(desPath, '12_iseg'));
+end
+if ~exist(strcat(desPath, '12_itpc'), 'dir')
+  mkdir(strcat(desPath, '12_itpc'));
+end
+
+clear sessionStr numOfPart part newPaths
 
 % -------------------------------------------------------------------------
 % Session selection
@@ -19,24 +86,40 @@ selection = false;
 
 tmpPath = strcat(desPath, '02_preproc/');
 
-sessionList    = dir([tmpPath, 'JAI_p*_02_preproc_*.mat']);
-sessionList    = struct2cell(sessionList);
-sessionList    = sessionList(1,:);
-numOfSessions  = length(sessionList);
+sessionList     = dir([tmpPath, 'JAI_p*_02_preproc_*.mat']);
+sessionList     = struct2cell(sessionList);
+sessionList     = sessionList(1,:);
+numOfSessions   = length(sessionList);
 
-sessionNum     = zeros(1, numOfSessions);
+sessionNum      = zeros(1, numOfSessions);
+sessionListCopy = sessionList;
 
 for i=1:1:numOfSessions
-  sessionList{i} = strsplit(sessionList{i}, '02_preproc_');
-  sessionList{i} = sessionList{i}{end};
-  sessionNum(i) = sscanf(sessionList{i}, '%d.mat');
+  sessionListCopy{i} = strsplit(sessionList{i}, '02_preproc_');
+  sessionListCopy{i} = sessionListCopy{i}{end};
+  sessionNum(i) = sscanf(sessionListCopy{i}, '%d.mat');
 end
 
 sessionNum = unique(sessionNum);
 y = sprintf('%d ', sessionNum);
 
+userList = cell(1, length(sessionNum));
+
+for i = sessionNum
+  match = find(strcmp(sessionListCopy, sprintf('%03d.mat', i)), 1, 'first');
+  filePath = [tmpPath, sessionList{match}];
+  [~, cmdout] = system(['ls -l ' filePath '']);
+  attrib = strsplit(cmdout);
+  userList{i} = attrib{3};
+end
+
 while selection == false
   fprintf('\nThe following sessions are available: %s\n', y);
+  fprintf('The session owners are:\n');
+  for i=1:1:length(userList)
+    fprintf('%d - %s\n', i, userList{i});
+  end
+  fprintf('\n');
   fprintf('Please select one session or create a new one:\n');
   fprintf('[0] - Create new session\n');
   fprintf('[num] - Select session\n\n');
@@ -62,6 +145,8 @@ while selection == false
     end
   end
 end
+
+clear tmpPath sessionListCopy userList match filePath cmdout attrib 
 
 % -------------------------------------------------------------------------
 % General selection of dyads
