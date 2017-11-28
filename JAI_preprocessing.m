@@ -72,23 +72,31 @@ cfgDS.showcallinfo     = 'no';                                              % pr
 % -------------------------------------------------------------------------
 % Preprocessing
 % -------------------------------------------------------------------------
-
 fprintf('Preproc participant 1...\n');
-data.part1   = bpfilter(cfgBP, data.part1);
-data.part1   = rereference(cfgReref, data.part1);
-data.part1   = downsampling(cfgDS, data.part1); 
+orgFs       = data.part1.fsample;
+data.part1  = bpfilter(cfgBP, data.part1);
+data.part1  = rereference(cfgReref, data.part1);
+if orgFs ~= samplingRate
+  data.part1  = downsampling(cfgDS, data.part1);
+else
+  data.part1.fsample = orgFs;
+end
   
 fprintf('Preproc participant 2...\n');
-data.part2   = bpfilter(cfgBP, data.part2);
-data.part2   = rereference(cfgReref, data.part2);
-data.part2   = downsampling(cfgDS, data.part2);
+orgFs       = data.part2.fsample;
+data.part2  = bpfilter(cfgBP, data.part2);
+data.part2  = rereference(cfgReref, data.part2);
+if orgFs ~= samplingRate
+  data.part2  = downsampling(cfgDS, data.part2);
+else
+  data.part2.fsample = orgFs;
+end  
 
 end
 
 % -------------------------------------------------------------------------
 % Local functions
 % -------------------------------------------------------------------------
-
 function [ data_out ] = bpfilter( cfgB, data_in )
   
 data_out = ft_preprocessing(cfgB, data_in);

@@ -9,6 +9,7 @@ function cfgArtifacts = JAI_databrowser( cfg, data )
 % JAI_PREPROCESSING or JAI_SEGMENTATION
 %
 % The configuration options are
+%   cfg.dyad      = number of dyad (no default value)
 %   cfg.part      = number of participant (default: 1)
 %   cfg.artifact  = Nx2 matrix with artifact segments (default: [])
 %
@@ -22,8 +23,33 @@ function cfgArtifacts = JAI_databrowser( cfg, data )
 % -------------------------------------------------------------------------
 % Get and check config options
 % -------------------------------------------------------------------------
+dyad      = ft_getopt(cfg, 'dyad', []);
 part      = ft_getopt(cfg, 'part', 1);
 artifact  = ft_getopt(cfg, 'artifact', []);
+
+if isempty(dyad)                                                            % if dyad number is not specified
+  event = [];                                                               % the associated markers cannot be loaded and displayed
+else                                                                        % else, load the stimulus markers 
+  source = '/data/pt_01826/eegData/DualEEG_JAI_rawData/';
+  filename = sprintf('DualEEG_JAI_%02d.vhdr', dyad);
+  path = strcat(source, filename);
+  event = ft_read_event(path);                                              % read stimulus markers
+  
+  eventCell = squeeze(struct2cell(event))';                   
+  if any(strcmp(eventCell(:,2), 'S128'))                                    % check if stimulus markers are effected with the 'S128' error 
+    match     = ~strcmp(eventCell(:,2), 'S128');                            % correct the error  
+    event     = event(match);
+    eventCell = squeeze(struct2cell(event))';
+    eventNum  = zeros(size(eventCell, 1) - 2, 1);
+    for i=3:size(eventCell, 1)
+      eventNum(i-2) = sscanf(eventCell{i,2},'S%d');    
+    end
+    eventNum = eventNum - 128;
+    for i=3:size(eventCell, 1)
+      event(i).value = sprintf('S%3d', eventNum(i-2));    
+    end
+  end
+end
 
 if part < 1 || part > 2                                                     % check cfg.participant definition
   error('cfg.part has to be 1 or 2');
@@ -38,6 +64,7 @@ cfg.viewmode                      = 'vertical';
 cfg.artfctdef.threshold.artifact  = artifact;
 cfg.continuous                    = 'no';
 cfg.channel                       = 'all';
+cfg.event                         = event;
 cfg.showcallinfo                  = 'no';
 
 fprintf('Databrowser - Participant: %d\n', part);

@@ -73,8 +73,8 @@ end
 if ~exist(strcat(desPath, '12_iseg'), 'dir')
   mkdir(strcat(desPath, '12_iseg'));
 end
-if ~exist(strcat(desPath, '12_itpc'), 'dir')
-  mkdir(strcat(desPath, '12_itpc'));
+if ~exist(strcat(desPath, '13_itpc'), 'dir')
+  mkdir(strcat(desPath, '13_itpc'));
 end
 
 clear sessionStr numOfPart part newPaths
