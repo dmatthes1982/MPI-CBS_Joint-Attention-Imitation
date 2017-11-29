@@ -1,13 +1,13 @@
-%% check if basic variables are defined and import segmented data
+%% check if basic variables are defined
 if ~exist('sessionStr', 'var')
   cfg           = [];
   cfg.subFolder = '02_preproc/';
-  cfg.filename  = 'JAI_p01_02_preproc';
+  cfg.filename  = 'JAI_d01_02_preproc';
   sessionStr    = sprintf('%03d', JAI_getSessionNum( cfg ));                % estimate current session number
 end
 
 if ~exist('desPath', 'var')
-  desPath       = '/data/pt_01826/eegData/DualEEG_JAI_processedData/';      % destination path for processed data  
+  desPath = '/data/pt_01826/eegData/DualEEG_JAI_processedData_branch_ica/'; % destination path for processed data  
 end
 
 if ~exist('numOfPart', 'var')                                               % estimate number of participants in segmented data folder
@@ -20,168 +20,108 @@ if ~exist('numOfPart', 'var')                                               % es
 
   for i=1:1:numOfSources
     numOfPart(i)  = sscanf(sourceList{i}, ...
-                    strcat('JAI_p%d_02_preproc_', sessionStr, '.mat'));
+                    strcat('JAI_d%d_02_preproc_', sessionStr, '.mat'));
   end
 end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% bandpass filtering
+%% part 5
+% segmentation, auto artifact detection (threshold +-75 uV) and manual 
+% artifact detection (verification)
 
 for i = numOfPart
+  % segmentation of the preprocessed trials
+  % split the data of every condition into subtrials with a length of 5 
+  % seconds
   cfg             = [];
   cfg.srcFolder   = strcat(desPath, '02_preproc/');
-  cfg.filename    = sprintf('JAI_p%02d_02_preproc', i);
+  cfg.filename    = sprintf('JAI_d%02d_02_preproc', i);
   cfg.sessionStr  = sessionStr;
   
   fprintf('Dyad %d\n', i);
-  fprintf('Load preprocessed data...\n\n');
+  fprintf('Load preproc data...\n');
   JAI_loadData( cfg );
   
-  filtCoeffDiv = 500 / data_preproc.part1.fsample;                          % estimate sample frequency dependent divisor of filter length
+  cfg         = [];
+  cfg.length  = 5;
+  
+  data_subseg = JAI_segmentation( cfg, data_preproc );
+  
+  % export the segmented data into a *.mat file
+  cfg             = [];
+  cfg.desFolder   = strcat(desPath, '05a_subseg/');
+  cfg.filename    = sprintf('JAI_d%02d_05a_subseg', i);
+  cfg.sessionStr  = sessionStr;
 
-  % bandpass filter data at 2Hz
+  file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
+                     '.mat');
+                   
+  fprintf('The segmented data of dyad %d will be saved in:\n', i); 
+  fprintf('%s ...\n', file_path);
+  JAI_saveData(cfg, 'data_subseg', data_subseg);
+  fprintf('Data stored!\n\n');
+  clear data_preproc
+
+  % automatic artifact detection (threshold +-75 uV)
   cfg           = [];
-  cfg.bpfreq    = [1.9 2.1];
-  cfg.filtorder = fix(500 / filtCoeffDiv);
+  cfg.chan      = {'Cz', 'O1', 'O2'};
+  cfg.minVal    = -75;
+  cfg.maxVal    = 75;
 
-  data_bpfilt_2Hz = JAI_bpFiltering(cfg, data_preproc);
+  cfg_autoart   = JAI_autoArtifact(cfg, data_subseg);
   
-  % export the filtered data into a *.mat file
-  cfg             = [];
-  cfg.desFolder   = strcat(desPath, '07_bpfilt/');
-  cfg.filename    = sprintf('JAI_p%02d_07a_bpfilt2Hz', i);
-  cfg.sessionStr  = sessionStr;
-
-  file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
-                     '.mat');
-                   
-  fprintf('Saving bandpass filtered data (2Hz) of dyad %d in:\n', i); 
-  fprintf('%s ...\n', file_path);
-  JAI_saveData(cfg, 'data_bpfilt_2Hz', data_bpfilt_2Hz);
-  fprintf('Data stored!\n\n');
-  clear data_bpfilt_2Hz
-  
-  % bandpass filter data at 10Hz
+  % verify automatic detected artifacts / manual artifact detection
   cfg           = [];
-  cfg.bpfreq    = [9 11];
-  cfg.filtorder = fix(250 / filtCoeffDiv);
+  cfg.artifact  = cfg_autoart;
   
-  data_bpfilt_10Hz = JAI_bpFiltering(cfg, data_preproc);
+  cfg_allart    = JAI_manArtifact(cfg, data_subseg);                           
   
-  % export the filtered data into a *.mat file
+  % export the automatic selected artifacts into a *.mat file
   cfg             = [];
-  cfg.desFolder   = strcat(desPath, '07_bpfilt/');
-  cfg.filename    = sprintf('JAI_p%02d_07b_bpfilt10Hz', i);
+  cfg.desFolder   = strcat(desPath, '05b_autoart/');
+  cfg.filename    = sprintf('JAI_d%02d_05b_autoart', i);
   cfg.sessionStr  = sessionStr;
 
   file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
                      '.mat');
                    
-  fprintf('Saving bandpass filtered data (10Hz) of dyad %d in:\n', i); 
+  fprintf('\nThe automatic selected artifacts of dyad %d will be saved in:\n', i); 
   fprintf('%s ...\n', file_path);
-  JAI_saveData(cfg, 'data_bpfilt_10Hz', data_bpfilt_10Hz);
-  fprintf('Data stored!\n\n');
-  clear data_bpfilt_10Hz
-
-  % bandpass filter data at 20Hz
-  cfg           = [];
-  cfg.bpfreq    = [19 21];
-  cfg.filtorder = fix(250 / filtCoeffDiv);
+  JAI_saveData(cfg, 'cfg_autoart', cfg_autoart);
+  fprintf('Data stored!\n');
+  clear cfg_autoart data_subseg
   
-  data_bpfilt_20Hz = JAI_bpFiltering(cfg, data_preproc);
-
-  % export the filtered data into a *.mat file
+  % export the verified and the additional artifacts into a *.mat file
   cfg             = [];
-  cfg.desFolder   = strcat(desPath, '07_bpfilt/');
-  cfg.filename    = sprintf('JAI_p%02d_07c_bpfilt20Hz', i);
+  cfg.desFolder   = strcat(desPath, '05c_allart/');
+  cfg.filename    = sprintf('JAI_d%02d_05c_allart', i);
   cfg.sessionStr  = sessionStr;
 
   file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
                      '.mat');
                    
-  fprintf('Saving bandpass filtered data (20Hz) of dyad %d in:\n', i); 
+  fprintf('The visual verified artifacts of dyad %d will be saved in:\n', i); 
   fprintf('%s ...\n', file_path);
-  JAI_saveData(cfg, 'data_bpfilt_20Hz', data_bpfilt_20Hz);
+  JAI_saveData(cfg, 'cfg_allart', cfg_allart);
   fprintf('Data stored!\n\n');
-  clear data_bpfilt_20Hz data_preproc
-end
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% hilbert phase calculation
-
-for i = numOfPart
-  cfg             = [];
-  cfg.srcFolder   = strcat(desPath, '07_bpfilt/');
-  cfg.sessionStr  = sessionStr;
+  clear cfg_allart
   
-  fprintf('Dyad %d\n', i);
-  
-  cfg.filename    = sprintf('JAI_p%02d_07a_bpfilt2Hz', i);
-  fprintf('Load the at 2Hz bandpass filtered data...\n');
-  JAI_loadData( cfg );
-
-  cfg.filename    = sprintf('JAI_p%02d_07b_bpfilt10Hz', i);
-  fprintf('Load the at 10 Hz bandpass filtered data ...\n');
-  JAI_loadData( cfg );
-  
-  cfg.filename    = sprintf('JAI_p%02d_07c_bpfilt20Hz', i);
-  fprintf('Load the at 20 Hz bandpass filtered data ...\n\n');
-  JAI_loadData( cfg );
-  
-  % calculate hilbert phase at 2Hz
-  data_hilbert_2Hz = JAI_hilbertPhase(data_bpfilt_2Hz);
-  
-  % export the hilbert phase data into a *.mat file
-  cfg             = [];
-  cfg.desFolder   = strcat(desPath, '08_hilbert/');
-  cfg.filename    = sprintf('JAI_p%02d_08a_hilbert2Hz', i);
-  cfg.sessionStr  = sessionStr;
-
-  file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
-                     '.mat');
-                   
-  fprintf('Saving Hilbert phase data (2Hz) of dyad %d in:\n', i); 
-  fprintf('%s ...\n', file_path);
-  JAI_saveData(cfg, 'data_hilbert_2Hz', data_hilbert_2Hz);
-  fprintf('Data stored!\n\n');
-  clear data_hilbert_2Hz data_bpfilt_2Hz
-  
-  % calculate hilbert phase at 10Hz
-  data_hilbert_10Hz = JAI_hilbertPhase(data_bpfilt_10Hz);
-  
-  % export the hilbert phase data into a *.mat file
-  cfg             = [];
-  cfg.desFolder   = strcat(desPath, '08_hilbert/');
-  cfg.filename    = sprintf('JAI_p%02d_08b_hilbert10Hz', i);
-  cfg.sessionStr  = sessionStr;
-
-  file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
-                     '.mat');
-                   
-  fprintf('Saving Hilbert phase data (10Hz) of dyad %d in:\n', i); 
-  fprintf('%s ...\n', file_path);
-  JAI_saveData(cfg, 'data_hilbert_10Hz', data_hilbert_10Hz);
-  fprintf('Data stored!\n\n');
-  clear data_hilbert_10Hz data_bpfilt_10Hz
-  
-  % calculate hilbert phase at 20Hz
-  data_hilbert_20Hz = JAI_hilbertPhase(data_bpfilt_20Hz);
-  
-  % export the hilbert phase data into a *.mat file
-  cfg             = [];
-  cfg.desFolder   = strcat(desPath, '08_hilbert/');
-  cfg.filename    = sprintf('JAI_p%02d_08c_hilbert20Hz', i);
-  cfg.sessionStr  = sessionStr;
-
-  file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
-                     '.mat');
-                   
-  fprintf('Saving Hilbert phase data (20Hz) of dyad %d in:\n', i); 
-  fprintf('%s ...\n', file_path);
-  JAI_saveData(cfg, 'data_hilbert_20Hz', data_hilbert_20Hz);
-  fprintf('Data stored!\n\n');
-  clear data_hilbert_20Hz data_bpfilt_20Hz
+  if(i < max(numOfPart))
+    selection = false;
+    while selection == false
+      fprintf('Proceed with the next dyad?\n');
+      x = input('\nSelect [y/n]: ','s');
+      if strcmp('y', x)
+        selection = true;
+      elseif strcmp('n', x)
+        clear file_path numOfSources sourceList cfg i x selection
+        return;
+      else
+        selection = false;
+      end
+    end
+    fprintf('\n');
+  end
 end
 
 %% clear workspace
-clear cfg file_path numOfSources sourceList i filtCoeffDiv 
+clear file_path numOfSources sourceList cfg i x selection

@@ -1,18 +1,18 @@
-%% check if basic variables are defined and import segmented data
+%% check if basic variables are defined
 if ~exist('sessionStr', 'var')
   cfg           = [];
-  cfg.subFolder = '08_hilbert/';
-  cfg.filename  = 'JAI_p01_08c_hilbert20Hz';
+  cfg.subFolder = '02_preproc/';
+  cfg.filename  = 'JAI_d01_02_preproc';
   sessionStr    = sprintf('%03d', JAI_getSessionNum( cfg ));                % estimate current session number
 end
 
 if ~exist('desPath', 'var')
-  desPath       = '/data/pt_01826/eegData/DualEEG_JAI_processedData/';      % destination path for processed data  
+  desPath = '/data/pt_01826/eegData/DualEEG_JAI_processedData_branch_ica/'; % destination path for processed data 
 end
 
 if ~exist('numOfPart', 'var')                                               % estimate number of participants in segmented data folder
-  sourceList    = dir([strcat(desPath, '08_hilbert/'), ...
-                       strcat('*20Hz_', sessionStr, '.mat')]);
+  sourceList    = dir([strcat(desPath, '02_preproc/'), ...
+                       strcat('*_', sessionStr, '.mat')]);
   sourceList    = struct2cell(sourceList);
   sourceList    = sourceList(1,:);
   numOfSources  = length(sourceList);
@@ -20,264 +20,170 @@ if ~exist('numOfPart', 'var')                                               % es
 
   for i=1:1:numOfSources
     numOfPart(i)  = sscanf(sourceList{i}, ...
-                    strcat('JAI_p%d_08c_hilbert20Hz_', sessionStr, '.mat'));
+                    strcat('JAI_d%d_02_preproc_', sessionStr, '.mat'));
   end
 end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% general adjustment
-choise = false;
-while choise == false
-  cprintf([0,0.6,0], 'Should rejection of detected artifacts be applied before PLV estimation?\n');
-  x = input('Select [y/n]: ','s');
-  if strcmp('y', x)
-    choise = true;
-    artifactRejection = true;
-  elseif strcmp('n', x)
-    choise = true;
-    artifactRejection = false;
-  else
-    choise = false;
-  end
-end
-fprintf('\n');
+%% part 6
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Segmentation and Artifact rejection
+%% bandpass filtering
 
 for i = numOfPart
+  cfg             = [];
+  cfg.srcFolder   = strcat(desPath, '02_preproc/');
+  cfg.filename    = sprintf('JAI_d%02d_02_preproc', i);
+  cfg.sessionStr  = sessionStr;
+  
+  fprintf('Dyad %d\n', i);
+  fprintf('Load preprocessed data...\n\n');
+  JAI_loadData( cfg );
+  
+  filtCoeffDiv = 500 / data_preproc.part1.fsample;                          % estimate sample frequency dependent divisor of filter length
+
+  % bandpass filter data at 2Hz
+  cfg           = [];
+  cfg.bpfreq    = [1.9 2.1];
+  cfg.filtorder = fix(500 / filtCoeffDiv);
+
+  data_bpfilt_2Hz = JAI_bpFiltering(cfg, data_preproc);
+  
+  % export the filtered data into a *.mat file
+  cfg             = [];
+  cfg.desFolder   = strcat(desPath, '06a_bpfilt/');
+  cfg.filename    = sprintf('JAI_d%02d_06a_bpfilt2Hz', i);
+  cfg.sessionStr  = sessionStr;
+
+  file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
+                     '.mat');
+                   
+  fprintf('Saving bandpass filtered data (2Hz) of dyad %d in:\n', i); 
+  fprintf('%s ...\n', file_path);
+  JAI_saveData(cfg, 'data_bpfilt_2Hz', data_bpfilt_2Hz);
+  fprintf('Data stored!\n\n');
+  clear data_bpfilt_2Hz
+  
+  % bandpass filter data at 10Hz
+  cfg           = [];
+  cfg.bpfreq    = [9 11];
+  cfg.filtorder = fix(250 / filtCoeffDiv);
+  
+  data_bpfilt_10Hz = JAI_bpFiltering(cfg, data_preproc);
+  
+  % export the filtered data into a *.mat file
+  cfg             = [];
+  cfg.desFolder   = strcat(desPath, '06a_bpfilt/');
+  cfg.filename    = sprintf('JAI_d%02d_06a_bpfilt10Hz', i);
+  cfg.sessionStr  = sessionStr;
+
+  file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
+                     '.mat');
+                   
+  fprintf('Saving bandpass filtered data (10Hz) of dyad %d in:\n', i); 
+  fprintf('%s ...\n', file_path);
+  JAI_saveData(cfg, 'data_bpfilt_10Hz', data_bpfilt_10Hz);
+  fprintf('Data stored!\n\n');
+  clear data_bpfilt_10Hz
+
+  % bandpass filter data at 20Hz
+  cfg           = [];
+  cfg.bpfreq    = [19 21];
+  cfg.filtorder = fix(250 / filtCoeffDiv);
+  
+  data_bpfilt_20Hz = JAI_bpFiltering(cfg, data_preproc);
+
+  % export the filtered data into a *.mat file
+  cfg             = [];
+  cfg.desFolder   = strcat(desPath, '06a_bpfilt/');
+  cfg.filename    = sprintf('JAI_d%02d_06a_bpfilt20Hz', i);
+  cfg.sessionStr  = sessionStr;
+
+  file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
+                     '.mat');
+                   
+  fprintf('Saving bandpass filtered data (20Hz) of dyad %d in:\n', i); 
+  fprintf('%s ...\n', file_path);
+  JAI_saveData(cfg, 'data_bpfilt_20Hz', data_bpfilt_20Hz);
+  fprintf('Data stored!\n\n');
+  clear data_bpfilt_20Hz data_preproc
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% hilbert phase calculation
+
+for i = numOfPart
+  cfg             = [];
+  cfg.srcFolder   = strcat(desPath, '06a_bpfilt/');
+  cfg.sessionStr  = sessionStr;
+  
   fprintf('Dyad %d\n', i);
   
-  cfg             = [];                                                     % load hilbert phase data
-  cfg.srcFolder   = strcat(desPath, '08_hilbert/');
-  cfg.sessionStr  = sessionStr;
-  
-  cfg.filename    = sprintf('JAI_p%02d_08a_hilbert2Hz', i);
-  fprintf('Load hilbert phase data at 2 Hz...\n');
+  cfg.filename    = sprintf('JAI_d%02d_06a_bpfilt2Hz', i);
+  fprintf('Load the at 2Hz bandpass filtered data...\n');
   JAI_loadData( cfg );
 
-  cfg.filename    = sprintf('JAI_p%02d_08b_hilbert10Hz', i);
-  fprintf('Load hilbert phase data at 10 Hz...\n');
+  cfg.filename    = sprintf('JAI_d%02d_06a_bpfilt10Hz', i);
+  fprintf('Load the at 10 Hz bandpass filtered data ...\n');
   JAI_loadData( cfg );
   
-  cfg.filename    = sprintf('JAI_p%02d_08c_hilbert20Hz', i);
-  fprintf('Load hilbert phase data at 20 Hz...\n\n');
+  cfg.filename    = sprintf('JAI_d%02d_06a_bpfilt20Hz', i);
+  fprintf('Load the at 20 Hz bandpass filtered data ...\n\n');
   JAI_loadData( cfg );
   
-  % Segmentation of the hilbert phase data trials for PLV estimation %%%%%%
-  % split the data of every condition into subtrials with a length of 5
-  % seconds
-  cfg           = [];
-  cfg.length    = 5;
+  % calculate hilbert phase at 2Hz
+  data_hilbert_2Hz = JAI_hilbertPhase(data_bpfilt_2Hz);
   
-  fprintf('Segmentation of Hilbert phase data at 2 Hz.\n');
-  data_hseg_2Hz  = JAI_segmentation( cfg, data_hilbert_2Hz );
-  fprintf('\n');
-  
-  fprintf('Segmentation of Hilbert phase data at 10 Hz.\n');
-  data_hseg_10Hz  = JAI_segmentation( cfg, data_hilbert_10Hz );
-  fprintf('\n');
-  
-  fprintf('Segmentation of Hilbert phase data at 20 Hz.\n');
-  data_hseg_20Hz  = JAI_segmentation( cfg, data_hilbert_20Hz );
-  fprintf('\n');
-  
-  % export the segmented hilbert (2 Hz, 10 Hz, 20 Hz) data into a *.mat file
+  % export the hilbert phase data into a *.mat file
   cfg             = [];
-  cfg.desFolder   = strcat(desPath, '09_hseg/');
-  cfg.filename    = sprintf('JAI_p%02d_09a_hseg2Hz', i);
+  cfg.desFolder   = strcat(desPath, '06b_hilbert/');
+  cfg.filename    = sprintf('JAI_d%02d_06b_hilbert2Hz', i);
   cfg.sessionStr  = sessionStr;
 
   file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
                      '.mat');
                    
-  fprintf('The segmented hilbert data (2Hz) of dyad %d will be saved in:\n', i); 
+  fprintf('Saving Hilbert phase data (2Hz) of dyad %d in:\n', i); 
   fprintf('%s ...\n', file_path);
-  JAI_saveData(cfg, 'data_hseg_2Hz', data_hseg_2Hz);
-  fprintf('Data stored!\n');
-  clear data_hilbert_2Hz
-  
-  cfg.filename    = sprintf('JAI_p%02d_09b_hseg10Hz', i);
-  
-  file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
-                     '.mat');
-                   
-  fprintf('The segmented hilbert data (10Hz) of dyad %d will be saved in:\n', i); 
-  fprintf('%s ...\n', file_path);
-  JAI_saveData(cfg, 'data_hseg_10Hz', data_hseg_10Hz);
-  fprintf('Data stored!\n');
-  clear data_hilbert_10Hz
-  
-  cfg.filename    = sprintf('JAI_p%02d_09c_hseg20Hz', i);
-  
-  file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
-                     '.mat');
-                   
-  fprintf('The segmented hilbert data (20Hz) of dyad %d will be saved in:\n', i); 
-  fprintf('%s ...\n', file_path);
-  JAI_saveData(cfg, 'data_hseg_20Hz', data_hseg_20Hz);
-  fprintf('Data stored!\n');
-  clear data_hilbert_20Hz
-    
-  % Artifact rejection %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  if artifactRejection == true                                              % load artifact definitions
-    cfg             = [];
-    cfg.srcFolder   = strcat(desPath, '06_allArt/');
-    cfg.filename    = sprintf('JAI_p%02d_06_allArt', i);
-    cfg.sessionStr  = sessionStr;
-  
-    file_path = strcat(cfg.srcFolder, cfg.filename, '_', cfg.sessionStr, ...
-                     '.mat');
-    if ~isempty(dir(file_path))
-      fprintf('\nLoading %s ...\n', file_path);
-      JAI_loadData( cfg );                                                  
-      artifactAvailable = true;     
-    else
-      fprintf('File %s is not existent,\n', file_path);
-      fprintf('Artifact rejection is not possible!\n');
-      artifactAvailable = false;
-    end
-  end
-  
-  if artifactRejection == true                                              % artifact rejection
-    if artifactAvailable == true
-      cfg           = [];
-      cfg.artifact  = cfg_allArt;
-      cfg.type      = 'dual';
-  
-      fprintf('Artifact Rejection of Hilbert phase data at 2 Hz.\n');
-      data_hseg_2Hz = JAI_rejectArtifacts(cfg, data_hseg_2Hz);
-      fprintf('\n');
-      
-      fprintf('Artifact Rejection of Hilbert phase data at 10 Hz.\n');
-      data_hseg_10Hz = JAI_rejectArtifacts(cfg, data_hseg_10Hz);
-      fprintf('\n');
-      
-      fprintf('Artifact Rejection of Hilbert phase data at 20 Hz.\n');
-      data_hseg_20Hz = JAI_rejectArtifacts(cfg, data_hseg_20Hz);
-      fprintf('\n');
-      
-      clear cfg_allArt
-    end
-  end
-  
-  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  %% PLV and mPLV calculation
-  % calculate PLV and meanPLV at 2Hz %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  cfg           = [];
-  cfg.winlen    = 5;                                                        % window length for one PLV value in seconds
-  
-  data_plv_2Hz  = JAI_phaseLockVal(cfg, data_hseg_2Hz);
-  data_mplv_2Hz = JAI_calcMeanPLV(data_plv_2Hz);
-  clear data_hseg_2Hz
-  
-  % export the PLVs into a *.mat file
-  cfg             = [];
-  cfg.desFolder   = strcat(desPath, '10_plv/');
-  cfg.filename    = sprintf('JAI_p%02d_10a_plv2Hz', i);
-  cfg.sessionStr  = sessionStr;
-
-  file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
-                     '.mat');
-                   
-  fprintf('Saving PLVs (2Hz) of dyad %d in:\n', i); 
-  fprintf('%s ...\n', file_path);
-  JAI_saveData(cfg, 'data_plv_2Hz', data_plv_2Hz);
-  fprintf('Data stored!\n');
-  clear data_plv_2Hz
-  
-  % export the mean PLVs into a *.mat file
-  cfg             = [];
-  cfg.desFolder   = strcat(desPath, '11_mplv/');
-  cfg.filename    = sprintf('JAI_p%02d_11a_mplv2Hz', i);
-  cfg.sessionStr  = sessionStr;
-
-  file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
-                     '.mat');
-                   
-  fprintf('Saving mean PLVs (2Hz) of dyad %d in:\n', i); 
-  fprintf('%s ...\n', file_path);
-  JAI_saveData(cfg, 'data_mplv_2Hz', data_mplv_2Hz);
+  JAI_saveData(cfg, 'data_hilbert_2Hz', data_hilbert_2Hz);
   fprintf('Data stored!\n\n');
-  clear data_mplv_2Hz
-
-  % calculate PLV and meanPLV at 10Hz %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  cfg           = [];
-  cfg.winlen    = 1;                                                        % window length for one PLV value in seconds
+  clear data_hilbert_2Hz data_bpfilt_2Hz
   
-  data_plv_10Hz  = JAI_phaseLockVal(cfg, data_hseg_10Hz);
-  data_mplv_10Hz = JAI_calcMeanPLV(data_plv_10Hz);
-  clear data_hseg_10Hz
+  % calculate hilbert phase at 10Hz
+  data_hilbert_10Hz = JAI_hilbertPhase(data_bpfilt_10Hz);
   
-  % export the PLVs into a *.mat file
+  % export the hilbert phase data into a *.mat file
   cfg             = [];
-  cfg.desFolder   = strcat(desPath, '10_plv/');
-  cfg.filename    = sprintf('JAI_p%02d_10b_plv10Hz', i);
+  cfg.desFolder   = strcat(desPath, '06b_hilbert/');
+  cfg.filename    = sprintf('JAI_d%02d_06b_hilbert10Hz', i);
   cfg.sessionStr  = sessionStr;
 
   file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
                      '.mat');
                    
-  fprintf('Saving PLVs (10Hz) of dyad %d in:\n', i); 
+  fprintf('Saving Hilbert phase data (10Hz) of dyad %d in:\n', i); 
   fprintf('%s ...\n', file_path);
-  JAI_saveData(cfg, 'data_plv_10Hz', data_plv_10Hz);
-  fprintf('Data stored!\n');
-  clear data_plv_10Hz
-  
-  % export the mean PLVs into a *.mat file
-  cfg             = [];
-  cfg.desFolder   = strcat(desPath, '11_mplv/');
-  cfg.filename    = sprintf('JAI_p%02d_11b_mplv10Hz', i);
-  cfg.sessionStr  = sessionStr;
-
-  file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
-                     '.mat');
-                   
-  fprintf('Saving mean PLVs (10Hz) of dyad %d in:\n', i); 
-  fprintf('%s ...\n', file_path);
-  JAI_saveData(cfg, 'data_mplv_10Hz', data_mplv_10Hz);
+  JAI_saveData(cfg, 'data_hilbert_10Hz', data_hilbert_10Hz);
   fprintf('Data stored!\n\n');
-  clear data_mplv_10Hz
+  clear data_hilbert_10Hz data_bpfilt_10Hz
   
-  % calculate PLV and meanPLV at 20Hz %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  cfg           = [];
-  cfg.winlen    = 1;                                                        % window length for one PLV value in seconds
+  % calculate hilbert phase at 20Hz
+  data_hilbert_20Hz = JAI_hilbertPhase(data_bpfilt_20Hz);
   
-  data_plv_20Hz  = JAI_phaseLockVal(cfg, data_hseg_20Hz);
-  data_mplv_20Hz = JAI_calcMeanPLV(data_plv_20Hz);
-  clear data_hseg_20Hz
-  
-  % export the PLVs into a *.mat file
+  % export the hilbert phase data into a *.mat file
   cfg             = [];
-  cfg.desFolder   = strcat(desPath, '10_plv/');
-  cfg.filename    = sprintf('JAI_p%02d_10c_plv20Hz', i);
+  cfg.desFolder   = strcat(desPath, '06b_hilbert/');
+  cfg.filename    = sprintf('JAI_d%02d_06b_hilbert20Hz', i);
   cfg.sessionStr  = sessionStr;
 
   file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
                      '.mat');
                    
-  fprintf('Saving PLVs (20Hz) of dyad %d in:\n', i); 
+  fprintf('Saving Hilbert phase data (20Hz) of dyad %d in:\n', i); 
   fprintf('%s ...\n', file_path);
-  JAI_saveData(cfg, 'data_plv_20Hz', data_plv_20Hz);
-  fprintf('Data stored!\n');
-  clear data_plv_20Hz
-  
-  % export the mean PLVs into a *.mat file
-  cfg             = [];
-  cfg.desFolder   = strcat(desPath, '11_mplv/');
-  cfg.filename    = sprintf('JAI_p%02d_11c_mplv20Hz', i);
-  cfg.sessionStr  = sessionStr;
-
-  file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
-                     '.mat');
-                   
-  fprintf('Saving mean PLVs (20Hz) of dyad %d in:\n', i); 
-  fprintf('%s ...\n', file_path);
-  JAI_saveData(cfg, 'data_mplv_20Hz', data_mplv_20Hz);
+  JAI_saveData(cfg, 'data_hilbert_20Hz', data_hilbert_20Hz);
   fprintf('Data stored!\n\n');
-  clear data_mplv_20Hz
+  clear data_hilbert_20Hz data_bpfilt_20Hz
 end
 
 %% clear workspace
-clear cfg file_path sourceList numOfSources i artifactRejection ...
-      artifactAvailable x choise
+clear cfg file_path numOfSources sourceList i filtCoeffDiv 
