@@ -9,7 +9,8 @@ function [ data ] = JAI_segmentation(cfg, data )
 % JAI_PREPROCESSING
 %
 % The configuration options are
-%   cfg.length    = length of segments (excepted values: 1, 5, 10 seconds)
+%   cfg.length    = length of segments (excepted values: 0.2, 1, 5, 10 seconds, default: 10)
+%   cfg.overlap   = percentage of overlapping (range: 0 ... 1, default: 0)
 %
 % This function requires the fieldtrip toolbox.
 %
@@ -22,8 +23,9 @@ function [ data ] = JAI_segmentation(cfg, data )
 % Get and check config options
 % -------------------------------------------------------------------------
 segLength = ft_getopt(cfg, 'length', 10);
+overlap   = ft_getopt(cfg, 'overlap', 0);
 
-possibleLengths = [1, 5, 10];
+possibleLengths = [0.2, 1, 5, 10];
 
 if ~any(ismember(possibleLengths, segLength))
   error('Excepted cfg.length values are only 1, 5 and 10 seconds');
@@ -37,7 +39,7 @@ cfg.feedback        = 'no';
 cfg.showcallinfo    = 'no';
 cfg.trials          = 'all';                                                  
 cfg.length          = segLength;
-cfg.overlap         = 0;                                                    % no overlap
+cfg.overlap         = overlap;
 
 % -------------------------------------------------------------------------
 % Segmentation

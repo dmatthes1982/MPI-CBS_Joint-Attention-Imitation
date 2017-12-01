@@ -43,6 +43,7 @@ for i = numOfPart
   
   cfg         = [];
   cfg.length  = 5;
+  cfg.overlap = 0;
   
   data_subseg = JAI_segmentation( cfg, data_preproc );
   

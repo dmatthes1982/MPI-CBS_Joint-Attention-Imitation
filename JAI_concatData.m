@@ -56,10 +56,11 @@ for i = 1:numOfTrials
   end
 end
 
-dataset.trial = [];
-dataset.time = [];
-dataset.trial{1} = data_concat;                                             % add concatenated data to the data struct
-dataset.time{1}  = time_concat;                                             % add concatenated time vector to the data struct
-dataset = removefields(dataset, {'trialinfo', 'sampleinfo'});               % remove trialinfo and sampleinfo from the data struct
+dataset.trial       = [];
+dataset.time        = [];
+dataset.trial{1}    = data_concat;                                          % add concatenated data to the data struct
+dataset.time{1}     = time_concat;                                          % add concatenated time vector to the data struct
+dataset.trialinfo   = 0;                                                    % add a fake event number to the trialinfo for subsequend artifact rejection
+dataset.sampleinfo  = [1 dataLength];                                       % add also a fake sampleinfo for subsequend artifact rejection
 
 end

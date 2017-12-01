@@ -63,6 +63,7 @@ for i = numOfPart
   % seconds
   cfg           = [];
   cfg.length    = 10;
+  cfg.overlap   = 0;
 
   data_iseg  = JAI_segmentation( cfg, data_preproc );
   clear data_preproc

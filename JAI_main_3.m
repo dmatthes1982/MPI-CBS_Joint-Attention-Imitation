@@ -29,13 +29,14 @@ end
 % Estimation of eye artifacts (via ICA decomposition)
 % Processing steps:
 % 1. Concatenated preprocessed trials to a continuous stream
-% 2. Detect and reject transient artifacts (200?V delta within 100 ms, 50% 
-%    window overlapping)
-% 3. ICA decomposition
-% 4. Find EOG-like ICA Components (Correlation with EOGV and EOGH, 80 %
+% 2. Segment the data into 200 ms Segments with 50% overlapping for
+%    transient artifact detection
+% 3. Detect and reject transient artifacts (200uV delta within 200 ms)
+% 4. ICA decomposition
+% 5. Find EOG-like ICA Components (Correlation with EOGV and EOGH, 80 %
 %    confirmity)
-% 5. Verify the estimated components by using the ft_topoplotIC function
-% 6. Reject verified components and save the resulting mixing and unmixing
+% 6. Verify the estimated components by using the ft_topoplotIC function
+% 7. Reject verified components and save the resulting mixing and unmixing
 %    matrices for the following eye artifact correction in part 4
 
 for i = numOfPart
@@ -52,9 +53,19 @@ for i = numOfPart
   data_continuous = JAI_concatData( data_preproc );
   
   clear data_preproc
+  fprintf('\n');
   
-  % Detect and reject transient artifacts (200?V delta within 100 ms, 50% 
-  % window overlapping)
+  % Segment the data into 200 ms Segments with 50% overlapping for
+  % transient artifact detection
+  cfg         = [];
+  cfg.length  = 0.2;                                                        % window length
+  cfg.overlap = 0.5;                                                        % 50 percent overlapping of trials
+  
+  data_segmented = JAI_segmentation(cfg, data_continuous);
+  
+  fprintf('\n');
+  
+  % Detect and reject transient artifacts (200uV delta within 200 ms)
   %cfg = [];
   
   %cfg_autoart  = JAI_autoArtifact(cfg, data_continuous);

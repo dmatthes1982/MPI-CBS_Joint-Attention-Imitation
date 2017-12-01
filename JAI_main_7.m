@@ -71,6 +71,7 @@ for i = numOfPart
   % seconds
   cfg           = [];
   cfg.length    = 5;
+  cfg.overlap   = 0;
   
   fprintf('Segmentation of Hilbert phase data at 2 Hz.\n');
   data_hseg_2Hz  = JAI_segmentation( cfg, data_hilbert_2Hz );
