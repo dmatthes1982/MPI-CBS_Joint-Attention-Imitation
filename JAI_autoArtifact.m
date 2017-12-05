@@ -9,8 +9,10 @@ function [ cfgAutoArt ] = JAI_autoArtifact( cfg, data )
 %
 % The configuration options are
 %   cfg.channel = cell-array with channel labels (default: {'Cz', 'O1', 'O2'}))
-%   cfg.min     = lower limit in uV (default: -75)
-%   cfg.max     = upper limit in uV (default: 75)
+%   cfg.method  = type of artifact detection (0: lower/upper limit, 1: range)
+%   cfg.min     = lower limit in uV for cfg.method = 0 (default: -75) 
+%   cfg.max     = upper limit in uV for cfg.method = 0 (default: 75)
+%   cfg.range   = range in uV for cfg.method = 1 (default: 200)
 %
 % This function requires the fieldtrip toolbox.
 %
@@ -22,8 +24,17 @@ function [ cfgAutoArt ] = JAI_autoArtifact( cfg, data )
 % Get and check config options
 % -------------------------------------------------------------------------
 chan      = ft_getopt(cfg, 'channel', {'Cz', 'O1', 'O2'});
-minVal    = ft_getopt(cfg, 'min', -75);
-maxVal    = ft_getopt(cfg, 'max', 75);
+method    = ft_getopt(cfg, 'method', 0);
+
+switch method
+  case 0
+    minVal    = ft_getopt(cfg, 'min', -75);
+    maxVal    = ft_getopt(cfg, 'max', 75);
+  case 1
+    range     = ft_getopt(cfg, 'range', 200);
+  otherwise
+    error('Only 0: lower/upper limit or 1: range are supported methods.');
+end
 
 % -------------------------------------------------------------------------
 % Artifact detection settings
@@ -34,8 +45,12 @@ cfg                               = [];
 cfg.continuous                    = 'no';                                   % data are already trial based
 cfg.artfctdef.threshold.channel   = chan;                                   % specify channels of interest
 cfg.artfctdef.threshold.bpfilter  = 'no';                                   % use no additional bandpass
-cfg.artfctdef.threshold.min       = minVal;                                 % minimum threshold
-cfg.artfctdef.threshold.max       = maxVal;                                 % maximum threshold
+if method == 0
+  cfg.artfctdef.threshold.min       = minVal;                               % minimum threshold
+  cfg.artfctdef.threshold.max       = maxVal;                               % maximum threshold
+elseif method == 1
+  cfg.artfctdef.threshold.range     = range;                                % range
+end
 cfg.showcallinfo                  = 'no';
 
 % -------------------------------------------------------------------------

@@ -65,6 +65,7 @@ for i = numOfPart
   % automatic artifact detection (threshold +-75 uV)
   cfg           = [];
   cfg.chan      = {'Cz', 'O1', 'O2'};
+  cfg.method    = 0;                                                        % method: maxmin threshold
   cfg.minVal    = -75;
   cfg.maxVal    = 75;
 

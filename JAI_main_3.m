@@ -63,12 +63,22 @@ for i = numOfPart
   
   data_segmented = JAI_segmentation(cfg, data_continuous);
   
+  for j = 1:1:size(data_segmented.part1.time, 2)                            % fieldtrip bugfix for ft_datatype_raw
+    data_segmented.part1.time{j} = data_segmented.part1.time{1};
+    data_segmented.part2.time{j} = data_segmented.part2.time{1};
+  end
+  
   fprintf('\n');
   
   % Detect and reject transient artifacts (200uV delta within 200 ms)
-  %cfg = [];
+  cfg         = [];
+  cfg.chan    = 'all';
+  cfg.method  = 1;                                                          % method: range
+  cfg.range   = 200;                                                        % 200 uV
   
-  %cfg_autoart  = JAI_autoArtifact(cfg, data_continuous);
+  tic
+  cfg_autoart  = JAI_autoArtifact(cfg, data_segmented);
+  toc
   
   %cfg = [];
   
