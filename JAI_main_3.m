@@ -71,13 +71,18 @@ for i = numOfPart
   fprintf('\n');
   
   % Detect and reject transient artifacts (200uV delta within 200 ms)
-  cfg         = [];
-  cfg.chan    = 'all';
-  cfg.method  = 1;                                                          % method: range
-  cfg.range   = 200;                                                        % 200 uV
+  cfg             = [];
+  cfg.chan        = 'all';                                                  % use all channels
+  cfg.continuous  = 'yes';
+  cfg.method      = 1;                                                      % method: range
+  cfg.range       = 200;                                                    % 200 uV
+  cfg.trl         = [ data_segmented.part1.sampleinfo, ...
+                      data_segmented.part1.sampleinfo(:,1)-1, ...
+                      data_segmented.part1.trialinfo];
+  
   
   tic
-  cfg_autoart  = JAI_autoArtifact(cfg, data_segmented);
+  cfg_autoart  = JAI_autoArtifact(cfg, data_continuous);
   toc
   
   %cfg = [];

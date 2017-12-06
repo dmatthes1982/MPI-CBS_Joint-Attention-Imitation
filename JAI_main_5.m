@@ -63,13 +63,15 @@ for i = numOfPart
   clear data_preproc
 
   % automatic artifact detection (threshold +-75 uV)
-  cfg           = [];
-  cfg.chan      = {'Cz', 'O1', 'O2'};
-  cfg.method    = 0;                                                        % method: maxmin threshold
-  cfg.minVal    = -75;
-  cfg.maxVal    = 75;
+  cfg             = [];
+  cfg.chan        = {'Cz', 'O1', 'O2'};
+  cfg.continuous  = 'no';                                                   % data is trial-based
+  cfg.trl         = [];                                                     % already segmented data, use trial definition from data
+  cfg.method      = 0;                                                      % method: maxmin threshold
+  cfg.minVal      = -75;
+  cfg.maxVal      = 75;
 
-  cfg_autoart   = JAI_autoArtifact(cfg, data_subseg);
+  cfg_autoart     = JAI_autoArtifact(cfg, data_subseg);
   
   % verify automatic detected artifacts / manual artifact detection
   cfg           = [];
