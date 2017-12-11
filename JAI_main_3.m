@@ -55,31 +55,19 @@ for i = numOfPart
   clear data_preproc
   fprintf('\n');
   
-  % Segment the data into 200 ms Segments with 50% overlapping for
-  % transient artifact detection
+  % Detect and reject transient artifacts (200uV delta within 200 ms. 
+  % The window is shifted with 100 ms, what means 50 % overlapping.)
   cfg         = [];
-  cfg.length  = 0.2;                                                        % window length
-  cfg.overlap = 0.5;                                                        % 50 percent overlapping of trials
+  cfg.length  = 200;        
+  cfg.overlap = 50;
+  trl         = JAI_genTrl(cfg, data_continuous);
   
-  data_segmented = JAI_segmentation(cfg, data_continuous);
-  
-  for j = 1:1:size(data_segmented.part1.time, 2)                            % fieldtrip bugfix for ft_datatype_raw
-    data_segmented.part1.time{j} = data_segmented.part1.time{1};
-    data_segmented.part2.time{j} = data_segmented.part2.time{1};
-  end
-  
-  fprintf('\n');
-  
-  % Detect and reject transient artifacts (200uV delta within 200 ms)
   cfg             = [];
   cfg.chan        = 'all';                                                  % use all channels
   cfg.continuous  = 'yes';
   cfg.method      = 1;                                                      % method: range
   cfg.range       = 200;                                                    % 200 uV
-  cfg.trl         = [ data_segmented.part1.sampleinfo, ...
-                      data_segmented.part1.sampleinfo(:,1)-1, ...
-                      data_segmented.part1.trialinfo];
-  
+  cfg.trl         = trl; 
   
   tic
   cfg_autoart  = JAI_autoArtifact(cfg, data_continuous);
@@ -88,6 +76,9 @@ for i = numOfPart
   %cfg = [];
   
   %data_cleaned = JAI_rejectArtifacts(cfg, data_continuous);
+  
+  clear trl
+  fprintf('\n');
   
   % ICA decomposition
   %cfg = [];
@@ -109,6 +100,6 @@ end
 
 
 %% clear workspace
-clear file_path cfg sourceList numOfSources i
+clear file_path cfg sourceList numOfSources i j
 
 
