@@ -8,7 +8,7 @@ function JAI_easyPLVplot( cfg, data )
 % where the input data has to be the result of JAI_PHASELOCKVAL
 %
 % The configuration options are
-%   cfg.condition = condition (default: 111 or 'SameObject', see JAI_DATASTRUCTURE)
+%   cfg.condition = condition (default: 111 or 'SameObjectB', see JAI_DATASTRUCTURE)
 %   cfg.elecPart1 = number of electrode of participant 1 (default: 'Cz')
 %   cfg.elecPart2 = number of electrode of participant 2 (default: 'Cz')
 %

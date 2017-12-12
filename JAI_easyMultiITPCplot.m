@@ -10,7 +10,7 @@ function JAI_easyMultiITPCplot(cfg, data)
 %
 % The configuration options are 
 %   cfg.part        = number of participant (default: 1)
-%   cfg.condition   = condition (default: 111 or 'SameObject', see JAI_DATASTRUCTURE)
+%   cfg.condition   = condition (default: 111 or 'SameObjectB', see JAI_DATASTRUCTURE)
 %   cfg.freqlimits  = [begin end] (default: [1 48])
 %   cfg.timelimits  = [begin end] (default: [0.2 9.8])
 %  

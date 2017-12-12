@@ -10,7 +10,7 @@ function JAI_easyPlot( cfg, data )
 %
 % The configuration options are
 %   cfg.part      = number of participant (default: 1)
-%   cfg.condition = condition (default: 111 or 'SameObject', see JAI data structure)
+%   cfg.condition = condition (default: 111 or 'SameObjectB', see JAI data structure)
 %   cfg.electrode = number of electrode (default: 'Cz')
 %   cfg.trial     = number of trial (default: 1)
 %

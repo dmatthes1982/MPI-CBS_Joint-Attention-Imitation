@@ -29,8 +29,9 @@
 % specific condition, which should be selected. Currently the following 
 % conditions are existent:
 %
-% - ViewMotion        - 2
-% - SameMotion        - 3
+% - SameObjectB       - 111
+% - ViewMotionB       - 2
+% - SameMotionB       - 3
 % - ConImi12          - 31
 % - ConImi21          - 32
 % - ConOthAct12       - 41
@@ -38,7 +39,21 @@
 % - SponImiI          - 51
 % - SponImiII         - 52
 % - Conversation      - 105
-% - SameObject        - 111
+% - Single_No         - 100
+% - Dual12_No         - 101
+% - Dual21_No         - 102         
+% - Single_2Hz        - 7
+% - Dual12_2Hz        - 8
+% - Dual21_2Hz        - 9
+% - Single_10Hz       - 10
+% - Dual12_10Hz       - 11
+% - Dual21_10Hz       - 12
+% - Single_20Hz       - 20
+% - Dual12_20Hz       - 21
+% - Dual21_20Hz       - 22
+% - SameObjectE       - 4
+% - ViewMotionE       - 5
+% - SameMotionE       - 6
 %
 % The defintion of the condition is done by setting the cfg.condition
 % option with the string or the number of the specific condition.

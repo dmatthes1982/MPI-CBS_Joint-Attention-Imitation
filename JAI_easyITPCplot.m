@@ -10,7 +10,7 @@ function JAI_easyITPCplot(cfg, data)
 %
 % The configuration options are 
 %   cfg.part        = number of participant (default: 1)
-%   cfg.condition   = condition (default: 111 or 'SameObject', see JAI_DATASTRUCTURE)
+%   cfg.condition   = condition (default: 111 or 'SameObjectB', see JAI_DATASTRUCTURE)
 %   cfg.electrode   = number of electrodes (default: {'Cz'} repsectively [7])
 %                     examples: {'Cz'}, {'F3', 'Fz', 'F4'}, [7] or [2, 1, 27] 
 %  

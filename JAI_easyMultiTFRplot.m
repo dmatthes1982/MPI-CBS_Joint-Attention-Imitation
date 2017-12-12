@@ -10,7 +10,7 @@ function JAI_easyMultiTFRplot(cfg, data)
 %
 % The configuration options are 
 %   cfg.part        = number of participant (1 or 2) (default: 1)
-%   cfg.condition   = condition (default: 101 or 'SameObject', see JAI_DATASTRUCTURE)
+%   cfg.condition   = condition (default: 101 or 'SameObjectB', see JAI_DATASTRUCTURE)
 %   cfg.trial       = number of trial (default: 1)
 %   cfg.freqlimits  = [begin end] (default: [2 30])
 %   cfg.timelimits  = [begin end] (default: [4 116])

@@ -10,7 +10,7 @@ function JAI_easyTFRplot(cfg, data)
 %
 % The configuration options are 
 %   cfg.part        = number of participant (default: 1)
-%   cfg.condition   = condition (default: 111 or 'SameObject', see JAI_DATASTRUCTURE)
+%   cfg.condition   = condition (default: 111 or 'SameObjectB', see JAI_DATASTRUCTURE)
 %   cfg.electrode   = number of electrode (default: 'Cz')
 %   cfg.trial       = number of trial (default: 1)
 %   cfg.freqlimits  = [begin end] (default: [2 50])

@@ -9,7 +9,7 @@ function JAI_easyMPLVplot( cfg, data )
 % where the input data has to be the result of JAI_CALCMEANPLV
 %
 % The configuration options are
-%   cfg.condition = condition (default: 111 or 'SameObject', see JAI_DATASTRUCTURE)
+%   cfg.condition = condition (default: 111 or 'SameObjectB', see JAI_DATASTRUCTURE)
 %
 % This function requires the fieldtrip toolbox.
 %
