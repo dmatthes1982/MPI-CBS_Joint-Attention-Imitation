@@ -111,7 +111,7 @@ for i = numOfPart
     data_iseg = JAI_rejectArtifacts(cfg, data_iseg);
     fprintf('\n');
     
-    clear cfg_allArt
+    clear cfg_allart
   end
 
   % estimation of the inter-trial phase coherence (ITPC)

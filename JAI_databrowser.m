@@ -59,7 +59,7 @@ end
 % Configure and start databrowser
 % -------------------------------------------------------------------------
 cfg                               = [];
-cfg.ylim                          = [-80 80];
+cfg.ylim                          = [-100 100];
 cfg.viewmode                      = 'vertical';
 cfg.artfctdef.threshold.artifact  = artifact;
 cfg.continuous                    = 'no';

@@ -112,25 +112,16 @@ end
 %% hilbert phase calculation
 
 for i = numOfPart
+  fprintf('Dyad %d\n', i);
+    
+  % calculate hilbert phase at 2Hz
   cfg             = [];
   cfg.srcFolder   = strcat(desPath, '06a_bpfilt/');
-  cfg.sessionStr  = sessionStr;
-  
-  fprintf('Dyad %d\n', i);
-  
   cfg.filename    = sprintf('JAI_d%02d_06a_bpfilt2Hz', i);
+  cfg.sessionStr  = sessionStr;
   fprintf('Load the at 2Hz bandpass filtered data...\n');
   JAI_loadData( cfg );
-
-  cfg.filename    = sprintf('JAI_d%02d_06a_bpfilt10Hz', i);
-  fprintf('Load the at 10 Hz bandpass filtered data ...\n');
-  JAI_loadData( cfg );
   
-  cfg.filename    = sprintf('JAI_d%02d_06a_bpfilt20Hz', i);
-  fprintf('Load the at 20 Hz bandpass filtered data ...\n\n');
-  JAI_loadData( cfg );
-  
-  % calculate hilbert phase at 2Hz
   data_hilbert_2Hz = JAI_hilbertPhase(data_bpfilt_2Hz);
   
   % export the hilbert phase data into a *.mat file
@@ -149,6 +140,13 @@ for i = numOfPart
   clear data_hilbert_2Hz data_bpfilt_2Hz
   
   % calculate hilbert phase at 10Hz
+  cfg             = [];
+  cfg.srcFolder   = strcat(desPath, '06a_bpfilt/');
+  cfg.filename    = sprintf('JAI_d%02d_06a_bpfilt10Hz', i);
+  cfg.sessionStr  = sessionStr;
+  fprintf('Load the at 10 Hz bandpass filtered data ...\n');
+  JAI_loadData( cfg );
+  
   data_hilbert_10Hz = JAI_hilbertPhase(data_bpfilt_10Hz);
   
   % export the hilbert phase data into a *.mat file
@@ -167,6 +165,13 @@ for i = numOfPart
   clear data_hilbert_10Hz data_bpfilt_10Hz
   
   % calculate hilbert phase at 20Hz
+  cfg             = [];
+  cfg.srcFolder   = strcat(desPath, '06a_bpfilt/');
+  cfg.filename    = sprintf('JAI_d%02d_06a_bpfilt20Hz', i);
+  cfg.sessionStr  = sessionStr;
+  fprintf('Load the at 20 Hz bandpass filtered data ...\n');
+  JAI_loadData( cfg );
+  
   data_hilbert_20Hz = JAI_hilbertPhase(data_bpfilt_20Hz);
   
   % export the hilbert phase data into a *.mat file

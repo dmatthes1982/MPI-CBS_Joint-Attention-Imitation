@@ -469,7 +469,7 @@ while sessionStatus == true
       JAI_main_7;
       selection = false;
       while selection == false
-        fprintf('\nContinue data processing with:\n');
+        fprintf('Continue data processing with:\n');
         fprintf('[8] - Estimation of Inter Trial Phase Coherences (ITPC)\n');
         x = input('\nSelect [y/n]: ','s');
         if strcmp('y', x)
