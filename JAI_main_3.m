@@ -29,9 +29,9 @@ end
 % Estimation of eye artifacts (via ICA decomposition)
 % Processing steps:
 % 1. Concatenated preprocessed trials to a continuous stream
-% 2. Segment the data into 200 ms Segments with 50% overlapping for
-%    transient artifact detection
-% 3. Detect and reject transient artifacts (200uV delta within 200 ms)
+% 2. Detect and reject transient artifacts (200uV delta within 200 ms. 
+%    The window is shifted with 100 ms, what means 50 % overlapping.)
+% 3. Concatenated cleaned data to a continuous stream
 % 4. ICA decomposition
 % 5. Find EOG-like ICA Components (Correlation with EOGV and EOGH, 80 %
 %    confirmity)
@@ -69,16 +69,22 @@ for i = numOfPart
   cfg.method      = 1;                                                      % method: range
   cfg.range       = 200;                                                    % 200 uV
    
-  tic
   cfg_autoart  = JAI_autoArtifact(cfg, data_continuous);
-  toc
-  
-  %cfg = [];
-  
-  %data_cleaned = JAI_rejectArtifacts(cfg, data_continuous);
   
   clear trl
+   
+  cfg           = [];
+  cfg.artifact  = cfg_autoart;
+  cfg.reject    = 'partial';                                                % partial rejection
+  cfg.target    = 'single';                                                 % target of rejection
+  
+  data_cleaned = JAI_rejectArtifacts(cfg, data_continuous);
+  
+  clear data_continuous cfg_autoart
   fprintf('\n');
+  
+  % Concatenated cleaned data to a continuous stream
+  data_cleaned = JAI_concatData( data_cleaned );
   
   % ICA decomposition
   %cfg = [];

@@ -50,9 +50,18 @@ for i = 1:numOfTrials
   if begsample == 1
     time_concat(1, begsample:endsample) = dataset.time{i}(:);               % concatenate time vectors
   else
-    time_concat(1, begsample:endsample) = dataset.time{i}(:) + ...
-                               time_concat(1, begsample - 1) + ...          % create continuous time scale
-                               1/dataset.fsample;
+    if (dataset.time{i}(1) == 0 )
+      time_concat(1, begsample:endsample) = dataset.time{i}(:) + ...
+                                time_concat(1, begsample - 1) + ...         % create continuous time scale
+                                1/dataset.fsample;
+    elseif(dataset.time{i}(1) > time_concat(1, begsample - 1))
+      time_concat(1, begsample:endsample) = dataset.time{i}(:);             % keep existing time scale
+    else
+      time_concat(1, begsample:endsample) = dataset.time{i}(:) + ...
+                                time_concat(1, begsample - 1) + ...         % create continuous time scale
+                                1/dataset.fsample - ...
+                                dataset.time{i}(1);
+    end
   end
 end
 

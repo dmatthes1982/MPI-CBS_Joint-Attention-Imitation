@@ -43,7 +43,7 @@ for i = numOfPart
   
   % automatic artifact detection (threshold +-75 uV)
   cfg             = [];
-  cfg.length      = 5000;                                                   % window length: 5 sec       
+  cfg.length      = 1000;                                                   % window length: 1 sec       
   cfg.overlap     = 0;                                                      % no overlap
   trl             = JAI_genTrl(cfg, data_preproc);                          % define artifact detection intervals
   

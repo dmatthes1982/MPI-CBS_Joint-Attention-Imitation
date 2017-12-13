@@ -106,7 +106,8 @@ for i = numOfPart
   if artifactRejection == true                                              % reject artifacts
     cfg           = [];
     cfg.artifact  = cfg_allart;
-    cfg.type      = 'single';
+    cfg.reject    = 'complete';
+    cfg.target    = 'single';
   
     data_iseg = JAI_rejectArtifacts(cfg, data_iseg);
     fprintf('\n');

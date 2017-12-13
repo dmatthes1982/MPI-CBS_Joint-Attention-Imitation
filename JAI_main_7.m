@@ -180,7 +180,8 @@ for i = numOfPart
       
       cfg           = [];
       cfg.artifact  = cfg_allart;
-      cfg.type      = 'dual';
+      cfg.reject    = 'complete';
+      cfg.target    = 'dual';
   
       fprintf('Artifact Rejection of Hilbert phase data at 2 Hz.\n');
       data_hseg_2Hz = JAI_rejectArtifacts(cfg, data_hseg_2Hz);
@@ -238,7 +239,8 @@ for i = numOfPart
       
       cfg           = [];
       cfg.artifact  = cfg_allart;
-      cfg.type      = 'dual';
+      cfg.reject    = 'complete';
+      cfg.target    = 'dual';
   
       fprintf('Artifact Rejection of Hilbert phase data at 10 Hz.\n');
       data_hseg_10Hz = JAI_rejectArtifacts(cfg, data_hseg_10Hz);
@@ -296,7 +298,8 @@ for i = numOfPart
       
       cfg           = [];
       cfg.artifact  = cfg_allart;
-      cfg.type      = 'dual';
+      cfg.reject    = 'complete';
+      cfg.target    = 'dual';
   
       fprintf('Artifact Rejection of Hilbert phase data at 20 Hz.\n');
       data_hseg_20Hz = JAI_rejectArtifacts(cfg, data_hseg_20Hz);
