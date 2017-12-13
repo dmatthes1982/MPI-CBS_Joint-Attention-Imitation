@@ -41,48 +41,32 @@ for i = numOfPart
   fprintf('Load preproc data...\n');
   JAI_loadData( cfg );
   
-  cfg         = [];
-  cfg.length  = 5;
-  cfg.overlap = 0;
-  
-  data_subseg = JAI_segmentation( cfg, data_preproc );
-  
-  % export the segmented data into a *.mat file
-  cfg             = [];
-  cfg.desFolder   = strcat(desPath, '05a_subseg/');
-  cfg.filename    = sprintf('JAI_d%02d_05a_subseg', i);
-  cfg.sessionStr  = sessionStr;
-
-  file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
-                     '.mat');
-                   
-  fprintf('The segmented data of dyad %d will be saved in:\n', i); 
-  fprintf('%s ...\n', file_path);
-  JAI_saveData(cfg, 'data_subseg', data_subseg);
-  fprintf('Data stored!\n\n');
-  clear data_preproc
-
   % automatic artifact detection (threshold +-75 uV)
+  cfg             = [];
+  cfg.length      = 5000;                                                   % window length: 5 sec       
+  cfg.overlap     = 0;                                                      % no overlap
+  trl             = JAI_genTrl(cfg, data_preproc);                          % define artifact detection intervals
+  
   cfg             = [];
   cfg.chan        = {'Cz', 'O1', 'O2'};
   cfg.continuous  = 'no';                                                   % data is trial-based
-  cfg.trl         = [];                                                     % already segmented data, use trial definition from data
+  cfg.trl         = trl;
   cfg.method      = 0;                                                      % method: maxmin threshold
-  cfg.minVal      = -75;
-  cfg.maxVal      = 75;
+  cfg.minVal      = -75;                                                    % min: -75 uV
+  cfg.maxVal      = 75;                                                     % max: 75 uV
 
-  cfg_autoart     = JAI_autoArtifact(cfg, data_subseg);
+  cfg_autoart     = JAI_autoArtifact(cfg, data_preproc);
   
   % verify automatic detected artifacts / manual artifact detection
   cfg           = [];
   cfg.artifact  = cfg_autoart;
   
-  cfg_allart    = JAI_manArtifact(cfg, data_subseg);                           
+  cfg_allart    = JAI_manArtifact(cfg, data_preproc);                           
   
   % export the automatic selected artifacts into a *.mat file
   cfg             = [];
-  cfg.desFolder   = strcat(desPath, '05b_autoart/');
-  cfg.filename    = sprintf('JAI_d%02d_05b_autoart', i);
+  cfg.desFolder   = strcat(desPath, '05a_autoart/');
+  cfg.filename    = sprintf('JAI_d%02d_05a_autoart', i);
   cfg.sessionStr  = sessionStr;
 
   file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
@@ -92,12 +76,12 @@ for i = numOfPart
   fprintf('%s ...\n', file_path);
   JAI_saveData(cfg, 'cfg_autoart', cfg_autoart);
   fprintf('Data stored!\n');
-  clear cfg_autoart data_subseg
+  clear cfg_autoart data_preproc trl
   
   % export the verified and the additional artifacts into a *.mat file
   cfg             = [];
-  cfg.desFolder   = strcat(desPath, '05c_allart/');
-  cfg.filename    = sprintf('JAI_d%02d_05c_allart', i);
+  cfg.desFolder   = strcat(desPath, '05b_allart/');
+  cfg.filename    = sprintf('JAI_d%02d_05b_allart', i);
   cfg.sessionStr  = sessionStr;
 
   file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...

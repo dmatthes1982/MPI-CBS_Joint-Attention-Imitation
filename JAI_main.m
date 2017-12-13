@@ -55,14 +55,11 @@ end
 if ~exist(strcat(desPath, '04b_tfr'), 'dir')
   mkdir(strcat(desPath, '04b_tfr'));
 end
-if ~exist(strcat(desPath, '05a_subseg'), 'dir')
-  mkdir(strcat(desPath, '05a_subseg'));
+if ~exist(strcat(desPath, '05a_autoart'), 'dir')
+  mkdir(strcat(desPath, '05a_autoart'));
 end
-if ~exist(strcat(desPath, '05b_autoart'), 'dir')
-  mkdir(strcat(desPath, '05b_autoart'));
-end
-if ~exist(strcat(desPath, '05c_allart'), 'dir')
-  mkdir(strcat(desPath, '05c_allart'));
+if ~exist(strcat(desPath, '05b_allart'), 'dir')
+  mkdir(strcat(desPath, '05b_allart'));
 end
 if ~exist(strcat(desPath, '06a_bpfilt'), 'dir')
   mkdir(strcat(desPath, '06a_bpfilt'));
@@ -282,8 +279,8 @@ switch part
   case 5
     tmpPath = strcat(desPath, '02_preproc/');
     fileNamePre = strcat(tmpPath, 'JAI_d*_02_preproc_', sessionStr, '.mat');
-    tmpPath = strcat(desPath, '05c_allart/');
-    fileNamePost = strcat(tmpPath, 'JAI_d*_05c_allart_', sessionStr, '.mat');
+    tmpPath = strcat(desPath, '05b_allart/');
+    fileNamePost = strcat(tmpPath, 'JAI_d*_05b_allart_', sessionStr, '.mat');
   case 6
     tmpPath = strcat(desPath, '02_preproc/');
     fileNamePre = strcat(tmpPath, 'JAI_d*_02_preproc_', sessionStr, '.mat');

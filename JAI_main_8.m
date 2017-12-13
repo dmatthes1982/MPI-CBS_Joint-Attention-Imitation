@@ -86,8 +86,8 @@ for i = numOfPart
   % artifact rejection
   if artifactRejection == true                                              % load artifact definitions
     cfg             = [];
-    cfg.srcFolder   = strcat(desPath, '05c_allart/');
-    cfg.filename    = sprintf('JAI_d%02d_05c_allart', i);
+    cfg.srcFolder   = strcat(desPath, '05b_allart/');
+    cfg.filename    = sprintf('JAI_d%02d_05b_allart', i);
     cfg.sessionStr  = sessionStr;
 
     file_path = strcat(cfg.srcFolder, cfg.filename, '_', cfg.sessionStr, ...

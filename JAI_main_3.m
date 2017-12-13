@@ -58,17 +58,17 @@ for i = numOfPart
   % Detect and reject transient artifacts (200uV delta within 200 ms. 
   % The window is shifted with 100 ms, what means 50 % overlapping.)
   cfg         = [];
-  cfg.length  = 200;        
-  cfg.overlap = 50;
-  trl         = JAI_genTrl(cfg, data_continuous);
+  cfg.length  = 200;                                                        % window length: 200 msec        
+  cfg.overlap = 50;                                                         % 50 % overlapping
+  trl         = JAI_genTrl(cfg, data_continuous);                           % define artifact detection intervals
   
   cfg             = [];
   cfg.chan        = 'all';                                                  % use all channels
   cfg.continuous  = 'yes';
+  cfg.trl         = trl; 
   cfg.method      = 1;                                                      % method: range
   cfg.range       = 200;                                                    % 200 uV
-  cfg.trl         = trl; 
-  
+   
   tic
   cfg_autoart  = JAI_autoArtifact(cfg, data_continuous);
   toc
