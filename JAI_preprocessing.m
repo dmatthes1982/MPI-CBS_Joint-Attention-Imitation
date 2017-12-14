@@ -14,8 +14,6 @@ function [ data ] = JAI_preprocessing( cfg, data )
 %   cfg.refchannel        = re-reference channel (default: 'TP10')
 %   cfg.samplingRate      = sampling rate in Hz (default: 500)
 %
-% Currently this function applies only a bandpass filter to the data.
-%
 % This function requires the fieldtrip toolbox.
 %
 % See also JAI_IMPORTDATASET, FT_PREPROCESSING, JAI_DATASTRUCTURE

@@ -69,7 +69,7 @@ for i = numOfPart
   cfg.method      = 1;                                                      % method: range
   cfg.range       = 200;                                                    % 200 uV
    
-  cfg_autoart  = JAI_autoArtifact(cfg, data_continuous);
+  cfg_autoart     = JAI_autoArtifact(cfg, data_continuous);
   
   clear trl
    
@@ -78,7 +78,7 @@ for i = numOfPart
   cfg.reject    = 'partial';                                                % partial rejection
   cfg.target    = 'single';                                                 % target of rejection
   
-  data_cleaned = JAI_rejectArtifacts(cfg, data_continuous);
+  data_cleaned  = JAI_rejectArtifacts(cfg, data_continuous);
   
   clear data_continuous cfg_autoart
   fprintf('\n');
@@ -87,9 +87,13 @@ for i = numOfPart
   data_cleaned = JAI_concatData( data_cleaned );
   
   % ICA decomposition
-  %cfg = [];
+  cfg               = [];
+  cfg.channel       = {'all', '-EOGV', '-EOGH', '-REF'};
+  cfg.numcomponent  = 'all';
   
-  %data_icacomp = JAI_ica(cfg, data_cleaned);
+  tic;
+  data_icacomp = JAI_ica(cfg, data_cleaned);
+  toc;
   
   % Find EOG-like ICA Components (Correlation with EOGV and EOGH, 80 %
   % confirmity)
