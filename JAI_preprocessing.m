@@ -57,7 +57,7 @@ cfgReref.reref         = reref;                                             % en
 cfgReref.refchannel    = {refchannel 'REF'};                                % select linked 'TP09' 'TP10' as new reference
 cfgReref.implicitref   = 'REF';                                             % add implicit channel 'REF' to the channels
 cfgReref.refmethod     = 'avg';                                             % average over selected electrodes (in our case insignificant)
-cfgReref.channel       = {'all', '-V1', '-V2', '-F9', '-F10'};              % use all channels except 'V1', 'V2', 'F9' and 'F10'
+cfgReref.channel       = 'all';                                             % use all channels
 cfgReref.trials        = 'all';                                             % use all trials
 cfgReref.feedback      = 'no';                                              % feedback should not be presented
 cfgReref.showcallinfo  = 'no';                                              % prevent printing the time and memory after each function call
@@ -119,12 +119,12 @@ if strcmp(calcceogcomp, 'yes')
   cfgtmp              = [];
   cfgtmp.channel      = {'F9', 'F10'};
   cfgtmp.reref        = 'yes';
-  cfgtmp.refchannel   = 'F9';
+  cfgtmp.refchannel   = 'F10';
   cfgtmp.showcallinfo = 'no';
   cfgtmp.feedback     = 'no';
   
   eogh                = ft_preprocessing(cfgtmp, data_in);
-  eogh.label{2}       = 'EOGH';
+  eogh.label{1}       = 'EOGH';
   
   cfgtmp              = [];
   cfgtmp.channel      = 'EOGH';
@@ -135,12 +135,12 @@ if strcmp(calcceogcomp, 'yes')
   cfgtmp              = [];
   cfgtmp.channel      = {'V1', 'V2'};
   cfgtmp.reref        = 'yes';
-  cfgtmp.refchannel   = 'V1';
+  cfgtmp.refchannel   = 'V2';
   cfgtmp.showcallinfo = 'no';
   cfgtmp.feedback     = 'no';
   
   eogv                = ft_preprocessing(cfgtmp, data_in);
-  eogv.label{2}       = 'EOGV';
+  eogv.label{1}       = 'EOGV';
   
   cfgtmp              = [];
   cfgtmp.channel      = 'EOGV';

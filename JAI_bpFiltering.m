@@ -33,7 +33,7 @@ order     = ft_getopt(cfg, 'filtorder', 250);
 % -------------------------------------------------------------------------
 cfg                 = [];
 cfg.trials          = 'all';                                                % apply bandpass to all trials
-cfg.channel         = {'all', '-REF', '-EOGV', '-EOGH'};                    % apply bandpass to every channel except REF, EOGV und EOGH
+cfg.channel         = {'all', '-REF', '-EOGV', '-EOGH', 'V1', 'V2'};        % apply bandpass to every channel except REF, EOGV, EOGH, V1 and V2
 cfg.bpfilter        = 'yes';
 cfg.bpfilttype      = 'fir';                                                % use a simple fir
 cfg.bpfreq          = bpfreq;                                               % define bandwith
