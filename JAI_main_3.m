@@ -1,7 +1,6 @@
 %% check if basic variables are defined
 if ~exist('sessionStr', 'var')
   cfg           = [];
-  cfg.desFolder = '/data/pt_01826/eegData/DualEEG_JAI_processedData_branch_ica/';
   cfg.subFolder = '02_preproc/';
   cfg.filename  = 'JAI_d01_02_preproc';
   sessionStr    = sprintf('%03d', JAI_getSessionNum( cfg ));                % estimate current session number
@@ -36,8 +35,6 @@ end
 % 5. Find EOG-like ICA Components (Correlation with EOGV and EOGH, 80 %
 %    confirmity)
 % 6. Verify the estimated components by using the ft_topoplotIC function
-% 7. Reject verified components and save the resulting mixing and unmixing
-%    matrices for the following eye artifact correction in part 4
 
 for i = numOfPart
   cfg             = [];
@@ -92,22 +89,39 @@ for i = numOfPart
   cfg.numcomponent  = 'all';
   
   tic;
-  data_icacomp = JAI_ica(cfg, data_cleaned);
+  data_ica          = JAI_ica(cfg, data_cleaned);
   toc;
   
   % Find EOG-like ICA Components (Correlation with EOGV and EOGH, 80 %
   % confirmity)
-  %cfg = [];
+  cfg               = [];
+  cfg.channel       = {'EOGV', 'EOGH'};
+  data_cleaned      = JAI_selectdata(cfg, data_cleaned);
+  
+  data_icacomp      = JAI_corrComp(data_ica, data_cleaned);
+  
+  clear data_cleaned
   
   % Verify the estimated components
   %cfg = [];
   
-  % Reject verified components and save the resulting mixing and unmixing
-  % matrices
-  %cfg = [];
+  % export the determined ica components and the unmixing matrix into 
+  % a *.mat file
+  cfg             = [];
+  cfg.desFolder   = strcat(desPath, '03a_icacomp/');
+  cfg.filename    = sprintf('JAI_p%02d_03a_icacomp', i);
+  cfg.sessionStr  = sessionStr;
+
+  file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
+                     '.mat');
+
+  fprintf('The eye-artifact related components and the unmixing matrix of dyad %d will be saved in:\n', i); 
+  fprintf('%s ...\n', file_path);
+  JAI_saveData(cfg, 'data_icacomp', data_icacomp);
+  fprintf('Data stored!\n\n');
+  clear data_icacomp
   
 end
-
 
 %% clear workspace
 clear file_path cfg sourceList numOfSources i j

@@ -201,7 +201,7 @@ else
     fprintf('\nPlease select what you want to do with the selected dyads:\n');
     fprintf('[1] - Import and basic preprocessing\n');
     fprintf('[2] - Preprocessing, filtering, re-referencing\n');
-    cprintf([0.5,0.5,0.5], '[3] - Estimation of eye artifacts (via ICA decomposition) - (not available yet)\n');
+    fprintf('[3] - Estimation of eye artifacts (via ICA decomposition)\n');
     cprintf([0.5,0.5,0.5], '[4] - Correction of eye artifacts (not available yet)\n');
     fprintf('[5] - Automatic and manual artifact detection\n');
     fprintf('[6] - Narrow band filtering and Hilbert transform\n'); 
@@ -219,8 +219,7 @@ else
         selection = true;
       case 3
         part = 3;
-        selection = false;
-        cprintf([1,0.5,0], 'This option is currently unsupported!\n');
+        selection = true;
       case 4
         part = 4;
         selection = false;
@@ -273,7 +272,10 @@ switch part
     tmpPath = strcat(desPath, '02_preproc/');
     fileNamePost = strcat(tmpPath, 'JAI_d*_02_preproc_', sessionStr, '.mat');
   case 3
-    error('This option is currently unsupported!');
+    tmpPath = strcat(desPath, '02_preproc/');
+    fileNamePre = strcat(tmpPath, 'JAI_d*_02_preproc_', sessionStr, '.mat');
+     tmpPath = strcat(desPath, '03a_icacomp/');
+    fileNamePost = strcat(tmpPath, 'JAI_d*_03a_icacomp_', sessionStr, '.mat');
   case 4
     error('This option is currently unsupported!');
   case 5
@@ -410,6 +412,24 @@ while sessionStatus == true
       end
     case 2
       JAI_main_2;
+      selection = false;
+      while selection == false
+        fprintf('Continue data processing with:\n');
+        fprintf('[3] - Estimation of eye artifacts (via ICA decomposition)?\n');
+        x = input('\nSelect [y/n]: ','s');
+        if strcmp('y', x)
+          selection = true;
+          sessionStatus = true;
+          sessionPart = 3;
+        elseif strcmp('n', x)
+          selection = true;
+          sessionStatus = false;
+        else
+          selection = false;
+        end
+      end
+    case 3
+      JAI_main_3;
       selection = false;
       while selection == false
         fprintf('Continue data processing with:\n');

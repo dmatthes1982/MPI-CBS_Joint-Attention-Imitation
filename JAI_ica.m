@@ -2,6 +2,7 @@ function [ data ] = JAI_ica( cfg, data )
 % JAI_ICA conducts an independent component analysis on both participants
 %
 % Use as
+%   [ data ] = JAI_ica( cfg, data )
 %
 % where the input data have to be the result from JAI_CONCATDATA
 %
