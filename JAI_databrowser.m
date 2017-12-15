@@ -1,4 +1,4 @@
-function cfgArtifacts = JAI_databrowser( cfg, data )
+function [ cfgArtifacts ] = JAI_databrowser( cfg, data )
 % JAI_DATABROWSER displays a certain joint attention imitation project 
 % dataset using a appropriate scaling.
 %
@@ -69,11 +69,20 @@ cfg.showcallinfo                  = 'no';
 
 fprintf('Databrowser - Participant: %d\n', part);
 
+
 switch part
   case 1
-    cfgArtifacts = ft_databrowser(cfg, data.part1);
+    if nargout == 0
+      ft_databrowser(cfg, data.part1);
+    else
+      cfgArtifacts = ft_databrowser(cfg, data.part1);
+    end
   case 2
-    cfgArtifacts = ft_databrowser(cfg, data.part2);
+    if nargout == 0
+      ft_databrowser(cfg, data.part2);
+    else
+      cfgArtifacts = ft_databrowser(cfg, data.part2);
+    end
 end
 
 end
