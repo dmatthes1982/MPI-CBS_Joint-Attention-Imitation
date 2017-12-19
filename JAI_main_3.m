@@ -88,23 +88,26 @@ for i = numOfPart
   cfg.channel       = {'all', '-EOGV', '-EOGH', '-REF'};
   cfg.numcomponent  = 'all';
   
-  tic;
   data_ica          = JAI_ica(cfg, data_cleaned);
-  toc;
-  
+    
   % Find EOG-like ICA Components (Correlation with EOGV and EOGH, 80 %
   % confirmity)
   cfg               = [];
   cfg.channel       = {'EOGV', 'EOGH'};
   data_cleaned      = JAI_selectdata(cfg, data_cleaned);
+  fprintf('\n');
   
   data_icacomp      = JAI_corrComp(data_ica, data_cleaned);
   
   clear data_cleaned
+  fprintf('\n');
   
   % Verify the estimated components
-  %cfg = [];
+  data_icacomp      = JAI_verifyComp(data_icacomp, data_ica);
   
+  clear data_ica
+  fprintf('\n');
+
   % export the determined ica components and the unmixing matrix into 
   % a *.mat file
   cfg             = [];

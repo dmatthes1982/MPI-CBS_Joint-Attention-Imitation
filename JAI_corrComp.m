@@ -1,9 +1,9 @@
-function [ component ] = JAI_corrComp( data_icacomp, data )
+function [ data_icacomp ] = JAI_corrComp( data_ica, data_sensor )
 % JAI_CORRCOMP estimates components which have a high correlation (> 80%) 
 % with the EOGV and EOGH components of the original data
 %
 % Use as
-%   [ component ] = JAI_corrcoef( data_icacomp, data )
+%   [ data_icacomp ] = JAI_corrComp( data_ica, data_sensor )
 %
 % where input data have to be the results from JAI_ICA and JAI_SELECTDATA
 %
@@ -11,17 +11,17 @@ function [ component ] = JAI_corrComp( data_icacomp, data )
 
 % Copyright (C) 2017, Daniel Matthes, MPI CBS
 
-fprintf('Estimate correlating components at participant 1\n');
-component.part1 = corrComp(data_icacomp.part1, data.part1);
-fprintf('Estimate correlating components at participant 2\n');
-component.part2 = corrComp(data_icacomp.part2, data.part2);
+fprintf('Estimate EOG-correlating components at participant 1\n');
+data_icacomp.part1 = corrComp(data_ica.part1, data_sensor.part1);
+fprintf('Estimate EOG-correlating components at participant 2\n');
+data_icacomp.part2 = corrComp(data_ica.part2, data_sensor.part2);
 
 end
 
 %--------------------------------------------------------------------------
-% SUBFUNCTION which is called after selecting channels
+% SUBFUNCTION which does the computation of the correlation coefficient
 %--------------------------------------------------------------------------
-function [ comp ] = corrComp( dataICA, dataEOG )
+function [ dataICAComp ] = corrComp( dataICA, dataEOG )
 
 numOfComp = length(dataICA.label);
 
@@ -41,8 +41,8 @@ end
 eogvCorr = squeeze(eogvCorr(1,2,:));
 eoghCorr = squeeze(eoghCorr(1,2,:));
 
-comp.eogvCorr = eogvCorr;
-comp.eoghCorr = eoghCorr;
+dataICAComp.eogvCorr = eogvCorr;
+dataICAComp.eoghCorr = eoghCorr;
 
 eogvCorr = abs(eogvCorr);
 eoghCorr = abs(eoghCorr);
@@ -50,11 +50,11 @@ eoghCorr = abs(eoghCorr);
 eogvCorr = (eogvCorr > 0.8);
 eoghCorr = (eoghCorr > 0.8);
 
-comp.label      = dataICA.label;
-comp.topolabel  = dataICA.topolabel;
-comp.topo       = dataICA.topo;
-comp.unmixing   = dataICA.unmixing;
-comp.elements   = dataICA.label(eogvCorr | eoghCorr);
+dataICAComp.label      = dataICA.label;
+dataICAComp.topolabel  = dataICA.topolabel;
+dataICAComp.topo       = dataICA.topo;
+dataICAComp.unmixing   = dataICA.unmixing;
+dataICAComp.elements   = dataICA.label(eogvCorr | eoghCorr);
 
 end
 
