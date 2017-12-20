@@ -10,7 +10,7 @@ if ~exist('desPath', 'var')
   desPath = '/data/pt_01826/eegData/DualEEG_JAI_processedData_branch_ica/'; % destination path for processed data  
 end
 
-if ~exist('numOfPart', 'var')                                               % estimate number of participants in segmented data folder
+if ~exist('numOfPart', 'var')                                               % estimate number of participants in preprocessed data folder
   sourceList    = dir([strcat(desPath, '02_preproc/'), ...
                        strcat('*_', sessionStr, '.mat')]);
   sourceList    = struct2cell(sourceList);
@@ -34,7 +34,7 @@ end
 % 4. ICA decomposition
 % 5. Find EOG-like ICA Components (Correlation with EOGV and EOGH, 80 %
 %    confirmity)
-% 6. Verify the estimated components by using the ft_topoplotIC function
+% 6. Verify the estimated components by using the ft_databrowser function
 
 for i = numOfPart
   cfg             = [];
@@ -88,8 +88,24 @@ for i = numOfPart
   cfg.channel       = {'all', '-EOGV', '-EOGH', '-REF'};
   cfg.numcomponent  = 'all';
   
-  data_ica          = JAI_ica(cfg, data_cleaned);
-    
+  data_icacomp      = JAI_ica(cfg, data_cleaned);
+  
+  fprintf('\n');
+  
+  % export the determined ica components in a *.mat file
+  cfg             = [];
+  cfg.desFolder   = strcat(desPath, '03a_icacomp/');
+  cfg.filename    = sprintf('JAI_d%02d_03a_icacomp', i);
+  cfg.sessionStr  = sessionStr;
+
+  file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
+                     '.mat');
+
+  fprintf('The ica components of dyad %d will be saved in:\n', i); 
+  fprintf('%s ...\n', file_path);
+  JAI_saveData(cfg, 'data_icacomp', data_icacomp);
+  fprintf('Data stored!\n\n');
+  
   % Find EOG-like ICA Components (Correlation with EOGV and EOGH, 80 %
   % confirmity)
   cfg               = [];
@@ -97,22 +113,22 @@ for i = numOfPart
   data_cleaned      = JAI_selectdata(cfg, data_cleaned);
   fprintf('\n');
   
-  data_icacomp      = JAI_corrComp(data_ica, data_cleaned);
+  data_eogcomp      = JAI_corrComp(data_icacomp, data_cleaned);
   
   clear data_cleaned
   fprintf('\n');
   
   % Verify the estimated components
-  data_icacomp      = JAI_verifyComp(data_icacomp, data_ica);
+  data_eogcomp      = JAI_verifyComp(data_eogcomp, data_icacomp);
   
-  clear data_ica
+  clear data_icacomp
   fprintf('\n');
 
-  % export the determined ica components and the unmixing matrix into 
+  % export the determined eog components and the unmixing matrix into 
   % a *.mat file
   cfg             = [];
-  cfg.desFolder   = strcat(desPath, '03a_icacomp/');
-  cfg.filename    = sprintf('JAI_p%02d_03a_icacomp', i);
+  cfg.desFolder   = strcat(desPath, '03b_eogcomp/');
+  cfg.filename    = sprintf('JAI_d%02d_03b_eogcomp', i);
   cfg.sessionStr  = sessionStr;
 
   file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
@@ -120,9 +136,9 @@ for i = numOfPart
 
   fprintf('The eye-artifact related components and the unmixing matrix of dyad %d will be saved in:\n', i); 
   fprintf('%s ...\n', file_path);
-  JAI_saveData(cfg, 'data_icacomp', data_icacomp);
+  JAI_saveData(cfg, 'data_eogcomp', data_eogcomp);
   fprintf('Data stored!\n\n');
-  clear data_icacomp
+  clear data_eogcomp
   
 end
 

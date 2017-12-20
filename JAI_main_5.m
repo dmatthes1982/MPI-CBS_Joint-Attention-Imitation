@@ -1,8 +1,8 @@
 %% check if basic variables are defined
 if ~exist('sessionStr', 'var')
   cfg           = [];
-  cfg.subFolder = '02_preproc/';
-  cfg.filename  = 'JAI_d01_02_preproc';
+  cfg.subFolder = '04a_eyecor/';
+  cfg.filename  = 'JAI_d01_04a_eyecor';
   sessionStr    = sprintf('%03d', JAI_getSessionNum( cfg ));                % estimate current session number
 end
 
@@ -10,8 +10,8 @@ if ~exist('desPath', 'var')
   desPath = '/data/pt_01826/eegData/DualEEG_JAI_processedData_branch_ica/'; % destination path for processed data  
 end
 
-if ~exist('numOfPart', 'var')                                               % estimate number of participants in segmented data folder
-  sourceList    = dir([strcat(desPath, '02_preproc/'), ...
+if ~exist('numOfPart', 'var')                                               % estimate number of participants in eyecor data folder
+  sourceList    = dir([strcat(desPath, '04a_eyecor/'), ...
                        strcat('*_', sessionStr, '.mat')]);
   sourceList    = struct2cell(sourceList);
   sourceList    = sourceList(1,:);
@@ -20,32 +20,29 @@ if ~exist('numOfPart', 'var')                                               % es
 
   for i=1:1:numOfSources
     numOfPart(i)  = sscanf(sourceList{i}, ...
-                    strcat('JAI_d%d_02_preproc_', sessionStr, '.mat'));
+                    strcat('JAI_d%d_04a_eyecor_', sessionStr, '.mat'));
   end
 end
 
 %% part 5
-% segmentation, auto artifact detection (threshold +-75 uV) and manual 
-% artifact detection (verification)
+% auto artifact detection (threshold +-75 uV) and manual artifact detection 
+% (verification)
 
 for i = numOfPart
-  % segmentation of the preprocessed trials
-  % split the data of every condition into subtrials with a length of 5 
-  % seconds
   cfg             = [];
-  cfg.srcFolder   = strcat(desPath, '02_preproc/');
-  cfg.filename    = sprintf('JAI_d%02d_02_preproc', i);
+  cfg.srcFolder   = strcat(desPath, '04a_eyecor/');
+  cfg.filename    = sprintf('JAI_d%02d_04a_eyecor', i);
   cfg.sessionStr  = sessionStr;
   
   fprintf('Dyad %d\n', i);
-  fprintf('Load preproc data...\n');
+  fprintf('Load EOG-artifact corrected data...\n');
   JAI_loadData( cfg );
   
   % automatic artifact detection (threshold +-75 uV)
   cfg             = [];
   cfg.length      = 1000;                                                   % window length: 1 sec       
   cfg.overlap     = 0;                                                      % no overlap
-  trl             = JAI_genTrl(cfg, data_preproc);                          % define artifact detection intervals
+  trl             = JAI_genTrl(cfg, data_eyecor);                           % define artifact detection intervals
   
   cfg             = [];
   cfg.chan        = {'Cz', 'O1', 'O2'};
@@ -55,13 +52,13 @@ for i = numOfPart
   cfg.minVal      = -75;                                                    % min: -75 uV
   cfg.maxVal      = 75;                                                     % max: 75 uV
 
-  cfg_autoart     = JAI_autoArtifact(cfg, data_preproc);
+  cfg_autoart     = JAI_autoArtifact(cfg, data_eyecor);
   
   % verify automatic detected artifacts / manual artifact detection
   cfg           = [];
   cfg.artifact  = cfg_autoart;
   
-  cfg_allart    = JAI_manArtifact(cfg, data_preproc);                           
+  cfg_allart    = JAI_manArtifact(cfg, data_eyecor);                           
   
   % export the automatic selected artifacts into a *.mat file
   cfg             = [];
@@ -76,7 +73,7 @@ for i = numOfPart
   fprintf('%s ...\n', file_path);
   JAI_saveData(cfg, 'cfg_autoart', cfg_autoart);
   fprintf('Data stored!\n');
-  clear cfg_autoart data_preproc trl
+  clear cfg_autoart data_eyecor trl
   
   % export the verified and the additional artifacts into a *.mat file
   cfg             = [];

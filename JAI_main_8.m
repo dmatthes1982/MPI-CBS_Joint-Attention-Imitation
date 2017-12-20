@@ -1,8 +1,8 @@
 %% check if basic variables are defined and import segmented data
 if ~exist('sessionStr', 'var')
   cfg           = [];
-  cfg.subfolder = '02_preproc';
-  cfg.filename  = 'JAI_d01_02_preproc';
+  cfg.subfolder = '04a_eyecor';
+  cfg.filename  = 'JAI_d01_04a_eyecor';
   sessionStr    = sprintf('%03d', JAI_getSessionNum( cfg ));                % estimate current session number
 end
 
@@ -10,8 +10,8 @@ if ~exist('desPath', 'var')
   desPath = '/data/pt_01826/eegData/DualEEG_JAI_processedData_branch_ica/'; % destination path for processed data  
 end
 
-if ~exist('numOfPart', 'var')                                               % estimate number of participants in preprocessed data folder
-  sourceList    = dir([strcat(desPath, '02_preproc/'), ...
+if ~exist('numOfPart', 'var')                                               % estimate number of participants in eyecor data folder
+  sourceList    = dir([strcat(desPath, '04a_eyecor/'), ...
                        strcat('*_', sessionStr, '.mat')]);
   sourceList    = struct2cell(sourceList);
   sourceList    = sourceList(1,:);
@@ -20,7 +20,7 @@ if ~exist('numOfPart', 'var')                                               % es
 
   for i=1:1:numOfSources
     numOfPart(i)  = sscanf(sourceList{i}, ...
-                    strcat('JAI_d%d_02_preproc_', sessionStr, '.mat'));
+                    strcat('JAI_d%d_04a_eyecor_', sessionStr, '.mat'));
   end
 end
 
@@ -51,11 +51,11 @@ for i = numOfPart
   fprintf('Dyad %d\n', i);
 
   cfg             = [];                                                     % load preprocessed data
-  cfg.srcFolder   = strcat(desPath, '02_preproc/');
+  cfg.srcFolder   = strcat(desPath, '04a_eyecor/');
   cfg.sessionStr  = sessionStr;
-  cfg.filename    = sprintf('JAI_d%02d_02_preproc', i);
+  cfg.filename    = sprintf('JAI_d%02d_04a_eyecor', i);
   
-  fprintf('Load preprocessed data...\n\n');
+  fprintf('Load EOG-artifact corrected data...\n\n');
   JAI_loadData( cfg );
   
   % Segmentation of the preprocessed trials for ITPC estimation %%%%%%%%%%%
@@ -65,8 +65,8 @@ for i = numOfPart
   cfg.length    = 10;
   cfg.overlap   = 0;
 
-  data_iseg  = JAI_segmentation( cfg, data_preproc );
-  clear data_preproc
+  data_iseg  = JAI_segmentation( cfg, data_eyecor );
+  clear data_eyecor
 
   % export the segmented data into a *.mat file
   cfg             = [];
@@ -81,7 +81,6 @@ for i = numOfPart
   fprintf('%s ...\n', file_path);
   JAI_saveData(cfg, 'data_iseg', data_iseg);
   fprintf('Data stored!\n\n');
-  clear data_preproc
 
   % artifact rejection
   if artifactRejection == true                                              % load artifact definitions

@@ -1,8 +1,8 @@
 %% check if basic variables are defined
 if ~exist('sessionStr', 'var')
   cfg           = [];
-  cfg.subFolder = '02_preproc/';
-  cfg.filename  = 'JAI_d01_02_preproc';
+  cfg.subFolder = '04a_eyecor/';
+  cfg.filename  = 'JAI_d01_04a_eyecor';
   sessionStr    = sprintf('%03d', JAI_getSessionNum( cfg ));                % estimate current session number
 end
 
@@ -10,8 +10,8 @@ if ~exist('desPath', 'var')
   desPath = '/data/pt_01826/eegData/DualEEG_JAI_processedData_branch_ica/'; % destination path for processed data 
 end
 
-if ~exist('numOfPart', 'var')                                               % estimate number of participants in segmented data folder
-  sourceList    = dir([strcat(desPath, '02_preproc/'), ...
+if ~exist('numOfPart', 'var')                                               % estimate number of participants in eyecor data folder
+  sourceList    = dir([strcat(desPath, '04a_eyecor/'), ...
                        strcat('*_', sessionStr, '.mat')]);
   sourceList    = struct2cell(sourceList);
   sourceList    = sourceList(1,:);
@@ -20,7 +20,7 @@ if ~exist('numOfPart', 'var')                                               % es
 
   for i=1:1:numOfSources
     numOfPart(i)  = sscanf(sourceList{i}, ...
-                    strcat('JAI_d%d_02_preproc_', sessionStr, '.mat'));
+                    strcat('JAI_d%d_04a_eyecor_', sessionStr, '.mat'));
   end
 end
 
@@ -31,22 +31,22 @@ end
 
 for i = numOfPart
   cfg             = [];
-  cfg.srcFolder   = strcat(desPath, '02_preproc/');
-  cfg.filename    = sprintf('JAI_d%02d_02_preproc', i);
+  cfg.srcFolder   = strcat(desPath, '04a_eyecor/');
+  cfg.filename    = sprintf('JAI_d%02d_04a_eyecor', i);
   cfg.sessionStr  = sessionStr;
   
   fprintf('Dyad %d\n', i);
-  fprintf('Load preprocessed data...\n\n');
+  fprintf('Load EOG-artifact corrected data...\n\n');
   JAI_loadData( cfg );
   
-  filtCoeffDiv = 500 / data_preproc.part1.fsample;                          % estimate sample frequency dependent divisor of filter length
+  filtCoeffDiv = 500 / data_eyecor.part1.fsample;                           % estimate sample frequency dependent divisor of filter length
 
   % bandpass filter data at 2Hz
   cfg           = [];
   cfg.bpfreq    = [1.9 2.1];
   cfg.filtorder = fix(500 / filtCoeffDiv);
 
-  data_bpfilt_2Hz = JAI_bpFiltering(cfg, data_preproc);
+  data_bpfilt_2Hz = JAI_bpFiltering(cfg, data_eyecor);
   
   % export the filtered data into a *.mat file
   cfg             = [];
@@ -68,7 +68,7 @@ for i = numOfPart
   cfg.bpfreq    = [9 11];
   cfg.filtorder = fix(250 / filtCoeffDiv);
   
-  data_bpfilt_10Hz = JAI_bpFiltering(cfg, data_preproc);
+  data_bpfilt_10Hz = JAI_bpFiltering(cfg, data_eyecor);
   
   % export the filtered data into a *.mat file
   cfg             = [];
@@ -90,7 +90,7 @@ for i = numOfPart
   cfg.bpfreq    = [19 21];
   cfg.filtorder = fix(250 / filtCoeffDiv);
   
-  data_bpfilt_20Hz = JAI_bpFiltering(cfg, data_preproc);
+  data_bpfilt_20Hz = JAI_bpFiltering(cfg, data_eyecor);
 
   % export the filtered data into a *.mat file
   cfg             = [];
@@ -105,7 +105,7 @@ for i = numOfPart
   fprintf('%s ...\n', file_path);
   JAI_saveData(cfg, 'data_bpfilt_20Hz', data_bpfilt_20Hz);
   fprintf('Data stored!\n\n');
-  clear data_bpfilt_20Hz data_preproc
+  clear data_bpfilt_20Hz data_eyecor
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -46,8 +46,8 @@ end
 if ~exist(strcat(desPath, '03a_icacomp'), 'dir')
   mkdir(strcat(desPath, '03a_icacomp'));
 end
-if ~exist(strcat(desPath, '03b_eyecomp'), 'dir')
-  mkdir(strcat(desPath, '03b_eyecomp'));
+if ~exist(strcat(desPath, '03b_eogcomp'), 'dir')
+  mkdir(strcat(desPath, '03b_eogcomp'));
 end
 if ~exist(strcat(desPath, '04a_eyecor'), 'dir')
   mkdir(strcat(desPath, '04a_eyecor'));
@@ -202,7 +202,7 @@ else
     fprintf('[1] - Import and basic preprocessing\n');
     fprintf('[2] - Preprocessing, filtering, re-referencing\n');
     fprintf('[3] - Estimation of eye artifacts (via ICA decomposition)\n');
-    cprintf([0.5,0.5,0.5], '[4] - Correction of eye artifacts (not available yet)\n');
+    fprintf('[4] - Correction of eye artifacts \n');
     fprintf('[5] - Automatic and manual artifact detection\n');
     fprintf('[6] - Narrow band filtering and Hilbert transform\n'); 
     fprintf('[7] - Estimation of Phase Locking Values (PLV)\n');
@@ -222,8 +222,7 @@ else
         selection = true;
       case 4
         part = 4;
-        selection = false;
-        cprintf([1,0.5,0], 'This option is currently unsupported!\n');
+        selection = true;
       case 5
         part = 5;
         selection = true;
@@ -274,18 +273,21 @@ switch part
   case 3
     tmpPath = strcat(desPath, '02_preproc/');
     fileNamePre = strcat(tmpPath, 'JAI_d*_02_preproc_', sessionStr, '.mat');
-     tmpPath = strcat(desPath, '03a_icacomp/');
-    fileNamePost = strcat(tmpPath, 'JAI_d*_03a_icacomp_', sessionStr, '.mat');
+    tmpPath = strcat(desPath, '03b_eogcomp/');
+    fileNamePost = strcat(tmpPath, 'JAI_d*_03b_eogcomp_', sessionStr, '.mat');
   case 4
-    error('This option is currently unsupported!');
+    tmpPath = strcat(desPath, '03b_eogcomp/');
+    fileNamePre = strcat(tmpPath, 'JAI_d*_03b_eogcomp_', sessionStr, '.mat');
+    tmpPath = strcat(desPath, '04b_tfr/');
+    fileNamePost = strcat(tmpPath, 'JAI_d*_04b_tfr_', sessionStr, '.mat');
   case 5
-    tmpPath = strcat(desPath, '02_preproc/');
-    fileNamePre = strcat(tmpPath, 'JAI_d*_02_preproc_', sessionStr, '.mat');
+    tmpPath = strcat(desPath, '04a_eyecor/');
+    fileNamePre = strcat(tmpPath, 'JAI_d*_04a_eyecor_', sessionStr, '.mat');
     tmpPath = strcat(desPath, '05b_allart/');
     fileNamePost = strcat(tmpPath, 'JAI_d*_05b_allart_', sessionStr, '.mat');
   case 6
-    tmpPath = strcat(desPath, '02_preproc/');
-    fileNamePre = strcat(tmpPath, 'JAI_d*_02_preproc_', sessionStr, '.mat');
+    tmpPath = strcat(desPath, '04a_eyecor/');
+    fileNamePre = strcat(tmpPath, 'JAI_d*_04a_eyecor_', sessionStr, '.mat');
     tmpPath = strcat(desPath, '06b_hilbert/');
     fileNamePost = strcat(tmpPath, 'JAI_d*_06b_hilbert20Hz_', sessionStr, '.mat');
   case 7
@@ -294,8 +296,8 @@ switch part
     tmpPath = strcat(desPath, '07c_mplv/');
     fileNamePost = strcat(tmpPath, 'JAI_d*_07c_mplv20Hz_', sessionStr, '.mat');
   case 8
-    tmpPath = strcat(desPath, '02_preproc/');
-    fileNamePre = strcat(tmpPath, 'JAI_d*_02_preproc_', sessionStr, '.mat');
+    tmpPath = strcat(desPath, '04a_eyecor/');
+    fileNamePre = strcat(tmpPath, 'JAI_d*_04a_eyecor_', sessionStr, '.mat');
     tmpPath = strcat(desPath, '08b_itpc/');
     fileNamePost = strcat(tmpPath, 'JAI_d*_08b_itpc_', sessionStr, '.mat');
   otherwise
@@ -430,6 +432,24 @@ while sessionStatus == true
       end
     case 3
       JAI_main_3;
+      selection = false;
+      while selection == false
+        fprintf('Continue data processing with:\n');
+        fprintf('[4] - Correction of eye artifacts?\n');
+        x = input('\nSelect [y/n]: ','s');
+        if strcmp('y', x)
+          selection = true;
+          sessionStatus = true;
+          sessionPart = 5;
+        elseif strcmp('n', x)
+          selection = true;
+          sessionStatus = false;
+        else
+          selection = false;
+        end
+      end
+    case 4
+      JAI_main_4;
       selection = false;
       while selection == false
         fprintf('Continue data processing with:\n');
