@@ -52,9 +52,13 @@ cfgBP.showcallinfo      = 'no';                                             % pr
 % re-referencing
 cfgReref               = [];
 cfgReref.reref         = reref;                                             % enable re-referencing
-cfgReref.refchannel    = {refchannel 'REF'};                                % select linked 'TP09' 'TP10' as new reference
+if ~iscell(refchannel)
+  cfgReref.refchannel    = {refchannel, 'REF'};                             % specify new reference
+else
+  cfgReref.refchannel    = [refchannel, {'REF'}];
+end
 cfgReref.implicitref   = 'REF';                                             % add implicit channel 'REF' to the channels
-cfgReref.refmethod     = 'avg';                                             % average over selected electrodes (in our case insignificant)
+cfgReref.refmethod     = 'avg';                                             % average over selected electrodes
 cfgReref.channel       = 'all';                                             % use all channels
 cfgReref.trials        = 'all';                                             % use all trials
 cfgReref.feedback      = 'no';                                              % feedback should not be presented
@@ -145,11 +149,6 @@ if strcmp(calcceogcomp, 'yes')
   cfgtmp.showcallinfo = 'no';
   
   eogv                = ft_selectdata(cfgtmp, eogv);
-else
-  cfgtmp              = [];
-  cfgtmp.channel      = {'V1', 'V2', 'F9', 'F10'};
-  cfgtmp.showcallinfo = 'no';
-  eogOrg              = ft_selectdata(cfgtmp, data_in);
 end
 
 cfgR = removefields(cfgR, {'calcceogcomp'});
@@ -160,12 +159,6 @@ if strcmp(calcceogcomp, 'yes')
   cfgtmp.showcallinfo = 'no';
   ft_info off;
   data_out            = ft_appenddata(cfgtmp, data_out, eogv, eogh);
-  ft_info on;
-else
-  cfgtmp              = [];
-  cfgtmp.showcallinfo = 'no';
-  ft_info off;
-  data_out            = ft_appenddata(cfgtmp, data_out, eogOrg);
   ft_info on;
 end
 

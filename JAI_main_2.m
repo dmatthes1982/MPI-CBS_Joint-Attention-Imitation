@@ -52,6 +52,26 @@ selection = false;
   end
   fprintf('\n');
 
+  selection = false;
+  while selection == false
+    cprintf([0,0.6,0], 'Please select favoured reference:\n');
+    fprintf('[1] - Linked mastoid (''TP9'', ''TP10'')\n');
+    fprintf('[2] - Common average reference\n');
+    x = input('Option: ');
+  
+    switch x
+      case 1
+        selection = true;
+        refchannel = 'TP10';
+      case 2
+        selection = true;
+        refchannel = {'all', '-V1', '-V2'};
+      otherwise
+        cprintf([1,0.5,0], 'Wrong input!\n');
+    end
+  end
+  fprintf('\n');
+  
 for i = numOfPart
   cfg             = [];
   cfg.srcFolder   = strcat(desPath, '01_raw/');
@@ -67,6 +87,7 @@ for i = numOfPart
   cfg.bpfilttype        = 'but';
   cfg.bpinstabilityfix  = 'split';
   cfg.samplingRate      = samplingRate;
+  cfg.refchannel        = refchannel;
   
   ft_info off;
   data_preproc = JAI_preprocessing( cfg, data_raw);
@@ -88,4 +109,5 @@ for i = numOfPart
 end
 
 %% clear workspace
-clear file_path cfg sourceList numOfSources i selection samplingRate x
+clear file_path cfg sourceList numOfSources i selection samplingRate x ...
+      refchannel
