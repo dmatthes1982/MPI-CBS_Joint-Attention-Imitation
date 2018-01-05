@@ -48,14 +48,15 @@ centerFreq = (bpfreq(2) + bpfreq(1))/2;
 % -------------------------------------------------------------------------
 data.centerFreq = [];
 
-fprintf('Apply bandpass to participant 1 with a center frequency of %d Hz...\n', ...           
+fprintf('Apply bandpass to participant 1 with a center frequency of %g Hz...\n', ...           
           centerFreq);
 data.part1   = ft_preprocessing(cfg, data.part1);        
           
-fprintf('Apply bandpass to participant 2 with a center frequency of %d Hz...\n', ...           
+fprintf('Apply bandpass to participant 2 with a center frequency of %g Hz...\n', ...           
           centerFreq);
 data.part2   = ft_preprocessing(cfg, data.part2);
   
 data.centerFreq = centerFreq;
+data.bpFreq = bpfreq;
 
 end

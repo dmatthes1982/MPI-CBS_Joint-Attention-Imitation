@@ -104,7 +104,7 @@ for i = numOfPart
   fprintf('The ica components of dyad %d will be saved in:\n', i); 
   fprintf('%s ...\n', file_path);
   JAI_saveData(cfg, 'data_icacomp', data_icacomp);
-  fprintf('Data stored!\n\n');
+  fprintf('Data stored!\n');
   
   % Find EOG-like ICA Components (Correlation with EOGV and EOGH, 80 %
   % confirmity)
