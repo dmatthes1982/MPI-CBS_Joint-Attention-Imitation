@@ -17,7 +17,7 @@ function [ data ] = JAI_calcMeanPLV( data )
 % Estimate mean Phase Locking Value (mPLV)
 % -------------------------------------------------------------------------
 
-fprintf('Calc mean PLVs with a center frequency of %d Hz...\n', ...           
+fprintf('Calc mean PLVs with a center frequency of %g Hz...\n', ...           
           data.centerFreq);
 numOfTrials = size(data.dyad.PLV, 2);
 numOfElecA = size(data.dyad.PLV{1}, 1);
