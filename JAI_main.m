@@ -356,7 +356,7 @@ elseif strcmp(dyadsSpec, 'new')                                             % pr
       numOfFiles  = length(fileListPost);
       numOfPostPart = zeros(1, numOfFiles);
       for i=1:1:numOfFiles
-        numOfPostPart(i) = sscanf(fileListPost{i}, strcat('JAI_p%d*', sessionStr, '.mat'));
+        numOfPostPart(i) = sscanf(fileListPost{i}, strcat('JAI_d%d*', sessionStr, '.mat'));
       end
     end
   
