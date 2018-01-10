@@ -82,6 +82,12 @@ end
 if ~exist(strcat(desPath, '08b_itpc'), 'dir')
   mkdir(strcat(desPath, '08b_itpc'));
 end
+if ~exist(strcat(desPath, '09a_mplvod'), 'dir')
+  mkdir(strcat(desPath, '09a_mplvod'));
+end
+if ~exist(strcat(desPath, '09b_itpcod'), 'dir')
+  mkdir(strcat(desPath, '09b_itpcod'));
+end
 
 clear sessionStr numOfPart part newPaths
 
@@ -207,7 +213,8 @@ else
     fprintf('[6] - Narrow band filtering and Hilbert transform\n'); 
     fprintf('[7] - Estimation of Phase Locking Values (PLV)\n');
     fprintf('[8] - Estimation of Inter Trial Phase Coherences (ITPC)\n');
-    fprintf('[9] - Quit data processing\n\n');
+    fprintf('[9] - Averaging over dyads\n');
+    fprintf('[10] - Quit data processing\n\n');
     x = input('Option: ');
   
     switch x
@@ -236,6 +243,9 @@ else
         part = 8;
         selection = true;
       case 9
+        part = 9;
+        selection = true;
+      case 10
         fprintf('\nData processing aborted.\n');
         clear selection i x y srcPath desPath session sessionList ...
             sessionNum numOfSessions dyadsSpec sessionStr
@@ -300,89 +310,103 @@ switch part
     fileNamePre = strcat(tmpPath, 'JAI_d*_04a_eyecor_', sessionStr, '.mat');
     tmpPath = strcat(desPath, '08b_itpc/');
     fileNamePost = strcat(tmpPath, 'JAI_d*_08b_itpc_', sessionStr, '.mat');
+  case 9
+    fileNamePre = 0;
   otherwise
     error('Something unexpected happend. part = %d is not defined' ...
           , part);
 end
 
-if isempty(fileNamePre)
-  numOfPrePart = fileNum;
-else
-  fileListPre = dir(fileNamePre);
-  if isempty(fileListPre)
-    error(['Selected part [%d] can not be executed, no input data '...
-           'available\n Please choose a previous part.']);
+if ~isequal(fileNamePre, 0)
+  if isempty(fileNamePre)
+    numOfPrePart = fileNum;
   else
-    fileListPre = struct2cell(fileListPre);
-    fileListPre = fileListPre(1,:);
-    numOfFiles  = length(fileListPre);
-    numOfPrePart = zeros(1, numOfFiles);
-    for i=1:1:numOfFiles
-      numOfPrePart(i) = sscanf(fileListPre{i}, strcat('JAI_d%d*', sessionStr, '.mat'));
-    end
-  end
-end
-
-if strcmp(dyadsSpec, 'all')                                                 % process all participants
-  numOfPart = numOfPrePart;
-elseif strcmp(dyadsSpec, 'specific')                                        % process specific participants
-  y = sprintf('%d ', numOfPrePart);
-    
-  selection = false;
-    
-  while selection == false
-    fprintf('\nThe following participants are available: %s\n', y);
-    fprintf(['Comma-seperate your selection and put it in squared ' ...
-               'brackets!\n']);
-    x = input('\nPlease make your choice! (i.e. [1,2,3]): ');
-      
-    if ~all(ismember(x, numOfPrePart))
-      cprintf([1,0.5,0], 'Wrong input!\n');
+    fileListPre = dir(fileNamePre);
+    if isempty(fileListPre)
+      cprintf([1,0.5,0], ['Selected part [%d] can not be executed, no '...'
+            'input data available\n Please choose a previous part.\n']);
+      clear desPath fileNamePost fileNamePre fileNum i numOfSources ...
+            selection sourceList srcPath x y dyadsSpec fileListPre ... 
+            sessionList sessionNum numOfSessions session part sessionStr ...
+            tmpPath
+      return;
     else
-      selection = true;
-      numOfPart = x;
-    end
-  end
-elseif strcmp(dyadsSpec, 'new')                                             % process only new participants
-  if session == 0
-    numOfPart = numOfPrePart;
-  else
-    fileListPost = dir(fileNamePost);
-    if isempty(fileListPost)
-      numOfPostPart = [];
-    else
-      fileListPost = struct2cell(fileListPost);
-      fileListPost = fileListPost(1,:);
-      numOfFiles  = length(fileListPost);
-      numOfPostPart = zeros(1, numOfFiles);
+      fileListPre = struct2cell(fileListPre);
+      fileListPre = fileListPre(1,:);
+      numOfFiles  = length(fileListPre);
+      numOfPrePart = zeros(1, numOfFiles);
       for i=1:1:numOfFiles
-        numOfPostPart(i) = sscanf(fileListPost{i}, strcat('JAI_d%d*', sessionStr, '.mat'));
+        numOfPrePart(i) = sscanf(fileListPre{i}, strcat('JAI_d%d*', sessionStr, '.mat'));
       end
     end
+  end
+
+  if strcmp(dyadsSpec, 'all')                                               % process all participants
+    numOfPart = numOfPrePart;
+  elseif strcmp(dyadsSpec, 'specific')                                      % process specific participants
+    y = sprintf('%d ', numOfPrePart);
+    
+    selection = false;
+    
+    while selection == false
+      fprintf('\nThe following participants are available: %s\n', y);
+      fprintf(['Comma-seperate your selection and put it in squared ' ...
+               'brackets!\n']);
+      x = input('\nPlease make your choice! (i.e. [1,2,3]): ');
+      
+      if ~all(ismember(x, numOfPrePart))
+        cprintf([1,0.5,0], 'Wrong input!\n');
+      else
+        selection = true;
+        numOfPart = x;
+      end
+    end
+  elseif strcmp(dyadsSpec, 'new')                                           % process only new participants
+    if session == 0
+      numOfPart = numOfPrePart;
+    else
+      fileListPost = dir(fileNamePost);
+      if isempty(fileListPost)
+        numOfPostPart = [];
+      else
+        fileListPost = struct2cell(fileListPost);
+        fileListPost = fileListPost(1,:);
+        numOfFiles  = length(fileListPost);
+        numOfPostPart = zeros(1, numOfFiles);
+        for i=1:1:numOfFiles
+          numOfPostPart(i) = sscanf(fileListPost{i}, strcat('JAI_d%d*', sessionStr, '.mat'));
+        end
+      end
   
-    numOfPart = numOfPrePart(~ismember(numOfPrePart, numOfPostPart));
-    if isempty(numOfPart)
-      cprintf([1,0.5,0], 'No new dyads available!\n');
-      fprintf('Data processing aborted.\n');
-      clear desPath fileNamePost fileNamePre fileNum i numOfPrePart ...
-          numOfSources selection sourceList srcPath x y dyadsSpec ...
-          fileListPost fileListPre numOfPostPart sessionList numOfFiles ...
-          sessionNum numOfSessions session numOfPart part sessionStr ...
-          dyads tmpPath
-      return;
+      numOfPart = numOfPrePart(~ismember(numOfPrePart, numOfPostPart));
+      if isempty(numOfPart)
+        cprintf([1,0.5,0], 'No new dyads available!\n');
+        fprintf('Data processing aborted.\n');
+        clear desPath fileNamePost fileNamePre fileNum i numOfPrePart ...
+              numOfSources selection sourceList srcPath x y dyadsSpec ...
+              fileListPost fileListPre numOfPostPart sessionList ...
+              numOfFiles sessionNum numOfSessions session numOfPart ...
+              part sessionStr dyads tmpPath
+        return;
+      end
     end
   end
-end
 
-y = sprintf('%d ', numOfPart);
-fprintf(['\nThe following participants will be processed ' ... 
+  y = sprintf('%d ', numOfPart);
+  fprintf(['\nThe following participants will be processed ' ... 
          'in the selected part [%d]:\n'],  part);
-fprintf('%s\n\n', y);
+  fprintf('%s\n\n', y);
 
-clear fileNamePost fileNamePre fileNum i numOfPrePart ...
-      numOfSources selection sourceList x y dyads fileListPost ...
-      fileListPre numOfPostPart sessionList sessionNum numOfSessions ...
-      session dyadsSpec numOfFiles tmpPath
+  clear fileNamePost fileNamePre fileNum i numOfPrePart ...
+        numOfSources selection sourceList x y dyads fileListPost ...
+        fileListPre numOfPostPart sessionList sessionNum numOfSessions ...
+        session dyadsSpec numOfFiles tmpPath
+else
+  fprintf('\n');
+  clear fileNamePost fileNamePre fileNum i numOfSources selection ...
+        sourceList x y dyads sessionList sessionNum numOfSessions ...
+        session dyadsSpec numOfFiles tmpPath
+end
 
 % -------------------------------------------------------------------------
 % Data processing main loop
@@ -520,8 +544,26 @@ while sessionStatus == true
           selection = false;
         end
       end
-    case 8
+     case 8
       JAI_main_8;
+      selection = false;
+      while selection == false
+        fprintf('Continue data processing with:\n');
+        fprintf('[9] - Averaging over dyads\n');
+        x = input('\nSelect [y/n]: ','s');
+        if strcmp('y', x)
+          selection = true;
+          sessionStatus = true;
+          sessionPart = 9;
+        elseif strcmp('n', x)
+          selection = true;
+          sessionStatus = false;
+        else
+          selection = false;
+        end
+      end
+    case 9
+      JAI_main_9;
       sessionStatus = false;
     otherwise
       sessionStatus = false;

@@ -2,7 +2,7 @@
 if ~exist('sessionStr', 'var')
   cfg           = [];
   cfg.subFolder = '06b_hilbert/';
-  cfg.filename  = 'JAI_d01_06b_hilbert20Hz';
+  cfg.filename  = 'JAI_d01_06b_hilbertGamma';
   sessionStr    = sprintf('%03d', JAI_getSessionNum( cfg ));                % estimate current session number
 end
 
@@ -12,7 +12,7 @@ end
 
 if ~exist('numOfPart', 'var')                                               % estimate number of participants in segmented data folder
   sourceList    = dir([strcat(desPath, '06b_hilbert/'), ...
-                       strcat('*20Hz_', sessionStr, '.mat')]);
+                       strcat('*Gamma_', sessionStr, '.mat')]);
   sourceList    = struct2cell(sourceList);
   sourceList    = sourceList(1,:);
   numOfSources  = length(sourceList);
@@ -20,7 +20,7 @@ if ~exist('numOfPart', 'var')                                               % es
 
   for i=1:1:numOfSources
     numOfPart(i)  = sscanf(sourceList{i}, ...
-                    strcat('JAI_d%d_06b_hilbert20Hz_', sessionStr, '.mat'));
+                    strcat('JAI_d%d_06b_hilbertGamma_', sessionStr, '.mat'));
   end
 end
 

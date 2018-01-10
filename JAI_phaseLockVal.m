@@ -36,7 +36,6 @@ function [ data ] = JAI_phaseLockVal( cfg, data )
 % Get config options
 % Get number of participants
 % -------------------------------------------------------------------------
-tic;
 cfg.winlen = ft_getopt(cfg, 'winlen', 5);
 
 % -------------------------------------------------------------------------
@@ -52,7 +51,6 @@ dataTmp.centerFreq = data.centerFreq;
 dataTmp.bpFreq = data.bpFreq;
 
 data = dataTmp;
-toc;
 end
 
 function [data_out] = phaseLockingValue(cfgPLV, dataPart1, dataPart2)
