@@ -60,7 +60,15 @@ if max(cfgITPC.toi) > max(data_in.time{1})                                  % ch
   error('toi is larger than the trial length. - Use another toi or resegment the trials.');
 end
 
-trialinfo = unique(data_in.trialinfo, 'stable');                            % extrakt trialinfo
+% -------------------------------------------------------------------------
+% Load general definitions
+% -------------------------------------------------------------------------
+load('JAI_generalDefinitions.mat', 'generalDefinitions');    
+trialinfo     = unique(data_in.trialinfo, 'stable');                        % extract trialinfo
+tf            = ismember(generalDefinitions.condNum, trialinfo);            % bring trials into a correct order
+idx           = 1:length(generalDefinitions.condNum);
+idx           = idx(tf);
+trialinfo     = generalDefinitions.condNum(idx);
 
 % -------------------------------------------------------------------------
 % Calculate spectrum
@@ -98,7 +106,7 @@ data_out.itpc{1, length(trialinfo)} = [];
 data_out.time{1, length(trialinfo)} = [];
 
 for i = 1:1:length(trialinfo)
-  trials = find(data_in.trialinfo == trialinfo(i));
+  trials = find(data_freq.trialinfo == trialinfo(i));
   N = size(trials, 1);
   data_out.itpc{i} = sum(F(trials,:,:,:), 1);                               % sum angles
   data_out.itpc{i} = abs(data_out.itpc{i})/N;                               % take the absolute value and normalize

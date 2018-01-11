@@ -36,11 +36,9 @@ else
 end
 
 % -------------------------------------------------------------------------
-% Specify default trial order
+% Load general definitions
 % -------------------------------------------------------------------------
-trialinfoOrg = [111, 2, 3, 31, 32, 41, 42, 51, 52, 105, 100, ...            % general trial order
-                101, 102, 7, 8, 9, 10, 11, 12, 20, 21, 22, ...
-                4, 5, 6];                                                 
+load('JAI_generalDefinitions.mat', 'generalDefinitions');
 
 % -------------------------------------------------------------------------
 % Select dyads
@@ -75,7 +73,7 @@ fprintf('\n');
 % -------------------------------------------------------------------------
 % Load and organize data
 % -------------------------------------------------------------------------
-data_mplv.avgData.trialinfo = trialinfoOrg;
+data_mplv.avgData.trialinfo = generalDefinitions.condNum;
 
 data{1, length(listOfDyads)} = [];
 trialinfo{1, length(listOfDyads)} = []; 
@@ -99,7 +97,8 @@ for i=1:1:length(listOfDyads)
 end
 fprintf('\n');
 
-data = fixTrialOrder(data, trialinfo, trialinfoOrg, listOfDyads);
+data = fixTrialOrder( data, trialinfo, generalDefinitions.condNum, ...
+                      listOfDyads );
 
 for j=1:1:length(listOfDyads)
   data{j} = cat(3, data{j}{:});

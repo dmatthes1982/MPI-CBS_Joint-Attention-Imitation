@@ -31,7 +31,7 @@ end
 for i = numOfPart
   cfg       = [];
   cfg.path  = srcPath;
-  cfg.part  = i;  
+  cfg.dyad  = i;  
 
   fprintf('Import data of dyad %d from: %s ...\n', i, cfg.path);
   ft_info off;

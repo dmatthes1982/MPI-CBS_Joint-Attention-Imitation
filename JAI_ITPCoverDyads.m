@@ -23,11 +23,9 @@ path      = ft_getopt(cfg, 'path', ...
 session   = ft_getopt(cfg, 'session', 1);
 
 % -------------------------------------------------------------------------
-% Specify default trial order
+% Load general definitions
 % -------------------------------------------------------------------------
-trialinfoOrg = [111, 2, 3, 31, 32, 41, 42, 51, 52, 105, 100, ...            % general trial order
-                101, 102, 7, 8, 9, 10, 11, 12, 20, 21, 22, ...
-                4, 5, 6];                                                 
+load('JAI_generalDefinitions.mat', 'generalDefinitions');                                               
 
 % -------------------------------------------------------------------------
 % Select dyads
@@ -60,7 +58,7 @@ fprintf('\n');
 % -------------------------------------------------------------------------
 % Load and organize data
 % -------------------------------------------------------------------------
-data_out.trialinfo = trialinfoOrg;
+data_out.trialinfo = generalDefinitions.condNum;
 
 data{1, 2 * numOfDyads} = [];
 trialinfo{1, 2 * numOfDyads} = []; 
@@ -83,7 +81,8 @@ for i=1:1:numOfDyads
 end
 fprintf('\n');
 
-data = fixTrialOrder(data, trialinfo, trialinfoOrg, repmat(listOfDyads,1,2));
+data = fixTrialOrder( data, trialinfo, generalDefinitions.condNum, ...
+                      repmat(listOfDyads,1,2) );
 
 for j=1:1:2*numOfDyads
   data{j} = cat(4, data{j}{:});

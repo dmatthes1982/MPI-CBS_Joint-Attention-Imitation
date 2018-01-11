@@ -54,12 +54,15 @@ data = dataTmp;
 end
 
 function [data_out] = phaseLockingValue(cfgPLV, dataPart1, dataPart2)
+% -------------------------------------------------------------------------
+% Load general definitions
+% -------------------------------------------------------------------------
+load('JAI_generalDefinitions.mat', 'generalDefinitions');
+
 %--------------------------------------------------------------------------
 % Initialze variables
 %--------------------------------------------------------------------------
-markerTemplate          = [111, 2, 3, 31, 32, 41, 42, 51, 52, 105, 100, ... % template including all available markers in correct order
-                           101, 102, 7, 8, 9, 10, 11, 12, 20, 21, 22, ...
-                           4, 5, 6];                      
+markerTemplate          = generalDefinitions.condNum;                       % template including all available markers in correct order
 numOfElec               = length(dataPart1.label);                          % number of electrodes
 connections             = numOfElec;                                        % number of connections
 timeOrg                 = dataPart1.time;                                   % extract original time vector
