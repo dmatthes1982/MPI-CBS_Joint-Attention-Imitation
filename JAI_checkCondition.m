@@ -9,42 +9,26 @@ function [ num ] = JAI_checkCondition( condition )
 % Copyright (C) 2017, Daniel Matthes, MPI CBS
 
 % -------------------------------------------------------------------------
-% Default values
+% Load general definitions
 % -------------------------------------------------------------------------
-defaultVals = [2, 3, 31, 32, 41, 42, 51, 52, 105, 111];
+load('JAI_generalDefinitions.mat', 'generalDefinitions');
 
 % -------------------------------------------------------------------------
 % Check Condition
 % -------------------------------------------------------------------------
 if isnumeric(condition)                                                     % if condition is already numeric
-  if isempty(find(defaultVals == condition, 1))
+  if ~any(generalDefinitions.condNum == condition)
     error('%d is not a valid condition', condition);
   else
     num = condition;
   end
 else                                                                        % if condition is specified as string
-  switch condition
-    case 'ViewMotion'
-      num = 2;
-    case 'SameMotion'
-      num = 3;
-    case 'ConImi12'
-      num = 31;
-    case 'ConImi21'
-      num = 32;
-    case 'ConOthAct12'
-      num = 41;
-    case 'ConOthAct21'
-      num = 42;
-    case 'SponImiI'
-      num = 51;
-    case 'SponImiII'
-      num = 52;
-    case 'Conversation'
-      num = 105;
-    case 'SameObject'
-      num = 111;
-    otherwise
-      error('%s is not a valid condition', condition);
+  elements = strcmp(generalDefinitions.condString, condition);
+  if ~any(elements)
+     error('%s is not a valid condition', condition);
+  else
+    num = generalDefinitions.condNum(elements);
   end
+end
+
 end

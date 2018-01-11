@@ -15,7 +15,7 @@ function [ data_mplv ] = JAI_mPLVoverDyads( cfg )
 % 
 % See also RPS_CALCMEANPLV
 
-% Copyright (C) 2017, Daniel Matthes, MPI CBS 
+% Copyright (C) 2018, Daniel Matthes, MPI CBS 
 
 % -------------------------------------------------------------------------
 % Get and check config options
