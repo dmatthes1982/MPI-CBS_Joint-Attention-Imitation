@@ -146,7 +146,7 @@ if avgOverDyads == true
   fprintf('Saving mean PLVs over dyads at gamma (31.48Hz) in:\n'); 
   fprintf('%s ...\n', file_path);
   JAI_saveData(cfg, 'data_mplvod_gamma', data_mplvod_gamma);
-  fprintf('Data stored!\n');
+  fprintf('Data stored!\n\n');
   clear data_mplvod_gamma
 end
 
@@ -172,12 +172,12 @@ if avgOverDyads == true
   cfg.path        = strcat(desPath, '08b_itpc/');
   cfg.session     = str2num(sessionStr);                                    %#ok<ST2NM>
   
-  data_itpcod     = JAI_IPTCoverDyads( cfg );
+  data_itpcod     = JAI_ITPCoverDyads( cfg );
   
   % export the averaged IPTCs into a *.mat file
   cfg             = [];
-  cfg.desFolder   = strcat(desPath, '09b_iptcod/');
-  cfg.filename    = 'JAI_09b_iptcod2Hz';
+  cfg.desFolder   = strcat(desPath, '09b_itpcod/');
+  cfg.filename    = 'JAI_09b_itpcod';
   cfg.sessionStr  = sessionStr;
 
   file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
@@ -185,9 +185,9 @@ if avgOverDyads == true
                    
   fprintf('Saving IPTCs over dyads in:\n'); 
   fprintf('%s ...\n', file_path);
-  JAI_saveData(cfg, 'data_iptcod', data_iptcod);
+  JAI_saveData(cfg, 'data_itpcod', data_itpcod);
   fprintf('Data stored!\n');
-  clear data_iptcod
+  clear data_itpcod
 end
 
 %% clear workspace

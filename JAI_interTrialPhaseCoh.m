@@ -82,10 +82,9 @@ cfgFrq.showcallinfo = 'no';
 cfgFrq.feedback     = 'no';
 
 ft_notice off;
-for i=1:1:length(data_in.time)
-  data_in.time{i} = data_in.time{1};
-end
-data_freq = ft_freqanalysis(cfgFrq, data_in);
+data_in.time(:) = { 0:(1/data_in.fsample): ...
+                    ((length(data_in.time{1})-1)/data_in.fsample) };
+data_freq       = ft_freqanalysis(cfgFrq, data_in);
 ft_notice on;
 
 % -------------------------------------------------------------------------

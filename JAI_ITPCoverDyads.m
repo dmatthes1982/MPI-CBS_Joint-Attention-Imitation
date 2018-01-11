@@ -30,6 +30,8 @@ load('JAI_generalDefinitions.mat', 'generalDefinitions');
 % -------------------------------------------------------------------------
 % Select dyads
 % -------------------------------------------------------------------------    
+fprintf('Averaging ITPC values over dyads...\n');
+
 dyadsList   = dir([path, sprintf('JAI_d*_08b_itpc_%03d.mat', session)]);
 dyadsList   = struct2cell(dyadsList);
 dyadsList   = dyadsList(1,:);
@@ -92,7 +94,6 @@ data = cat(5, data{:});
 % -------------------------------------------------------------------------
 % Estimate averaged Phase Locking Value (over dyads)
 % ------------------------------------------------------------------------- 
-fprintf('Averaging ITPC values over dyads...\n\n');
 data = nanmean(data, 5);
 data = squeeze(num2cell(data, [1 2 3]))';
 

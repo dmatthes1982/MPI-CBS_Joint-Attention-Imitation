@@ -134,7 +134,7 @@ for i = numOfPart
   fprintf('The ITPC data of dyad %d will be saved in:\n', i); 
   fprintf('%s ...\n', file_path);
   JAI_saveData(cfg, 'data_itpc', data_itpc);
-  fprintf('Data stored!\n');
+  fprintf('Data stored!\n\n');
   clear data_itpc
 end
 

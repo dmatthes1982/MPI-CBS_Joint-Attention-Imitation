@@ -43,6 +43,8 @@ load('JAI_generalDefinitions.mat', 'generalDefinitions');
 % -------------------------------------------------------------------------
 % Select dyads
 % -------------------------------------------------------------------------    
+fprintf('Averaging of Phase Locking Values over dyads at %s...\n', passband);
+
 dyadsList   = dir([path, sprintf('JAI_d*_07c_mplv%s_%03d.mat', ...
                    fileSuffix, session)]);
 dyadsList   = struct2cell(dyadsList);
@@ -97,7 +99,7 @@ for i=1:1:length(listOfDyads)
 end
 fprintf('\n');
 
-data = fixTrialOrder( data, trialinfo, generalDefinitions.condNum, ...
+data = fixTrialOrder( data, trialinfo, generalDefinitions.condNum', ...
                       listOfDyads );
 
 for j=1:1:length(listOfDyads)
@@ -110,7 +112,6 @@ end
 % -------------------------------------------------------------------------
 % Estimate averaged Phase Locking Value (over dyads)
 % ------------------------------------------------------------------------- 
-fprintf('Averaging of Phase Locking Values over dyads at %s...\n\n', passband);
 if length(listOfDyads) > 1
   data = nanmean(data, 4);
 else
