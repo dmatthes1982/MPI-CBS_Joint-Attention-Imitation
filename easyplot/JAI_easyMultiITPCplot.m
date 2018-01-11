@@ -82,7 +82,9 @@ itpclim = [itpcMin itpcMax];
 % -------------------------------------------------------------------------
 % load head layout informations
 % -------------------------------------------------------------------------
-load('mpi_customized_acticap32.mat','lay');
+filepath = fileparts(mfilename('fullpath'));
+load(sprintf('%s/../headmodels/mpi_customized_acticap32.mat', filepath),...
+     'lay');
 
 [selchan, sellay] = match_str(dataPlot.label, lay.label);                   % take the subselection of channels that is contained in the layout
 chanX             = lay.pos(sellay, 1);

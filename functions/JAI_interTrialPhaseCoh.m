@@ -63,7 +63,9 @@ end
 % -------------------------------------------------------------------------
 % Load general definitions
 % -------------------------------------------------------------------------
-load('JAI_generalDefinitions.mat', 'generalDefinitions');    
+filepath = fileparts(mfilename('fullpath'));
+load(sprintf('%s/../general/JAI_generalDefinitions.mat', filepath), ...
+     'generalDefinitions');    
 trialinfo     = unique(data_in.trialinfo, 'stable');                        % extract trialinfo
 tf            = ismember(generalDefinitions.condNum, trialinfo);            % bring trials into a correct order
 idx           = 1:length(generalDefinitions.condNum);

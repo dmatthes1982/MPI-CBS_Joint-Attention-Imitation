@@ -25,7 +25,9 @@ session   = ft_getopt(cfg, 'session', 1);
 % -------------------------------------------------------------------------
 % Load general definitions
 % -------------------------------------------------------------------------
-load('JAI_generalDefinitions.mat', 'generalDefinitions');                                               
+filepath = fileparts(mfilename('fullpath'));
+load(sprintf('%s/../general/JAI_generalDefinitions.mat', filepath), ...
+     'generalDefinitions');                                               
 
 % -------------------------------------------------------------------------
 % Select dyads

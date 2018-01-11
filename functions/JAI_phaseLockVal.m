@@ -57,7 +57,9 @@ function [data_out] = phaseLockingValue(cfgPLV, dataPart1, dataPart2)
 % -------------------------------------------------------------------------
 % Load general definitions
 % -------------------------------------------------------------------------
-load('JAI_generalDefinitions.mat', 'generalDefinitions');
+filepath = fileparts(mfilename('fullpath'));
+load(sprintf('%s/../general/JAI_generalDefinitions.mat', filepath), ...
+     'generalDefinitions');
 
 %--------------------------------------------------------------------------
 % Initialze variables

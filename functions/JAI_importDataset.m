@@ -39,7 +39,9 @@ headerfile = sprintf('%sDualEEG_JAI_%02d.vhdr', path, dyad);
 % -------------------------------------------------------------------------
 % Load general definitions
 % -------------------------------------------------------------------------
-load('JAI_generalDefinitions.mat', 'generalDefinitions');
+filepath = fileparts(mfilename('fullpath'));
+load(sprintf('%s/../general/JAI_generalDefinitions.mat', filepath), ...
+     'generalDefinitions');
 
 % definition of all possible stimuli, two for each condition, the first on 
 % is the original one and the second one handles the 'video trigger bug'

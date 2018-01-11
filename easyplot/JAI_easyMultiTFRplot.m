@@ -59,6 +59,9 @@ ft_warning off;
 % -------------------------------------------------------------------------
 % Plot time frequency spectrum
 % -------------------------------------------------------------------------
+filepath = fileparts(mfilename('fullpath'));
+load(sprintf('%s/../headmodels/mpi_customized_acticap32.mat', filepath),...
+     'lay');
 
 colormap 'jet';
 
@@ -70,7 +73,7 @@ cfg.ylim          = freqlim;
 cfg.zlim          = 'maxmin';
 cfg.trials        = trl;
 cfg.channel       = 1:1:28;
-cfg.layout        = 'mpi_customized_acticap32.mat';
+cfg.layout        = lay;
 
 cfg.showlabels    = 'no';
 cfg.showoutline   = 'yes';
