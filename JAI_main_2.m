@@ -29,49 +29,71 @@ end
 % export the preprocessed data into a *.mat file
 
 selection = false;
-  while selection == false
-    cprintf([0,0.6,0], 'Please select sampling rate for preprocessing:\n');
-    fprintf('[1] - 500 Hz (original sampling rate)\n');
-    fprintf('[2] - 250 Hz (downsampling factor 2)\n');
-    fprintf('[3] - 125 Hz (downsampling factor 4)\n');
-    x = input('Option: ');
-  
-    switch x
-      case 1
-        selection = true;
-        samplingRate = 500;
-      case 2
-        selection = true;
-        samplingRate = 250;
-      case 3
-        selection = true;
-        samplingRate = 125;
-      otherwise
-        cprintf([1,0.5,0], 'Wrong input!\n');
-    end
-  end
-  fprintf('\n');
+while selection == false
+  cprintf([0,0.6,0], 'Please select sampling rate for preprocessing:\n');
+  fprintf('[1] - 500 Hz (original sampling rate)\n');
+  fprintf('[2] - 250 Hz (downsampling factor 2)\n');
+  fprintf('[3] - 125 Hz (downsampling factor 4)\n');
+  x = input('Option: ');
 
-  selection = false;
-  while selection == false
-    cprintf([0,0.6,0], 'Please select favoured reference:\n');
-    fprintf('[1] - Linked mastoid (''TP9'', ''TP10'')\n');
-    fprintf('[2] - Common average reference\n');
-    x = input('Option: ');
-  
-    switch x
-      case 1
-        selection = true;
-        refchannel = 'TP10';
-      case 2
-        selection = true;
-        refchannel = {'all', '-V1', '-V2'};
-      otherwise
-        cprintf([1,0.5,0], 'Wrong input!\n');
-    end
+  switch x
+    case 1
+      selection = true;
+      samplingRate = 500;
+    case 2
+      selection = true;
+      samplingRate = 250;
+    case 3
+      selection = true;
+      samplingRate = 125;
+    otherwise
+      cprintf([1,0.5,0], 'Wrong input!\n');
   end
-  fprintf('\n');
+end
+fprintf('\n');
+
+selection = false;
+while selection == false
+  cprintf([0,0.6,0], 'Please select favoured reference:\n');
+  fprintf('[1] - Linked mastoid (''TP9'', ''TP10'')\n');
+  fprintf('[2] - Common average reference\n');
+  x = input('Option: ');
+
+  switch x
+    case 1
+      selection = true;
+      refchannel = 'TP10';
+      reference = {'LM'};
+    case 2
+      selection = true;
+      refchannel = {'all', '-V1', '-V2'};
+      reference = {'CAR'};
+    otherwise
+      cprintf([1,0.5,0], 'Wrong input!\n');
+  end
+end
+fprintf('\n');
+
+% Write selected settings to settings file
+file_path = [desPath '00_settings/' sprintf('settings_%s', sessionStr) '.xls'];
+if ~(exist(file_path, 'file') == 2)                                         % check if settings file already exist
+  cfg = [];
+  cfg.desFolder   = [desPath '00_settings/'];
+  cfg.type        = 'settings';
+  cfg.sessionStr  = sessionStr;
   
+  JAI_createTbl(cfg);                                                       % create settings file
+end
+
+T = readtable(file_path);                                                   % update settings table
+delete(file_path);
+warning off;
+T.dyad(numOfPart) = numOfPart;
+T.fsample(numOfPart) = samplingRate;
+T.reference(numOfPart) = reference;
+warning on;
+writetable(T, file_path);
+
 for i = numOfPart
   cfg             = [];
   cfg.srcFolder   = strcat(desPath, '01_raw/');
@@ -110,4 +132,4 @@ end
 
 %% clear workspace
 clear file_path cfg sourceList numOfSources i selection samplingRate x ...
-      refchannel
+      refchannel reference T

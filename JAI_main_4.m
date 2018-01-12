@@ -32,6 +32,59 @@ end
 % 2. Verify the estimated components by using the ft_databrowser function
 % 3. Remove eye artifacts
 
+selection = false;
+while selection == false
+  fprintf('Do you want to use the default threshold (0.8) for EOG-artifact estimation?\n');
+  x = input('Select [y/n]: ','s');
+  if strcmp('y', x)
+    selection = true;
+    threshold = 0.8;
+  elseif strcmp('n', x)
+    selection = true;
+    threshold = [];
+  else
+    selection = false;
+  end
+end
+
+if isempty(threshold)
+  selection = false;
+  while selection == false
+    fprintf('\nSpecify a threshold value in a range between 0 and 1!\n');
+    x = input('Value: ');
+    if isnumeric(x)
+      if (x < 0 || x > 1)
+        cprintf([1,0.5,0], 'Wrong input!\n');
+        selection = false;
+      else
+        threshold = x;
+        selection = true;
+      end
+    else
+      cprintf([1,0.5,0], 'Wrong input!\n');
+      selection = false;
+    end
+  end
+end
+
+% Write selected settings to settings file
+file_path = [desPath '00_settings/' sprintf('settings_%s', sessionStr) '.xls'];
+if ~(exist(file_path, 'file') == 2)                                         % check if settings file already exist
+  cfg = [];
+  cfg.desFolder   = [desPath '00_settings/'];
+  cfg.type        = 'settings';
+  cfg.sessionStr  = sessionStr;
+  
+  JAI_createTbl(cfg);                                                       % create settings file
+end
+
+T = readtable(file_path);                                                   % update settings table
+delete(file_path);
+warning off;
+T.ICAcorrVal(numOfPart) = threshold;
+warning on;
+writetable(T, file_path);
+
 for i = numOfPart
   cfg             = [];
   cfg.srcFolder   = strcat(desPath, '03a_icacomp/');
@@ -50,7 +103,10 @@ for i = numOfPart
   
   % Find EOG-like ICA Components (Correlation with EOGV and EOGH, 80 %
   % confirmity)
-  data_eogcomp      = JAI_corrComp(data_icacomp, data_eogchan);
+  cfg         = [];
+  cfg.threshold = threshold;
+  
+  data_eogcomp      = JAI_corrComp(cfg, data_icacomp, data_eogchan);
   
   clear data_eogchan
   fprintf('\n');
@@ -107,4 +163,4 @@ for i = numOfPart
 end
 
 %% clear workspace
-clear file_path cfg sourceList numOfSources i
+clear file_path cfg sourceList numOfSources i threshold selection x T

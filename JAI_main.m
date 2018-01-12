@@ -42,6 +42,9 @@ if newPaths == true
   desPath = strcat(desPath, '/');
 end
 
+if ~exist(strcat(desPath, '00_settings'), 'dir')
+  mkdir(strcat(desPath, '00_settings'));
+end
 if ~exist(strcat(desPath, '01_raw'), 'dir')
   mkdir(strcat(desPath, '01_raw'));
 end
