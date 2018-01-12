@@ -5,7 +5,7 @@ fprintf('Copyright (C) 2017, Daniel Matthes, MPI CBS\n');
 fprintf('------------------------------------------------\n');
 
 % -------------------------------------------------------------------------
-% Add subfolders to path
+% Add directory and subfolders to path
 % -------------------------------------------------------------------------
 addpath('./:./easyplot:./functions:./general:./headmodels:./utilities');
 
@@ -51,14 +51,14 @@ end
 if ~exist(strcat(desPath, '03a_icacomp'), 'dir')
   mkdir(strcat(desPath, '03a_icacomp'));
 end
-if ~exist(strcat(desPath, '03b_eogcomp'), 'dir')
-  mkdir(strcat(desPath, '03b_eogcomp'));
+if ~exist(strcat(desPath, '03b_eogchan'), 'dir')
+  mkdir(strcat(desPath, '03b_eogchan'));
 end
-if ~exist(strcat(desPath, '04a_eyecor'), 'dir')
-  mkdir(strcat(desPath, '04a_eyecor'));
+if ~exist(strcat(desPath, '04a_eogcomp'), 'dir')
+  mkdir(strcat(desPath, '04a_eogcomp'));
 end
-if ~exist(strcat(desPath, '04b_tfr'), 'dir')
-  mkdir(strcat(desPath, '04b_tfr'));
+if ~exist(strcat(desPath, '04b_eyecor'), 'dir')
+  mkdir(strcat(desPath, '04b_eyecor'));
 end
 if ~exist(strcat(desPath, '05a_autoart'), 'dir')
   mkdir(strcat(desPath, '05a_autoart'));
@@ -87,11 +87,14 @@ end
 if ~exist(strcat(desPath, '08b_itpc'), 'dir')
   mkdir(strcat(desPath, '08b_itpc'));
 end
-if ~exist(strcat(desPath, '09a_mplvod'), 'dir')
-  mkdir(strcat(desPath, '09a_mplvod'));
+if ~exist(strcat(desPath, '09a_tfr'), 'dir')
+  mkdir(strcat(desPath, '09a_tfr'));
 end
-if ~exist(strcat(desPath, '09b_itpcod'), 'dir')
-  mkdir(strcat(desPath, '09b_itpcod'));
+if ~exist(strcat(desPath, '10a_mplvod'), 'dir')
+  mkdir(strcat(desPath, '10a_mplvod'));
+end
+if ~exist(strcat(desPath, '10b_itpcod'), 'dir')
+  mkdir(strcat(desPath, '10b_itpcod'));
 end
 
 clear sessionStr numOfPart part newPaths
@@ -210,16 +213,17 @@ if session == 0
 else
   while selection == false
     fprintf('\nPlease select what you want to do with the selected dyads:\n');
-    fprintf('[1] - Import and basic preprocessing\n');
-    fprintf('[2] - Preprocessing, filtering, re-referencing\n');
-    fprintf('[3] - Estimation of eye artifacts (via ICA decomposition)\n');
-    fprintf('[4] - Correction of eye artifacts \n');
-    fprintf('[5] - Automatic and manual artifact detection\n');
-    fprintf('[6] - Narrow band filtering and Hilbert transform\n'); 
-    fprintf('[7] - Estimation of Phase Locking Values (PLV)\n');
-    fprintf('[8] - Estimation of Inter Trial Phase Coherences (ITPC)\n');
-    fprintf('[9] - Averaging over dyads\n');
-    fprintf('[10] - Quit data processing\n\n');
+    fprintf('[1]  - Import and basic preprocessing\n');
+    fprintf('[2]  - Preprocessing, filtering, re-referencing\n');
+    fprintf('[3]  - ICA decomposition\n');
+    fprintf('[4]  - Estimation and correction of eye artifacts \n');
+    fprintf('[5]  - Automatic and manual artifact detection\n');
+    fprintf('[6]  - Narrow band filtering and Hilbert transform\n'); 
+    fprintf('[7]  - Estimation of Phase Locking Values (PLV)\n');
+    fprintf('[8]  - Estimation of Inter Trial Phase Coherences (ITPC)\n');
+    fprintf('[9]  - Power analysis (TFR)\n');
+    fprintf('[10] - Averaging over dyads\n');
+    fprintf('[11] - Quit data processing\n\n');
     x = input('Option: ');
   
     switch x
@@ -251,6 +255,9 @@ else
         part = 9;
         selection = true;
       case 10
+        part = 10;
+        selection = true;
+      case 11
         fprintf('\nData processing aborted.\n');
         clear selection i x y srcPath desPath session sessionList ...
             sessionNum numOfSessions dyadsSpec sessionStr
@@ -288,21 +295,21 @@ switch part
   case 3
     tmpPath = strcat(desPath, '02_preproc/');
     fileNamePre = strcat(tmpPath, 'JAI_d*_02_preproc_', sessionStr, '.mat');
-    tmpPath = strcat(desPath, '03b_eogcomp/');
-    fileNamePost = strcat(tmpPath, 'JAI_d*_03b_eogcomp_', sessionStr, '.mat');
+    tmpPath = strcat(desPath, '03b_eogchan/');
+    fileNamePost = strcat(tmpPath, 'JAI_d*_03b_eogchan_', sessionStr, '.mat');
   case 4
-    tmpPath = strcat(desPath, '03b_eogcomp/');
-    fileNamePre = strcat(tmpPath, 'JAI_d*_03b_eogcomp_', sessionStr, '.mat');
-    tmpPath = strcat(desPath, '04b_tfr/');
-    fileNamePost = strcat(tmpPath, 'JAI_d*_04b_tfr_', sessionStr, '.mat');
+    tmpPath = strcat(desPath, '03b_eogchan/');
+    fileNamePre = strcat(tmpPath, 'JAI_d*_03b_eogchan_', sessionStr, '.mat');
+    tmpPath = strcat(desPath, '04b_eyecor/');
+    fileNamePost = strcat(tmpPath, 'JAI_d*_04b_eyecor_', sessionStr, '.mat');
   case 5
-    tmpPath = strcat(desPath, '04a_eyecor/');
-    fileNamePre = strcat(tmpPath, 'JAI_d*_04a_eyecor_', sessionStr, '.mat');
+    tmpPath = strcat(desPath, '04b_eyecor/');
+    fileNamePre = strcat(tmpPath, 'JAI_d*_04b_eyecor_', sessionStr, '.mat');
     tmpPath = strcat(desPath, '05b_allart/');
     fileNamePost = strcat(tmpPath, 'JAI_d*_05b_allart_', sessionStr, '.mat');
   case 6
-    tmpPath = strcat(desPath, '04a_eyecor/');
-    fileNamePre = strcat(tmpPath, 'JAI_d*_04a_eyecor_', sessionStr, '.mat');
+    tmpPath = strcat(desPath, '04b_eyecor/');
+    fileNamePre = strcat(tmpPath, 'JAI_d*_04b_eyecor_', sessionStr, '.mat');
     tmpPath = strcat(desPath, '06b_hilbert/');
     fileNamePost = strcat(tmpPath, 'JAI_d*_06b_hilbert20Hz_', sessionStr, '.mat');
   case 7
@@ -311,11 +318,16 @@ switch part
     tmpPath = strcat(desPath, '07c_mplv/');
     fileNamePost = strcat(tmpPath, 'JAI_d*_07c_mplv20Hz_', sessionStr, '.mat');
   case 8
-    tmpPath = strcat(desPath, '04a_eyecor/');
-    fileNamePre = strcat(tmpPath, 'JAI_d*_04a_eyecor_', sessionStr, '.mat');
+    tmpPath = strcat(desPath, '04b_eyecor/');
+    fileNamePre = strcat(tmpPath, 'JAI_d*_04b_eyecor_', sessionStr, '.mat');
     tmpPath = strcat(desPath, '08b_itpc/');
     fileNamePost = strcat(tmpPath, 'JAI_d*_08b_itpc_', sessionStr, '.mat');
   case 9
+    tmpPath = strcat(desPath, '04b_eyecor/');
+    fileNamePre = strcat(tmpPath, 'JAI_d*_04b_eyecor_', sessionStr, '.mat');
+    tmpPath = strcat(desPath, '09a_tfr/');
+    fileNamePost = strcat(tmpPath, 'JAI_d*_09a_tfr_', sessionStr, '.mat');
+  case 10
     fileNamePre = 0;
   otherwise
     error('Something unexpected happend. part = %d is not defined' ...
@@ -446,7 +458,7 @@ while sessionStatus == true
       selection = false;
       while selection == false
         fprintf('Continue data processing with:\n');
-        fprintf('[3] - Estimation of eye artifacts (via ICA decomposition)?\n');
+        fprintf('[3] - ICA decomposition?\n');
         x = input('\nSelect [y/n]: ','s');
         if strcmp('y', x)
           selection = true;
@@ -464,7 +476,7 @@ while sessionStatus == true
       selection = false;
       while selection == false
         fprintf('Continue data processing with:\n');
-        fprintf('[4] - Correction of eye artifacts?\n');
+        fprintf('[4] - Estimation and correction of eye artifacts?\n');
         x = input('\nSelect [y/n]: ','s');
         if strcmp('y', x)
           selection = true;
@@ -500,17 +512,30 @@ while sessionStatus == true
       selection = false;
       while selection == false
         fprintf('Continue data processing with:\n');
-        fprintf('[6] - Narrow band filtering and Hilbert transform?\n');
-        x = input('\nSelect [y/n]: ','s');
-        if strcmp('y', x)
-          selection = true;
-          sessionStatus = true;
-          sessionPart = 6;
-        elseif strcmp('n', x)
-          selection = true;
-          sessionStatus = false;
-        else
-          selection = false;
+        fprintf('[6]  - Narrow band filtering and Hilbert transform?\n');
+        fprintf('[8]  - Estimation of Inter Trial Phase Coherences (ITPC)?\n');
+        fprintf('[9]  - Power analysis (TFR)?\n');
+        fprintf('[11] - Quit data processing?\n');
+        x = input('\nSelect one of these options: ');
+        switch x
+          case 6
+            selection = true;
+            sessionStatus = true;
+            sessionPart = 6;
+          case 8
+            selection = true;
+            sessionStatus = true;
+            sessionPart = 8;
+          case 9
+            selection = true;
+            sessionStatus = true;
+            sessionPart = 9;
+          case 11
+            selection = true;
+            sessionStatus = false;
+          otherwise
+            selection = false;
+            cprintf([1,0.5,0], 'Wrong input!\n');
         end
       end
     case 6
@@ -536,7 +561,7 @@ while sessionStatus == true
       selection = false;
       while selection == false
         fprintf('Continue data processing with:\n');
-        fprintf('[8] - Estimation of Inter Trial Phase Coherences (ITPC)\n');
+        fprintf('[8] - Estimation of Inter Trial Phase Coherences (ITPC)?\n');
         x = input('\nSelect [y/n]: ','s');
         if strcmp('y', x)
           selection = true;
@@ -554,7 +579,7 @@ while sessionStatus == true
       selection = false;
       while selection == false
         fprintf('Continue data processing with:\n');
-        fprintf('[9] - Averaging over dyads\n');
+        fprintf('[9] - Power analysis (TFR)?\n');
         x = input('\nSelect [y/n]: ','s');
         if strcmp('y', x)
           selection = true;
@@ -569,6 +594,24 @@ while sessionStatus == true
       end
     case 9
       JAI_main_9;
+      selection = false;
+      while selection == false
+        fprintf('Continue data processing with:\n');
+        fprintf('[10] - Averaging over dyads?\n');
+        x = input('\nSelect [y/n]: ','s');
+        if strcmp('y', x)
+          selection = true;
+          sessionStatus = true;
+          sessionPart = 10;
+        elseif strcmp('n', x)
+          selection = true;
+          sessionStatus = false;
+        else
+          selection = false;
+        end
+      end
+    case 10
+      JAI_main_10;
       sessionStatus = false;
     otherwise
       sessionStatus = false;

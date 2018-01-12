@@ -1,8 +1,8 @@
 %% check if basic variables are defined
 if ~exist('sessionStr', 'var')
   cfg           = [];
-  cfg.subFolder = '04a_eyecor/';
-  cfg.filename  = 'JAI_d01_04a_eyecor';
+  cfg.subFolder = '04b_eyecor/';
+  cfg.filename  = 'JAI_d01_04b_eyecor';
   sessionStr    = sprintf('%03d', JAI_getSessionNum( cfg ));                % estimate current session number
 end
 
@@ -11,7 +11,7 @@ if ~exist('desPath', 'var')
 end
 
 if ~exist('numOfPart', 'var')                                               % estimate number of participants in eyecor data folder
-  sourceList    = dir([strcat(desPath, '04a_eyecor/'), ...
+  sourceList    = dir([strcat(desPath, '04b_eyecor/'), ...
                        strcat('*_', sessionStr, '.mat')]);
   sourceList    = struct2cell(sourceList);
   sourceList    = sourceList(1,:);
@@ -20,7 +20,7 @@ if ~exist('numOfPart', 'var')                                               % es
 
   for i=1:1:numOfSources
     numOfPart(i)  = sscanf(sourceList{i}, ...
-                    strcat('JAI_d%d_04a_eyecor_', sessionStr, '.mat'));
+                    strcat('JAI_d%d_04b_eyecor_', sessionStr, '.mat'));
   end
 end
 
@@ -30,12 +30,12 @@ end
 
 for i = numOfPart
   cfg             = [];
-  cfg.srcFolder   = strcat(desPath, '04a_eyecor/');
-  cfg.filename    = sprintf('JAI_d%02d_04a_eyecor', i);
+  cfg.srcFolder   = strcat(desPath, '04b_eyecor/');
+  cfg.filename    = sprintf('JAI_d%02d_04b_eyecor', i);
   cfg.sessionStr  = sessionStr;
   
   fprintf('Dyad %d\n', i);
-  fprintf('Load EOG-artifact corrected data...\n');
+  fprintf('Load eye-artifact corrected data...\n');
   JAI_loadData( cfg );
   
   % automatic artifact detection (threshold +-75 uV)

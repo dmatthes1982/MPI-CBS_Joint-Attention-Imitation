@@ -25,16 +25,14 @@ if ~exist('numOfPart', 'var')                                               % es
 end
 
 %% part 3
-% Estimation of eye artifacts (via ICA decomposition)
+% ICA decomposition
 % Processing steps:
 % 1. Concatenated preprocessed trials to a continuous stream
 % 2. Detect and reject transient artifacts (200uV delta within 200 ms. 
 %    The window is shifted with 100 ms, what means 50 % overlapping.)
 % 3. Concatenated cleaned data to a continuous stream
 % 4. ICA decomposition
-% 5. Find EOG-like ICA Components (Correlation with EOGV and EOGH, 80 %
-%    confirmity)
-% 6. Verify the estimated components by using the ft_databrowser function
+% 5. Extract EOG channels from the cleaned continuous data
 
 for i = numOfPart
   cfg             = [];
@@ -85,11 +83,10 @@ for i = numOfPart
   
   % ICA decomposition
   cfg               = [];
-  cfg.channel       = {'all', '-EOGV', '-EOGH', '-REF'};
+  cfg.channel       = {'all', '-EOGV', '-EOGH', '-REF'};                    % use all channels for EOG decomposition expect EOGV, EOGH and REF
   cfg.numcomponent  = 'all';
   
   data_icacomp      = JAI_ica(cfg, data_cleaned);
-  
   fprintf('\n');
   
   % export the determined ica components in a *.mat file
@@ -105,41 +102,30 @@ for i = numOfPart
   fprintf('%s ...\n', file_path);
   JAI_saveData(cfg, 'data_icacomp', data_icacomp);
   fprintf('Data stored!\n');
+  clear data_icacomp
   
-  % Find EOG-like ICA Components (Correlation with EOGV and EOGH, 80 %
-  % confirmity)
+  % Extract EOG channels from the cleaned continuous data 
   cfg               = [];
   cfg.channel       = {'EOGV', 'EOGH'};
-  data_cleaned      = JAI_selectdata(cfg, data_cleaned);
-  fprintf('\n');
-  
-  data_eogcomp      = JAI_corrComp(data_icacomp, data_cleaned);
+  data_eogchan      = JAI_selectdata(cfg, data_cleaned);
   
   clear data_cleaned
   fprintf('\n');
   
-  % Verify the estimated components
-  data_eogcomp      = JAI_verifyComp(data_eogcomp, data_icacomp);
-  
-  clear data_icacomp
-  fprintf('\n');
-
-  % export the determined eog components and the unmixing matrix into 
-  % a *.mat file
+  % export the EOG channels in a *.mat file
   cfg             = [];
-  cfg.desFolder   = strcat(desPath, '03b_eogcomp/');
-  cfg.filename    = sprintf('JAI_d%02d_03b_eogcomp', i);
+  cfg.desFolder   = strcat(desPath, '03b_eogchan/');
+  cfg.filename    = sprintf('JAI_d%02d_03b_eogchan', i);
   cfg.sessionStr  = sessionStr;
 
   file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
                      '.mat');
 
-  fprintf('The eye-artifact related components and the unmixing matrix of dyad %d will be saved in:\n', i); 
+  fprintf('The EOG channels of dyad %d will be saved in:\n', i); 
   fprintf('%s ...\n', file_path);
-  JAI_saveData(cfg, 'data_eogcomp', data_eogcomp);
+  JAI_saveData(cfg, 'data_eogchan', data_eogchan);
   fprintf('Data stored!\n\n');
-  clear data_eogcomp
-  
+  clear data_eogchan
 end
 
 %% clear workspace

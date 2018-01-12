@@ -1,8 +1,8 @@
 %% check if basic variables are defined
 if ~exist('sessionStr', 'var')
   cfg           = [];
-  cfg.subFolder = '07c_mplv/';
-  cfg.filename  = 'JAI_d01_07c_mplvGamma';
+  cfg.subfolder = '04b_eyecor';
+  cfg.filename  = 'JAI_d01_04b_eyecor';
   sessionStr    = sprintf('%03d', JAI_getSessionNum( cfg ));                % estimate current session number
 end
 
@@ -10,185 +10,55 @@ if ~exist('desPath', 'var')
   desPath = '/data/pt_01826/eegData/DualEEG_JAI_processedData_branch_ica/'; % destination path for processed data  
 end
 
+if ~exist('numOfPart', 'var')                                               % estimate number of participants in eyecor data folder
+  sourceList    = dir([strcat(desPath, '04b_eyecor/'), ...
+                       strcat('*_', sessionStr, '.mat')]);
+  sourceList    = struct2cell(sourceList);
+  sourceList    = sourceList(1,:);
+  numOfSources  = length(sourceList);
+  numOfPart     = zeros(1, numOfSources);
+
+  for i=1:1:numOfSources
+    numOfPart(i)  = sscanf(sourceList{i}, ...
+                    strcat('JAI_d%d_04b_eyecor_', sessionStr, '.mat'));
+  end
+end
+
 %% part 9
+% Calculate TFRs of the EOG-artifact corrected data
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Averaging mPLVs over dyads
-choise = false;
-while choise == false
-  cprintf([0,0.6,0], 'Averaging mPLVs over dyads?\n');
-  x = input('Select [y/n]: ','s');
-  if strcmp('y', x)
-    choise = true;
-    avgOverDyads = true;
-  elseif strcmp('n', x)
-    choise = true;
-    avgOverDyads = false;
-  else
-    choise = false;
-  end
-end
-fprintf('\n');
+for i = numOfPart
+  fprintf('Dyad %d\n', i);
 
-if avgOverDyads == true
-  cfg               = [];
-  cfg.path          = strcat(desPath, '07c_mplv/');
-  cfg.session       = str2num(sessionStr);                                  %#ok<ST2NM>
-  cfg.passband      = '2Hz';
-
-  data_mplvod_2Hz   = JAI_mPLVoverDyads( cfg );
-
-  cfg.passband      = 'theta';
-
-  data_mplvod_theta = JAI_mPLVoverDyads( cfg );
+  cfg             = [];                                                     % load EOG-artifact corrected data
+  cfg.srcFolder   = strcat(desPath, '04b_eyecor/');
+  cfg.sessionStr  = sessionStr;
+  cfg.filename    = sprintf('JAI_d%02d_04b_eyecor', i);
   
-  cfg.passband      = 'alpha';
-
-  data_mplvod_alpha = JAI_mPLVoverDyads( cfg );
+  fprintf('Load eye-artifact corrected data...\n\n');
+  JAI_loadData( cfg );
   
-  cfg.passband      = '20Hz';
-
-  data_mplvod_20Hz  = JAI_mPLVoverDyads( cfg );
+  cfg         = [];
+  cfg.foi     = 2:1:50;                                                     % frequency of interest
+  cfg.toi     = 4:0.5:176;                                                  % time of interest
   
-  cfg.passband      = 'beta';
-
-  data_mplvod_beta  = JAI_mPLVoverDyads( cfg );
+  data_tfr = JAI_timeFreqanalysis( cfg, data_eyecor );
   
-  cfg.passband      = 'gamma';
-
-  data_mplvod_gamma = JAI_mPLVoverDyads( cfg );
-
-  % export the averaged PLVs into a *.mat file
-  % 2Hz
+  % export TFR data into a *.mat file
   cfg             = [];
-  cfg.desFolder   = strcat(desPath, '09a_mplvod/');
-  cfg.filename    = 'JAI_09a_mplvod2Hz';
+  cfg.desFolder   = strcat(desPath, '09a_tfr/');
+  cfg.filename    = sprintf('JAI_d%02d_09a_tfr', i);
   cfg.sessionStr  = sessionStr;
 
   file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
                      '.mat');
-                   
-  fprintf('Saving mean PLVs over dyads at 2Hz in:\n'); 
-  fprintf('%s ...\n', file_path);
-  JAI_saveData(cfg, 'data_mplvod_2Hz', data_mplvod_2Hz);
-  fprintf('Data stored!\n');
-  clear data_mplvod_2Hz
 
-  % theta
-  cfg             = [];
-  cfg.desFolder   = strcat(desPath, '09a_mplvod/');
-  cfg.filename    = 'JAI_09a_mplvodTheta';
-  cfg.sessionStr  = sessionStr;
-
-  file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
-                     '.mat');
-                   
-  fprintf('Saving mean PLVs over dyads at theta (4-7Hz) in:\n'); 
+  fprintf('Time-frequency response data of dyad %d will be saved in:\n', i); 
   fprintf('%s ...\n', file_path);
-  JAI_saveData(cfg, 'data_mplvod_theta', data_mplvod_theta);
-  fprintf('Data stored!\n');
-  clear data_mplvod_theta
-  
-  % alpha
-  cfg             = [];
-  cfg.desFolder   = strcat(desPath, '09a_mplvod/');
-  cfg.filename    = 'JAI_09a_mplvodAlpha';
-  cfg.sessionStr  = sessionStr;
-
-  file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
-                     '.mat');
-                   
-  fprintf('Saving mean PLVs over dyads at alpha (8-12Hz) in:\n'); 
-  fprintf('%s ...\n', file_path);
-  JAI_saveData(cfg, 'data_mplvod_alpha', data_mplvod_alpha);
-  fprintf('Data stored!\n');
-  clear data_mplvod_alpha
-  
-  % 20Hz
-  cfg             = [];
-  cfg.desFolder   = strcat(desPath, '09a_mplvod/');
-  cfg.filename    = 'JAI_09a_mplvod20Hz';
-  cfg.sessionStr  = sessionStr;
-
-  file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
-                     '.mat');
-                   
-  fprintf('Saving mean PLVs over dyads at 20Hz in:\n'); 
-  fprintf('%s ...\n', file_path);
-  JAI_saveData(cfg, 'data_mplvod_20Hz', data_mplvod_20Hz);
-  fprintf('Data stored!\n');
-  clear data_mplvod_20Hz
-  
-  % beta
-  cfg             = [];
-  cfg.desFolder   = strcat(desPath, '09a_mplvod/');
-  cfg.filename    = 'JAI_09a_mplvodBeta';
-  cfg.sessionStr  = sessionStr;
-
-  file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
-                     '.mat');
-                   
-  fprintf('Saving mean PLVs over dyads at beta (13-30Hz) in:\n'); 
-  fprintf('%s ...\n', file_path);
-  JAI_saveData(cfg, 'data_mplvod_beta', data_mplvod_beta);
-  fprintf('Data stored!\n');
-  clear data_mplvod_beta
-  
-  % gamma
-  cfg             = [];
-  cfg.desFolder   = strcat(desPath, '09a_mplvod/');
-  cfg.filename    = 'JAI_09a_mplvodGamma';
-  cfg.sessionStr  = sessionStr;
-
-  file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
-                     '.mat');
-                   
-  fprintf('Saving mean PLVs over dyads at gamma (31.48Hz) in:\n'); 
-  fprintf('%s ...\n', file_path);
-  JAI_saveData(cfg, 'data_mplvod_gamma', data_mplvod_gamma);
+  JAI_saveData(cfg, 'data_tfr', data_tfr);
   fprintf('Data stored!\n\n');
-  clear data_mplvod_gamma
-end
-
-%% Averaging iptc over dyads
-choise = false;
-while choise == false
-  cprintf([0,0.6,0], 'Averaging IPTC over dyads?\n');
-  x = input('Select [y/n]: ','s');
-  if strcmp('y', x)
-    choise = true;
-    avgOverDyads = true;
-  elseif strcmp('n', x)
-    choise = true;
-    avgOverDyads = false;
-  else
-    choise = false;
-  end
-end
-fprintf('\n');
-
-if avgOverDyads == true
-  cfg             = [];
-  cfg.path        = strcat(desPath, '08b_itpc/');
-  cfg.session     = str2num(sessionStr);                                    %#ok<ST2NM>
-  
-  data_itpcod     = JAI_ITPCoverDyads( cfg );
-  
-  % export the averaged IPTCs into a *.mat file
-  cfg             = [];
-  cfg.desFolder   = strcat(desPath, '09b_itpcod/');
-  cfg.filename    = 'JAI_09b_itpcod';
-  cfg.sessionStr  = sessionStr;
-
-  file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
-                     '.mat');
-                   
-  fprintf('Saving IPTCs over dyads in:\n'); 
-  fprintf('%s ...\n', file_path);
-  JAI_saveData(cfg, 'data_itpcod', data_itpcod);
-  fprintf('Data stored!\n');
-  clear data_itpcod
+  clear data_tfr data_eyecor
 end
 
 %% clear workspace
-clear cfg file_path avgOverDyads x choise
+clear file_path cfg sourceList numOfSources i

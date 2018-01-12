@@ -1,8 +1,8 @@
 %% check if basic variables are defined
 if ~exist('sessionStr', 'var')
   cfg           = [];
-  cfg.subFolder = '03b_eogcomp/';
-  cfg.filename  = 'JAI_d01_03b_eogcomp';
+  cfg.subFolder = '03b_eogchan/';
+  cfg.filename  = 'JAI_d01_03b_eogchan';
   sessionStr    = sprintf('%03d', JAI_getSessionNum( cfg ));                % estimate current session number
 end
 
@@ -11,7 +11,7 @@ if ~exist('desPath', 'var')
 end
 
 if ~exist('numOfPart', 'var')                                               % estimate number of participants in eogcomp data folder
-  sourceList    = dir([strcat(desPath, '03b_eogcomp/'), ...
+  sourceList    = dir([strcat(desPath, '03b_eogchan/'), ...
                        strcat('*_', sessionStr, '.mat')]);
   sourceList    = struct2cell(sourceList);
   sourceList    = sourceList(1,:);
@@ -20,30 +20,68 @@ if ~exist('numOfPart', 'var')                                               % es
 
   for i=1:1:numOfSources
     numOfPart(i)  = sscanf(sourceList{i}, ...
-                    strcat('JAI_d%d_03b_eogcomp_', sessionStr, '.mat'));
+                    strcat('JAI_d%d_03b_eogchan_', sessionStr, '.mat'));
   end
 end
 
 %% part 4
-% Correction of eye artifacts
-% Calculate TFRs of the corrected data
-% export both corrected data and TFR data into *.mat files
+% Estimation and correction of eye artifacts
+% Processing steps:
+% 1. Find EOG-like ICA Components (Correlation with EOGV and EOGH, 80 %
+%    confirmity)
+% 2. Verify the estimated components by using the ft_databrowser function
+% 3. Remove eye artifacts
 
-% Correction of eye artifacts
 for i = numOfPart
+  cfg             = [];
+  cfg.srcFolder   = strcat(desPath, '03a_icacomp/');
+  cfg.filename    = sprintf('JAI_d%02d_03a_icacomp', i);
+  cfg.sessionStr  = sessionStr;
+  
+  fprintf('Dyad %d\n', i);
+  fprintf('Load ICA result...\n');
+  JAI_loadData( cfg );
+  
+  cfg.srcFolder   = strcat(desPath, '03b_eogchan/');
+  cfg.filename    = sprintf('JAI_d%02d_03b_eogchan', i);
+  
+  fprintf('Load EOG data...\n\n');
+  JAI_loadData( cfg );
+  
+  % Find EOG-like ICA Components (Correlation with EOGV and EOGH, 80 %
+  % confirmity)
+  data_eogcomp      = JAI_corrComp(data_icacomp, data_eogchan);
+  
+  clear data_eogchan
+  fprintf('\n');
+  
+  % Verify the estimated components
+  data_eogcomp      = JAI_verifyComp(data_eogcomp, data_icacomp);
+  
+  clear data_icacomp
+  fprintf('\n');
+
+  % export the determined eog components and the unmixing matrix into 
+  % a *.mat file
+  cfg             = [];
+  cfg.desFolder   = strcat(desPath, '04a_eogcomp/');
+  cfg.filename    = sprintf('JAI_d%02d_04a_eogcomp', i);
+  cfg.sessionStr  = sessionStr;
+
+  file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
+                     '.mat');
+
+  fprintf('The eye-artifact related components and the unmixing matrix of dyad %d will be saved in:\n', i); 
+  fprintf('%s ...\n', file_path);
+  JAI_saveData(cfg, 'data_eogcomp', data_eogcomp);
+  fprintf('Data stored!\n\n');
+    
   cfg             = [];
   cfg.srcFolder   = strcat(desPath, '02_preproc/');
   cfg.filename    = sprintf('JAI_d%02d_02_preproc', i);
   cfg.sessionStr  = sessionStr;
   
-  fprintf('Dyad %d\n', i);
   fprintf('Load preprocessed data...\n');
-  JAI_loadData( cfg );
-  
-  cfg.srcFolder   = strcat(desPath, '03b_eogcomp/');
-  cfg.filename    = sprintf('JAI_d%02d_03b_eogcomp', i);
-  
-  fprintf('Load eye-artifact related components and the unmixing matrix...\n\n');
   JAI_loadData( cfg );
   
   % Remove eye artifacts
@@ -54,51 +92,18 @@ for i = numOfPart
   
   % export the reviced data in a *.mat file
   cfg             = [];
-  cfg.desFolder   = strcat(desPath, '04a_eyecor/');
-  cfg.filename    = sprintf('JAI_d%02d_04a_eyecor', i);
+  cfg.desFolder   = strcat(desPath, '04b_eyecor/');
+  cfg.filename    = sprintf('JAI_d%02d_04b_eyecor', i);
   cfg.sessionStr  = sessionStr;
 
   file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
                      '.mat');
 
-  fprintf('The reviced data (from EOG artifacts) of dyad %d will be saved in:\n', i); 
+  fprintf('The reviced data (from eye artifacts) of dyad %d will be saved in:\n', i); 
   fprintf('%s ...\n', file_path);
   JAI_saveData(cfg, 'data_eyecor', data_eyecor);
   fprintf('Data stored!\n\n');
   clear data_eyecor
-end
-
-% Calculate TFRs of the corrected data
-for i = numOfPart
-  cfg             = [];
-  cfg.srcFolder   = strcat(desPath, '04a_eyecor/');
-  cfg.filename    = sprintf('JAI_d%02d_04a_eyecor', i);
-  cfg.sessionStr  = sessionStr;
-  
-  fprintf('Dyad %d\n', i);
-  fprintf('Load eyecor data...\n');
-  JAI_loadData( cfg );
-
-  cfg         = [];
-  cfg.foi     = 2:1:50;                                                     % frequency of interest
-  cfg.toi     = 4:0.5:176;                                                  % time of interest
-  
-  data_tfr = JAI_timeFreqanalysis( cfg, data_eyecor );
-  
-  % export TFR data into a *.mat file
-  cfg             = [];
-  cfg.desFolder   = strcat(desPath, '04b_tfr/');
-  cfg.filename    = sprintf('JAI_d%02d_04b_tfr', i);
-  cfg.sessionStr  = sessionStr;
-
-  file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
-                     '.mat');
-
-  fprintf('Time-frequency response data of dyad %d will be saved in:\n', i); 
-  fprintf('%s ...\n', file_path);
-  JAI_saveData(cfg, 'data_tfr', data_tfr);
-  fprintf('Data stored!\n\n');
-  clear data_tfr data_eyecor
 end
 
 %% clear workspace
