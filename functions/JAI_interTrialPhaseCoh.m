@@ -70,7 +70,7 @@ trialinfo     = unique(data_in.trialinfo, 'stable');                        % ex
 tf            = ismember(generalDefinitions.condNum, trialinfo);            % bring trials into a correct order
 idx           = 1:length(generalDefinitions.condNum);
 idx           = idx(tf);
-trialinfo     = generalDefinitions.condNum(idx);
+trialinfo     = generalDefinitions.condNum(idx)';
 
 % -------------------------------------------------------------------------
 % Calculate spectrum
@@ -95,10 +95,11 @@ ft_notice on;
 % make a new FieldTrip-style data structure containing the ITC
 % copy the descriptive fields over from the frequency decomposition
 data_out = [];
-data_out.label     = data_freq.label;
-data_out.freq      = data_freq.freq;
-data_out.dimord    = 'rpt_chan_freq_time';
-data_out.trialinfo = trialinfo;
+data_out.label      = data_freq.label;
+data_out.freq       = data_freq.freq;
+data_out.dimord     = 'rpt_chan_freq_time';
+data_out.trialinfo  = trialinfo;
+data_out.goodtrials = zeros(length(trialinfo), 1);
 
 F = data_freq.fourierspctrm;                                                % copy the Fourier spectrum
 F = F./abs(F);                                                              % divide by amplitude
@@ -109,6 +110,7 @@ data_out.time{1, length(trialinfo)} = [];
 for i = 1:1:length(trialinfo)
   trials = find(data_freq.trialinfo == trialinfo(i));
   N = size(trials, 1);
+  data_out.goodtrials(i) = N;                                               % save the number of good trials for each condition 
   data_out.itpc{i} = sum(F(trials,:,:,:), 1);                               % sum angles
   data_out.itpc{i} = abs(data_out.itpc{i})/N;                               % take the absolute value and normalize
   data_out.itpc{i} = squeeze(data_out.itpc{i});                             % remove the first singleton dimension

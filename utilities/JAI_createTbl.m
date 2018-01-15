@@ -24,7 +24,8 @@ function JAI_createTbl( cfg )
 % -------------------------------------------------------------------------
 % Get config options
 % -------------------------------------------------------------------------
-desFolder   = ft_getopt(cfg, 'desFolder', '/data/pt_01826/eegData/DualEEG_JAI_processedData/00_settings/');
+desFolder   = ft_getopt(cfg, 'desFolder', ...
+          '/data/pt_01826/eegData/DualEEG_JAI_processedData/00_settings/');
 type        = ft_getopt(cfg, 'type', []);
 param       = ft_getopt(cfg, 'param', []);
 sessionStr  = ft_getopt(cfg, 'sessionStr', []);
@@ -32,6 +33,13 @@ sessionStr  = ft_getopt(cfg, 'sessionStr', []);
 if isempty(type)
   error(['cfg.type has to be specified. It could be either ''settings'''...
          ', ''plv'' or ''itpc''.']);
+end
+
+if strcmp(type, 'plv')
+  if isempty(param)
+    error([ 'cfg.param has to be specified. Selectable options: ''2Hz'', '...
+            '''theta'', ''alpha'', ''20Hz'', ''beta'', ''gamma''']);
+  end
 end
 
 if isempty(sessionStr)
@@ -62,17 +70,18 @@ switch type
     C = cellfun(@(x) sprintf('S%d', x), B, 'UniformOutput', 0);                            
     VarNames = [{'dyad'} C];
     T.Properties.VariableNames = VarNames;
-     filepath = [desFolder type '_' param '_' sessionStr '.xls'];
+    filepath = [desFolder type '_' param '_' sessionStr '.xls'];
     writetable(T, filepath); 
   case 'itpc'
     A(1) = {1};
-    A(2:26) = {0};
+    A(2:51) = {0};
     T = cell2table(A); 
     B = num2cell(generalDefinitions.condNum);
-    C = cellfun(@(x) sprintf('S%d', x), B, 'UniformOutput', 0);                            
-    VarNames = [{'dyad'} C];
+    C = cellfun(@(x) sprintf('S%d_01', x), B, 'UniformOutput', 0);
+    D = cellfun(@(x) sprintf('S%d_02', x), B, 'UniformOutput', 0);
+    VarNames = [{'dyad'} C D];
     T.Properties.VariableNames = VarNames;
-     filepath = [desFolder type '_' sessionStr '.xls'];
+    filepath = [desFolder type '_' sessionStr '.xls'];
     writetable(T, filepath);    
   otherwise
     error(['cfg.type is not valid. Use either ''settings'', ''plv'' or '...

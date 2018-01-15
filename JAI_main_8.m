@@ -121,7 +121,15 @@ for i = numOfPart
 
   data_itpc = JAI_interTrialPhaseCoh(cfg, data_iseg);
   clear data_iseg
-
+  
+  % export number of good trials into a spreadsheet
+  cfg           = [];
+  cfg.desFolder = [desPath '00_settings/'];
+  cfg.dyad = i;
+  cfg.type = 'itpc';
+  cfg.sessionStr = sessionStr;
+  JAI_writeTbl(cfg, data_itpc);
+  
   % export the itpc data into a *.mat file
   cfg             = [];
   cfg.desFolder   = strcat(desPath, '08b_itpc/');

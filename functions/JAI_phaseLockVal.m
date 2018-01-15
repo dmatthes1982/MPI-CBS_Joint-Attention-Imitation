@@ -90,15 +90,17 @@ idx                     = 1:length(markerTemplate);
 idx                     = idx(tf);
 uniqueTrials            = markerTemplate(idx);
 
-diffPhases              = length(uniqueTrials);                             % estimate number of different phases 
-trialinfo               = zeros(diffPhases, 1);                             % build new trialinfo
-catTrial_p1{diffPhases} = [];                                               % new cell vector for concatenated trial matrices of participant 1
-catTrial_p2{diffPhases} = [];                                               % new cell vector for concatenated trial matrices of participant 2
-catTimeOrg{diffPhases}  = [];                                               % new cell vector for concatenated time vectors   
+diffCondition           = length(uniqueTrials);                             % estimate number of different condition 
+trialinfo               = zeros(diffCondition, 1);                          % build new trialinfo
+goodtrials              = zeros(diffCondition, 1);                          % build goodtrials info field
+catTrial_p1{diffCondition} = [];                                            % new cell vector for concatenated trial matrices of participant 1
+catTrial_p2{diffCondition} = [];                                            % new cell vector for concatenated trial matrices of participant 2
+catTimeOrg{diffCondition}  = [];                                            % new cell vector for concatenated time vectors   
 
-for i=1:1:diffPhases                                                        % for all phases
+for i=1:1:diffCondition                                                     % for all conditions
   marker          = uniqueTrials(i);                                        % estimate i-th phase marker
   trials          = find(dataPart1.trialinfo == marker);                    % extract all trials with this marker
+  goodtrials(i)   = length(trials);                                         % save the number of good trials for each condition
   trialinfo(i)    = marker;                                                 % put phase marker into new trialinfo
   catTimeOrg{i}   = cat(2, timeOrg{trials});                                % concatenate time elements
   catTrial_p1{i}  = cat(2, trial_p1{trials});                               % concatenate trials of participant 1
@@ -141,6 +143,7 @@ end
 %--------------------------------------------------------------------------
 data_out                  = keepfields(dataPart1, {'hdr', 'fsample'});
 data_out.trialinfo        = trialinfo;
+data_out.goodtrials       = goodtrials;
 data_out.dimord           = 'trl_chan1_chan2';
 data_out.PLV              = PLV;
 data_out.time             = time;

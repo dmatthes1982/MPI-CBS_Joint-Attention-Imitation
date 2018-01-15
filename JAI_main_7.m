@@ -288,6 +288,15 @@ for i = numOfPart
   data_mplv_2Hz = JAI_calcMeanPLV(data_plv_2Hz);
   clear data_hseg_2Hz
   
+  % export number of good trials into a spreadsheet
+  cfg           = [];
+  cfg.desFolder = [desPath '00_settings/'];
+  cfg.dyad = i;
+  cfg.type = 'plv';
+  cfg.param = '2Hz';
+  cfg.sessionStr = sessionStr;
+  JAI_writeTbl(cfg, data_plv_2Hz);
+  
   % export the PLVs into a *.mat file
   cfg             = [];
   cfg.desFolder   = strcat(desPath, '07b_plv/');
@@ -347,6 +356,15 @@ for i = numOfPart
   data_plv_theta  = JAI_phaseLockVal(cfg, data_hseg_theta);
   data_mplv_theta = JAI_calcMeanPLV(data_plv_theta);
   clear data_hseg_theta
+  
+  % export number of good trials into a spreadsheet
+  cfg           = [];
+  cfg.desFolder = [desPath '00_settings/'];
+  cfg.dyad = i;
+  cfg.type = 'plv';
+  cfg.param = 'theta';
+  cfg.sessionStr = sessionStr;
+  JAI_writeTbl(cfg, data_plv_theta);
   
   % export the PLVs into a *.mat file
   cfg             = [];
@@ -408,6 +426,15 @@ for i = numOfPart
   data_mplv_alpha = JAI_calcMeanPLV(data_plv_alpha);
   clear data_hseg_alpha
   
+  % export number of good trials into a spreadsheet
+  cfg           = [];
+  cfg.desFolder = [desPath '00_settings/'];
+  cfg.dyad = i;
+  cfg.type = 'plv';
+  cfg.param = 'alpha';
+  cfg.sessionStr = sessionStr;
+  JAI_writeTbl(cfg, data_plv_alpha);
+  
   % export the PLVs into a *.mat file
   cfg             = [];
   cfg.desFolder   = strcat(desPath, '07b_plv/');
@@ -468,6 +495,15 @@ for i = numOfPart
   data_mplv_20Hz = JAI_calcMeanPLV(data_plv_20Hz);
   clear data_hseg_20Hz
   
+  % export number of good trials into a spreadsheet
+  cfg           = [];
+  cfg.desFolder = [desPath '00_settings/'];
+  cfg.dyad = i;
+  cfg.type = 'plv';
+  cfg.param = '20Hz';
+  cfg.sessionStr = sessionStr;
+  JAI_writeTbl(cfg, data_plv_20Hz);
+  
   % export the PLVs into a *.mat file
   cfg             = [];
   cfg.desFolder   = strcat(desPath, '07b_plv/');
@@ -527,6 +563,15 @@ for i = numOfPart
   data_plv_beta  = JAI_phaseLockVal(cfg, data_hseg_beta);
   data_mplv_beta = JAI_calcMeanPLV(data_plv_beta);
   clear data_hseg_beta
+  
+  % export number of good trials into a spreadsheet
+  cfg           = [];
+  cfg.desFolder = [desPath '00_settings/'];
+  cfg.dyad = i;
+  cfg.type = 'plv';
+  cfg.param = 'beta';
+  cfg.sessionStr = sessionStr;
+  JAI_writeTbl(cfg, data_plv_beta);
   
   % export the PLVs into a *.mat file
   cfg             = [];
@@ -589,6 +634,15 @@ for i = numOfPart
   data_plv_gamma  = JAI_phaseLockVal(cfg, data_hseg_gamma);
   data_mplv_gamma = JAI_calcMeanPLV(data_plv_gamma);
   clear data_hseg_gamma
+  
+  % export number of good trials into a spreadsheet
+  cfg           = [];
+  cfg.desFolder = [desPath '00_settings/'];
+  cfg.dyad = i;
+  cfg.type = 'plv';
+  cfg.param = 'gamma';
+  cfg.sessionStr = sessionStr;
+  JAI_writeTbl(cfg, data_plv_gamma);
   
   % export the PLVs into a *.mat file
   cfg             = [];
