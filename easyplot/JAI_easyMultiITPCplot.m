@@ -10,6 +10,9 @@ function JAI_easyMultiITPCplot(cfg, data)
 %
 % The configuration options are 
 %   cfg.part        = number of participant (default: 1)
+%                     0 - plot the averaged data
+%                     1 - plot data of participant 1
+%                     2 - plot data of participant 2
 %   cfg.condition   = condition (default: 111 or 'SameObjectB', see JAI_DATASTRUCTURE)
 %   cfg.freqlimits  = [begin end] (default: [1 48])
 %   cfg.timelimits  = [begin end] (default: [0.2 9.8])
@@ -28,8 +31,17 @@ cfg.cond    = ft_getopt(cfg, 'condition', 111);
 freqlim = ft_getopt(cfg, 'freqlimits', [1 48]);
 timelim = ft_getopt(cfg, 'timelimits', [0.2 9.8]);
 
-if cfg.part < 1 || cfg.part > 2                                             % check cfg.participant definition
-  error('cfg.part has to be 1 or 2');
+if ~ismember(cfg.part, [0,1,2])                                             % check cfg.part definition
+  error('cfg.part has to either 0, 1 or 2');
+end
+
+switch cfg.part
+  case 0
+    dataPlot = data;
+  case 1
+    dataPlot = data.part1;
+  case 2
+    dataPlot = data.part2;
 end
 
 if length(freqlim) ~= 2                                                     % check cfg.freqlimits definition
@@ -40,15 +52,9 @@ if length(timelim) ~= 2                                                     % ch
   error('cfg.timelimits has to be a 1x2 vector: [begin end]');
 end
 
-if cfg.part == 1                                                                 
-  trialinfo = data.part1.trialinfo;                                         % get specific trialinfo and
-  dataPlot  = data.part1;                                                   % extract data of selected participant
-elseif cfg.part == 2
-  trialinfo = data.part2.trialinfo;
-  dataPlot  = data.part2;
-  
-end
+trialinfo = dataPlot.trialinfo;                                             % get trialinfo
 
+addpath('../utilities');
 cfg.cond = JAI_checkCondition( cfg.cond );                                  % check cfg.condition definition    
 if isempty(find(trialinfo == cfg.cond, 1))
   error('The selected dataset contains no condition %d.', cfg.cond);

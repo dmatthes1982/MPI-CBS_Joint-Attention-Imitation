@@ -7,7 +7,7 @@ fprintf('------------------------------------------------\n');
 % -------------------------------------------------------------------------
 % Add directory and subfolders to path
 % -------------------------------------------------------------------------
-addpath('./:./easyplot:./functions:./general:./headmodels:./utilities');
+addpath('./:./easyplot:./elecorder:./functions:./general:./headmodels:./utilities');
 
 % -------------------------------------------------------------------------
 % Path settings

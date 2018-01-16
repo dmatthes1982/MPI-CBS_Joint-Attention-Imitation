@@ -30,16 +30,20 @@ trl     = ft_getopt(cfg, 'trial', 1);
 freqlim = ft_getopt(cfg, 'freqlimits', [2 30]);
 timelim = ft_getopt(cfg, 'timelimits', [4 116]);
 
-if part < 1 || part > 2                                                     % check cfg.participant definition
-  error('cfg.part has to be 1 or 2');
+if ~ismember(part, [1,2])                                                   % check cfg.part definition
+  error('cfg.part has to either 1 or 2');
 end
 
-if part == 1                                                                % get trialinfo
-  trialinfo = data.part1.trialinfo;
-elseif part == 2
-  trialinfo = data.part2.trialinfo;
+switch part
+  case 1
+    data = data.part1;
+  case 2
+    data = data.part2;
 end
 
+trialinfo = data.trialinfo;                                                 % get trialinfo
+
+addpath('../utilities');
 cond    = JAI_checkCondition( cond );                                       % check cfg.condition definition    
 trials  = find(trialinfo == cond);
 if isempty(trials)
@@ -72,7 +76,7 @@ cfg.xlim          = timelim;
 cfg.ylim          = freqlim;
 cfg.zlim          = 'maxmin';
 cfg.trials        = trl;
-cfg.channel       = 1:1:28;
+cfg.channel       = {'all', '-V1', '-V2', '-Ref', '-EOGH', '-EOGV'};
 cfg.layout        = lay;
 
 cfg.showlabels    = 'no';
@@ -81,17 +85,9 @@ cfg.colorbar      = 'yes';
 
 cfg.showcallinfo  = 'no';                                                   % suppress function call output
 
-switch part
-  case 1
-    ft_multiplotTFR(cfg, data.part1);
-    title(sprintf('Part.: %d - Cond.: %d - Trial: %d', ...
-          part, cond, trlInCond));      
-  case 2
-    ft_multiplotTFR(cfg, data.part2);
-    title(sprintf('Part.: %d - Cond.: %d - Trial: %d', ...
-          part, cond, trlInCond));
-end
-
+ft_multiplotTFR(cfg, data);
+title(sprintf('Part.: %d - Cond.: %d - Trial: %d', part, cond, trlInCond));      
+  
 ft_warning on;
 
 end

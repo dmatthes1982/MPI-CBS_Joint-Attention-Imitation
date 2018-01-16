@@ -32,16 +32,21 @@ trl     = ft_getopt(cfg, 'trial', 1);
 freqlim = ft_getopt(cfg, 'freqlimits', [2 50]);
 timelim = ft_getopt(cfg, 'timelimits', [4 116]);
 
-if part < 1 || part > 2                                                     % check cfg.participant definition
-  error('cfg.part has to be 1 or 2');
+if ~ismember(part, [1,2])                                                   % check cfg.part definition
+  error('cfg.part has to either 1 or 2');
 end
 
-if part == 1                                                                % get trialinfo
-  trialinfo = data.part1.trialinfo;
-elseif part == 2
-  trialinfo = data.part2.trialinfo;
+switch part
+  case 1
+    data = data.part1;
+  case 2
+    data = data.part2;
 end
 
+trialinfo = data.trialinfo;                                                 % get trialinfo
+label     = data.label;                                                     % get labels
+
+addpath('../utilities');
 cond    = JAI_checkCondition( cond );                                       % check cfg.condition definition    
 trials  = find(trialinfo == cond);
 if isempty(trials)
@@ -56,14 +61,8 @@ else
   end
 end
 
-if part == 1                                                                % get labels
-  label = data.part1.label;                                             
-elseif part == 2
-  label = data.part2.label;
-end
-
 if isnumeric(elec)
-  if elec < 1 || elec > 32
+  if ~ismember(elec,  1:1:32)
     error('cfg.elec hast to be a number between 1 and 32 or a existing label like ''Cz''.');
   end
 else
@@ -91,18 +90,9 @@ cfg.showcallinfo    = 'no';                                                 % su
 
 colormap jet;                                                               % use the older and more common colormap
 
-switch part
-  case 1
-    ft_singleplotTFR(cfg, data.part1);
-    title(sprintf('Part.: %d - Cond.: %d - Elec.: %s - Trial: %d', ...
-          part, cond, ...
-          strrep(data.part1.label{elec}, '_', '\_'), trlInCond));      
-  case 2
-    ft_singleplotTFR(cfg, data.part2);
-    title(sprintf('Part.: %d - Cond.: %d - Elec.: %s - Trial: %d', ...
-          part, cond, ...
-          strrep(data.part2.label{elec}, '_', '\_'), trlInCond));
-end
+ft_singleplotTFR(cfg, data);
+title(sprintf('Part.: %d - Cond.: %d - Elec.: %s - Trial: %d', ...
+      part, cond, strrep(data.label{elec}, '_', '\_'), trlInCond));      
 
 xlabel('time in sec');                                                      % set xlabel
 ylabel('frequency in Hz');                                                  % set ylabel

@@ -27,6 +27,7 @@ elecPart2 = ft_getopt(cfg, 'elecPart2', 'Cz');
 
 trialinfo = data.dyad.trialinfo;                                            % get trialinfo
 
+addpath('../utilities');
 cond = JAI_checkCondition( cond );                                          % check cfg.condition definition and translate it into trl number    
 trl  = find(trialinfo == cond);
 if isempty(trl)
@@ -36,7 +37,7 @@ end
 label = data.dyad.label;                                                    % get labels
 
 if isnumeric(elecPart1)                                                     % check cfg.electrode definition
-  if elecPart1 < 1 || elecPart1 > 32
+  if ~ismember(elecPart1, 1:1:32)
     error('cfg.elecPart1 hast to be a number between 1 and 32 or a existing label like ''Cz''.');
   end
 else
@@ -47,7 +48,7 @@ else
 end
 
 if isnumeric(elecPart2)                                                     % check cfg.electrode definition
-  if elecPart2 < 1 || elecPart2 > 32
+  if ~ismember(elecPart2, 1:1:32)
     error('cfg.elecPart2 hast to be a number between 1 and 32 or a existing label like ''Cz''.');
   end
 else

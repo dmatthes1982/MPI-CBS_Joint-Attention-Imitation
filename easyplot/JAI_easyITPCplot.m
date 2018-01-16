@@ -10,6 +10,9 @@ function JAI_easyITPCplot(cfg, data)
 %
 % The configuration options are 
 %   cfg.part        = number of participant (default: 1)
+%                     0 - plot the averaged data
+%                     1 - plot data of participant 1
+%                     2 - plot data of participant 2   
 %   cfg.condition   = condition (default: 111 or 'SameObjectB', see JAI_DATASTRUCTURE)
 %   cfg.electrode   = number of electrodes (default: {'Cz'} repsectively [7])
 %                     examples: {'Cz'}, {'F3', 'Fz', 'F4'}, [7] or [2, 1, 27] 
@@ -27,27 +30,27 @@ part    = ft_getopt(cfg, 'part', 1);
 cond    = ft_getopt(cfg, 'condition', 111);
 elec    = ft_getopt(cfg, 'electrode', {'Cz'});
 
-if part < 1 || part > 2                                                     % check cfg.participant definition
-  error('cfg.part has to be 1 or 2');
+if ~ismember(part, [0,1,2])                                                 % check cfg.part definition
+  error('cfg.part has to either 0, 1 or 2');
 end
 
-if part == 1                                                                % get trialinfo
-  trialinfo = data.part1.trialinfo;
-elseif part == 2
-  trialinfo = data.part2.trialinfo;
+switch part
+  case 0
+  case 1
+    data = data.part1;
+  case 2
+    data = data.part2;
 end
 
+trialinfo = data.trialinfo;                                                 % get trialinfo
+label     = data.label;                                                     % get labels                                             
+
+addpath('../utilities');
 cond    = JAI_checkCondition( cond );                                       % check cfg.condition definition    
 if isempty(find(trialinfo == cond, 1))
   error('The selected dataset contains no condition %d.', cond);
 else
   trialNum = find(ismember(trialinfo, cond));
-end
-
-if part == 1                                                                % get labels
-  label = data.part1.label;                                             
-elseif part == 2
-  label = data.part2.label;
 end
 
 if isnumeric(elec)                                                          % check cfg.electrode
@@ -70,19 +73,14 @@ end
 % -------------------------------------------------------------------------
 % inter-trial phase coherence representation
 % -------------------------------------------------------------------------
-switch part
-  case 1
-    imagesc(data.part1.time{trialNum}(2:end), data.part1.freq, ...
-              squeeze(mean(data.part1.itpc{trialNum}(elec,:,2:end),1)));
-    labelString = elec2string(elec, data.part2.label);
-    title(sprintf('ITPC - Part.: %d - Cond.: %d - Elec.: %s', ...
-          part, cond, labelString));
-  case 2
-    imagesc(data.part2.time{trialNum}(2:end), data.part2.freq, ...
-              squeeze(mean(data.part2.itpc{trialNum}(elec,:,2:end),1)));
-    labelString = elec2string(elec, data.part2.label);        
-    title(sprintf('ITPC - Part.: %d - Cond.: %d - Elec.: %s', ...
-          part, cond, labelString));
+imagesc(data.time{trialNum}(2:end), data.freq, ...
+        squeeze(mean(data.itpc{trialNum}(elec,:,2:end),1)));
+labelString = elec2string(elec, data.label);
+if part == 0
+  title(sprintf('ITPC - Cond.: %d - Elec.: %s', cond, labelString));
+else
+  title(sprintf('ITPC - Part.: %d - Cond.: %d - Elec.: %s', ...
+        part, cond, labelString));
 end
 
 axis xy;

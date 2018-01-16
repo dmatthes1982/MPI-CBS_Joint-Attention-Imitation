@@ -28,16 +28,21 @@ cond = ft_getopt(cfg, 'condition', 111);
 elec = ft_getopt(cfg, 'electrode', 'Cz');
 trl  = ft_getopt(cfg, 'trial', 1);
 
-if part < 1 || part > 2                                                     % check cfg.participant definition
-  error('cfg.part has to be 1 or 2');
+if ~ismember(part, [1,2])                                                   % check cfg.part definition
+  error('cfg.part has to either 1 or 2');
 end
 
-if part == 1                                                                % get trialinfo
-  trialinfo = data.part1.trialinfo;
-elseif part == 2
-  trialinfo = data.part2.trialinfo;
+switch part
+  case 1
+    data = data.part1;
+  case 2
+    data = data.part2;
 end
 
+trialinfo = data.trialinfo;                                                 % get trialinfo
+label     = data.label;                                                     % get labels
+
+addpath('../utilities');
 cond    = JAI_checkCondition( cond );                                       % check cfg.condition definition    
 trials  = find(trialinfo == cond);
 if isempty(trials)
@@ -50,12 +55,6 @@ else
     trlInCond = trl;
     trl = trl-1 + trials(1);
   end
-end
-
-if part == 1                                                                % get labels
-  label = data.part1.label;                                             
-elseif part == 2
-  label = data.part2.label;
 end
 
 if isnumeric(elec)                                                          % check cfg.electrode definition
@@ -72,18 +71,9 @@ end
 % -------------------------------------------------------------------------
 % Plot timeline
 % -------------------------------------------------------------------------
-switch part
-  case 1
-    plot(data.part1.time{trl}, data.part1.trial{trl}(elec,:));
-    title(sprintf('Part.: %d - Cond.: %d - Elec.: %s - Trial: %d', ...
-          part, cond, ...
-          strrep(data.part1.label{elec}, '_', '\_'), trlInCond));      
-  case 2
-    plot(data.part2.time{trl}, data.part2.trial{trl}(elec,:));
-    title(sprintf('Part.: %d - Cond.: %d - Elec.: %s - Trial: %d', ...
-          part, cond, ...
-          strrep(data.part2.label{elec}, '_', '\_'), trlInCond));
-end
+plot(data.time{trl}, data.trial{trl}(elec,:));
+title(sprintf('Part.: %d - Cond.: %d - Elec.: %s - Trial: %d', ...
+      part, cond, strrep(data.label{elec}, '_', '\_'), trlInCond));      
 
 xlabel('time in seconds');
 ylabel('voltage in \muV');

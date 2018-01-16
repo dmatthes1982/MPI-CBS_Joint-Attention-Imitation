@@ -79,7 +79,9 @@ for i=1:1:numOfDyads
   trialinfo{i + numOfDyads} = data_itpc.part2.trialinfo;
   if i == 1
     data_out.label  = data_itpc.part1.label;
+    data_out.freq   = data_itpc.part1.freq;
     data_out.dimord = data_itpc.part1.dimord;
+    data_out.time   = data_itpc.part1.time;
   end
   clear data_itpc
 end
@@ -115,7 +117,7 @@ function dataTmp = fixTrialOrder( dataTmp, trInf, trInfOrg, dyadNum )
 emptyMatrix = NaN * ones(35,95,5);                                          % empty matrix with NaNs
 
 for k = 1:1:size(dataTmp, 2)
-  if ~isequal(trInf{k}, trInfOrg)
+  if ~isequal(trInf{k}, trInfOrg')
     missingPhases = ~ismember(trInfOrg, trInf{k});
     missingPhases = trInfOrg(missingPhases);
     missingPhases = join_str(', ', num2cell(missingPhases)');
