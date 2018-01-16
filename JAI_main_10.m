@@ -7,7 +7,7 @@ if ~exist('sessionStr', 'var')
 end
 
 if ~exist('desPath', 'var')
-  desPath = '/data/pt_01826/eegData/DualEEG_JAI_processedData_branch_ica/'; % destination path for processed data  
+  desPath = '/data/pt_01826/eegData/DualEEG_JAI_processedData/';            % destination path for processed data  
 end
 
 %% part 10

@@ -13,7 +13,7 @@ addpath('./:./easyplot:./elecorder:./functions:./general:./headmodels:./utilitie
 % Path settings
 % -------------------------------------------------------------------------
 srcPath = '/data/pt_01826/eegData/DualEEG_JAI_rawData/';
-desPath = '/data/pt_01826/eegData/DualEEG_JAI_processedData_branch_ica/';
+desPath = '/data/pt_01826/eegData/DualEEG_JAI_processedData/';
 
 fprintf('\nThe default paths are:\n');
 fprintf('Source: %s\n',srcPath);
