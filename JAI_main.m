@@ -314,12 +314,12 @@ switch part
     tmpPath = strcat(desPath, '04b_eyecor/');
     fileNamePre = strcat(tmpPath, 'JAI_d*_04b_eyecor_', sessionStr, '.mat');
     tmpPath = strcat(desPath, '06b_hilbert/');
-    fileNamePost = strcat(tmpPath, 'JAI_d*_06b_hilbert20Hz_', sessionStr, '.mat');
+    fileNamePost = strcat(tmpPath, 'JAI_d*_06b_hilbertgamma_', sessionStr, '.mat');
   case 7
     tmpPath = strcat(desPath, '06b_hilbert/');
-    fileNamePre = strcat(tmpPath, 'JAI_d*_06b_hilbert20Hz_', sessionStr, '.mat');
+    fileNamePre = strcat(tmpPath, 'JAI_d*_06b_hilbertgamma_', sessionStr, '.mat');
     tmpPath = strcat(desPath, '07c_mplv/');
-    fileNamePost = strcat(tmpPath, 'JAI_d*_07c_mplv20Hz_', sessionStr, '.mat');
+    fileNamePost = strcat(tmpPath, 'JAI_d*_07c_mplvgamma_', sessionStr, '.mat');
   case 8
     tmpPath = strcat(desPath, '04b_eyecor/');
     fileNamePre = strcat(tmpPath, 'JAI_d*_04b_eyecor_', sessionStr, '.mat');
@@ -577,7 +577,7 @@ while sessionStatus == true
           selection = false;
         end
       end
-     case 8
+    case 8
       JAI_main_8;
       selection = false;
       while selection == false

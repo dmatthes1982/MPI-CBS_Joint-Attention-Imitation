@@ -3,24 +3,30 @@ if ~exist('sessionStr', 'var')
   cfg           = [];
   cfg.subFolder = '01_raw/';
   cfg.filename  = 'JAI_d01_01_raw';
-  sessionStr    = sprintf('%03d', JAI_getSessionNum( cfg ));                % estimate current session number
+  sessionNum    = JAI_getSessionNum( cfg );
+  if sessionNum == 0
+    sessionNum = 1;
+  end
+  sessionStr    = sprintf('%03d', sessionNum);                              % estimate current session number
+end
+
+if ~exist('srcPath', 'var')
+  srcPath = '/data/pt_01826/eegData/DualEEG_JAI_rawData/';                  % source path to raw data
 end
 
 if ~exist('desPath', 'var')
   desPath = '/data/pt_01826/eegData/DualEEG_JAI_processedData/';            % destination path for processed data  
 end
 
-if ~exist('numOfPart', 'var')                                               % estimate number of participants in segmented data folder
-  sourceList    = dir([strcat(desPath, '01_raw/'), ...
-                       strcat('*_', sessionStr, '.mat')]);
+if ~exist('numOfPart', 'var')                                               % estimate number of participants in raw data folder
+  sourceList    = dir([srcPath, '/*.vhdr']);
   sourceList    = struct2cell(sourceList);
   sourceList    = sourceList(1,:);
   numOfSources  = length(sourceList);
   numOfPart     = zeros(1, numOfSources);
 
   for i=1:1:numOfSources
-    numOfPart(i)  = sscanf(sourceList{i}, ...
-                    strcat('JAI_d%d_01_raw_', sessionStr, '.mat'));
+    numOfPart(i)  = sscanf(sourceList{i}, 'DualEEG_JAI_%d.vhdr');
   end
 end
 
