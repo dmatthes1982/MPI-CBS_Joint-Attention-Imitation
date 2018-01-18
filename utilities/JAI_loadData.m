@@ -6,7 +6,7 @@ function JAI_loadData( cfg )
 %
 % The configuration options are
 %   cfg.srcFolder   = source folder (default: '/data/pt_01826/eegData/DualEEG_JAI_processedData/01_raw/')
-%   cfg.filename    = filename (default: 'JAI_p01_01_raw')
+%   cfg.filename    = filename (default: 'JAI_d01_01_raw')
 %   cfg.sessionStr  = number of session, format: %03d, i.e.: '003' (default: '001')
 %
 % This function requires the fieldtrip toolbox.
@@ -19,7 +19,7 @@ function JAI_loadData( cfg )
 % Get config options
 % -------------------------------------------------------------------------
 srcFolder   = ft_getopt(cfg, 'srcFolder', '/data/pt_01826/eegData/DualEEG_JAI_processedData/01_raw/');
-filename    = ft_getopt(cfg, 'filename', 'JAI_p01_01_raw');
+filename    = ft_getopt(cfg, 'filename', 'JAI_d01_01_raw');
 sessionStr  = ft_getopt(cfg, 'sessionStr', '001');
 
 % -------------------------------------------------------------------------
