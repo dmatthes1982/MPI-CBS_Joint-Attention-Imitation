@@ -46,6 +46,7 @@ while selection == false
     selection = false;
   end
 end
+fprintf('\n');
 
 if isempty(threshold)
   selection = false;
@@ -65,6 +66,7 @@ if isempty(threshold)
       selection = false;
     end
   end
+fprintf('\n');  
 end
 
 % Write selected settings to settings file
