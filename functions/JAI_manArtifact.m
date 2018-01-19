@@ -9,7 +9,7 @@ function [ cfgAllArt ] = JAI_manArtifact( cfg, data )
 % where data has to be a result of JAI_SEGMENTATION
 %
 % The configuration options are
-%   cfg.artifact  = output of JAI_autoArtifact (see file JAI_pxx_05_autoArt_yyy.mat)
+%   cfg.artifact  = output of JAI_autoArtifact (see file JAI_dxx_05a_autoart_yyy.mat)
 %
 % This function requires the fieldtrip toolbox.
 %
