@@ -1,6 +1,6 @@
 function [ cfgAutoArt ] = JAI_autoArtifact( cfg, data )
 % JAI_AUTOARTIFACT marks timeslots as an artifact in which the values of
-% specified channels exeeds a min-max levels or a defined range.
+% specified channels exeeds a min-max level or a defined range.
 %
 % Use as
 %   [ cfgAutoArt ] = JAI_autoArtifact(cfg, data)

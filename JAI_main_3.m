@@ -130,5 +130,3 @@ end
 
 %% clear workspace
 clear file_path cfg sourceList numOfSources i j
-
-

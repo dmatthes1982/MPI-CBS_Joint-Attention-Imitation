@@ -7,7 +7,7 @@ function [ data ] = JAI_ica( cfg, data )
 % where the input data have to be the result from JAI_CONCATDATA
 %
 % The configuration options are
-%   cfg.channel       = cell-array with channel selection (default = {'all', '-EOGV', '-EOGH'})
+%   cfg.channel       = cell-array with channel selection (default = {'all', '-EOGV', '-EOGH', '-REF'})
 %   cfg.numcomponent  = 'all' or number (default = 'all')
 %
 % This function requires the fieldtrip toolbox.

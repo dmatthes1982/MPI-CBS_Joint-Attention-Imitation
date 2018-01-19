@@ -5,8 +5,8 @@ function [ data ] = JAI_rejectArtifacts( cfg, data )
 % Use as
 %   [ data ] = JAI_rejectartifacts( cfg, data )
 %
-% where data can be a result of JAI_SEGMENTATION, JAI_BPFILTERING or
-% JAI_HILBERTPHASE
+% where data can be a result of JAI_SEGMENTATION, JAI_BPFILTERING,
+% JAI_CONCATDATA or JAI_HILBERTPHASE
 %
 % The configuration options are
 %   cfg.artifact  = output of JAI_manArtifact or JAI_manArtifact 
