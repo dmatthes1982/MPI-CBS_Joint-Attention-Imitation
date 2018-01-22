@@ -1,7 +1,6 @@
 function [ data ] = JAI_phaseLockVal( cfg, data )
-% JAI_PHASELOCKVAL estimates the phase locking value between the
-% the participants of the dyads over all conditions and trials in the 
-% JAI_DATASTRUCTURE
+% JAI_PHASELOCKVAL estimates phase locking values between the participants 
+% of one dyads for all conditions and trials in the JAI_DATASTRUCTURE
 %
 % Use as
 %   [ data ] = JAI_phaseLockVal( cfg, data )
@@ -9,7 +8,7 @@ function [ data ] = JAI_phaseLockVal( cfg, data )
 % where the input data have to be the result from JAI_HILBERTPHASE
 %
 % The configuration options are
-%   cfg.winlen    = length of window over which the PLV will be calculated. (default: 5 sec)
+%   cfg.winlen    = length of window over which the PLV will be calculated. (default: 1 sec)
 %                   minimum = 1 sec
 % 
 % Theoretical Background:                                    T
@@ -33,10 +32,9 @@ function [ data ] = JAI_phaseLockVal( cfg, data )
 % Copyright (C) 2017, Daniel Matthes, MPI CBS 
 
 % -------------------------------------------------------------------------
-% Get config options
-% Get number of participants
+% Get config option
 % -------------------------------------------------------------------------
-cfg.winlen = ft_getopt(cfg, 'winlen', 5);
+cfg.winlen = ft_getopt(cfg, 'winlen', 1);
 
 % -------------------------------------------------------------------------
 % Estimate Phase Locking Value (PLV)
@@ -120,7 +118,7 @@ for i = 1:1:numOfTrials                                                     % fo
   VarB        = catTrial_p2{i};                                             % extract i-th trial of participant 2
   VarB        = permute(VarB, [3, 1, 2]);                                   % rearrange dimensions (electrodes to second, samples to third)
   Time        = catTimeOrg{i};
-  numOfPLV    = fix(size(VarA, 3)/N);                                         % calculate number of PLV values within one trial
+  numOfPLV    = fix(size(VarA, 3)/N);                                       % calculate number of PLV values within one trial
   PLV{i}      = zeros(numOfElec, connections, numOfPLV);
   
   phasediff = VarA - VarB;                                                  % calculate phase diff for all electrodes and over all connections
@@ -134,12 +132,13 @@ for i = 1:1:numOfTrials                                                     % fo
     window = phasediff(:,:, (k-1)*N + 1:k*N);
     PLV{i}(:,:,k) = abs(sum(exp(1i*window), 3)/N);
   end
-  PLV{i} = mat2cell(PLV{i}, ones(1,30), ones(1,30), size(PLV{i},3));
+  PLV{i} = mat2cell(PLV{i}, ones(1,numOfElec), ones(1,numOfElec), ...
+                    size(PLV{i},3));
   PLV{i} = cellfun(@(x) squeeze(x)', PLV{i}, 'uniform', 0);
 end
 
 %--------------------------------------------------------------------------
-% concatenate all trials with equal condition numbers
+% compile output data
 %--------------------------------------------------------------------------
 data_out                  = keepfields(dataPart1, {'hdr', 'fsample'});
 data_out.trialinfo        = trialinfo;

@@ -1,6 +1,6 @@
 function [ data ] = JAI_calcMeanPLV( data )
-% JAI_CALCMEANPLV estimates the mean of the phase locking values for all
-% dyads and electrodes over the different conditions.
+% JAI_CALCMEANPLV estimates the mean of the phase locking values within the 
+% different conditions for all dyads and connections.
 %
 % Use as
 %   [ data ] = JAI_calcMeanPLV( data )
