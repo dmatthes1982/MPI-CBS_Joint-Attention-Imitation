@@ -6,7 +6,7 @@ function [ data_mplv ] = JAI_mPLVoverDyads( cfg )
 %   [ data_mplv ] = JAI_mPLVoverDyads( cfg )
 %
 % The configuration options are
-%   cfg.path      = source path' (i.e. '/data/pt_01843/eegData/DualEEG_JAI_processedData/07c_mplv/')
+%   cfg.path      = source path' (i.e. '/data/pt_01826/eegData/DualEEG_JAI_processedData/07c_mplv/')
 %   cfg.session   = session number (default: 1)
 %   cfg.passband  = select passband of interest (default: 2Hz)
 %                   (accepted values: 2Hz, Theta, Alpha, 20Hz, Beta, Gamma)
@@ -21,7 +21,7 @@ function [ data_mplv ] = JAI_mPLVoverDyads( cfg )
 % Get and check config options
 % -------------------------------------------------------------------------
 path      = ft_getopt(cfg, 'path', ...
-              '/data/pt_01843/eegData/DualEEG_JAI_processedData/07c_mplv/');
+              '/data/pt_01826/eegData/DualEEG_JAI_processedData/07c_mplv/');
 session   = ft_getopt(cfg, 'session', 1);
 passband  = ft_getopt(cfg, 'passband', '2Hz');
 
@@ -132,7 +132,7 @@ end
 %--------------------------------------------------------------------------
 function dataTmp = fixTrialOrder( dataTmp, trInf, trInfOrg, dyadNum )
 
-emptyMatrix = NaN * ones(28,28);                                            % empty matrix with NaNs
+emptyMatrix = NaN * ones(size(dataTmp{1}{1}, 1), size(dataTmp{1}{1}, 2));   % empty matrix with NaNs
 
 for k = 1:1:size(dataTmp, 2)
   if ~isequal(trInf{k}, trInfOrg)
