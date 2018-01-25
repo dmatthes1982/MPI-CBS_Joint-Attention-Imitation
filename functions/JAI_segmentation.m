@@ -1,34 +1,34 @@
 function [ data ] = JAI_segmentation(cfg, data )
 % JAI_SEGMENTATION segments the data of each condition into segments with a
-% duration of 5 seconds
+% certain length
 %
 % Use as
-%   [ data ] = JAI_segmentation( data )
+%   [ data ] = JAI_segmentation( cfg, data )
 %
-% where the input data can be the result from JAI_IMPORTDATASET or
-% JAI_PREPROCESSING
+% where the input data can be the result from JAI_IMPORTDATASET, 
+% JAI_PREPROCESSING, JAI_BPFILTERING or JAI_HILBERTPHASE
 %
 % The configuration options are
-%   cfg.length    = length of segments (excepted values: 0.2, 1, 5, 10 seconds, default: 10)
+%   cfg.length    = length of segments (excepted values: 0.2, 1, 5, 10 seconds, default: 1)
 %   cfg.overlap   = percentage of overlapping (range: 0 ... 1, default: 0)
 %
 % This function requires the fieldtrip toolbox.
 %
 % See also JAI_IMPORTDATASET, JAI_PREPROCESSING, FT_REDEFINETRIAL,
-% JAI_DATASTRUCTURE
+% JAI_DATASTRUCTURE, JAI_BPFILTERING, JAI_HILBERTPHASE
 
 % Copyright (C) 2017, Daniel Matthes, MPI CBS
 
 % -------------------------------------------------------------------------
 % Get and check config options
 % -------------------------------------------------------------------------
-segLength = ft_getopt(cfg, 'length', 10);
+segLength = ft_getopt(cfg, 'length', 1);
 overlap   = ft_getopt(cfg, 'overlap', 0);
 
 possibleLengths = [0.2, 1, 5, 10];
 
 if ~any(ismember(possibleLengths, segLength))
-  error('Excepted cfg.length values are only 1, 5 and 10 seconds');
+  error('Excepted cfg.length values are only 0.2, 1, 5 and 10 seconds');
 end
 
 % -------------------------------------------------------------------------
