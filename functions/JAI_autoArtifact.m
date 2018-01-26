@@ -46,6 +46,12 @@ if isempty(cfg.trl)
   error('cfg.trl is missing. You can use JAI_genTrl to generate the trl matrix');
 end
 
+% -------------------------------------------------------------------------
+% Load general definitions
+% -------------------------------------------------------------------------
+filepath = fileparts(mfilename('fullpath'));
+load(sprintf('%s/../general/JAI_generalDefinitions.mat', filepath), ...
+     'generalDefinitions');
 
 % -------------------------------------------------------------------------
 % Artifact detection settings
@@ -83,12 +89,20 @@ cfgAutoArt.part1    = keepfields(cfgAutoArt.part1, ...
 cfgAutoArt.bad1Num  = length(cfgAutoArt.part1.artfctdef.threshold.artifact);
 fprintf('%d artifacts detected!\n', cfgAutoArt.bad1Num);
 
+if cfgAutoArt.bad1Num == sum(generalDefinitions.trialNum1sec)
+  warning('All trials are marked as bad, it is recommended to recheck the channels quality!');
+end
+
 fprintf('Estimate artifacts in participant 2...\n');
 cfgAutoArt.part2    = ft_artifact_threshold(cfg, data.part2);
 cfgAutoArt.part2    = keepfields(cfgAutoArt.part2, ...
                                       {'artfctdef', 'showcallinfo'});
 cfgAutoArt.bad2Num  = length(cfgAutoArt.part2.artfctdef.threshold.artifact);
 fprintf('%d artifacts detected!\n', cfgAutoArt.bad2Num);
+
+if cfgAutoArt.bad2Num == sum(generalDefinitions.trialNum1sec)
+  warning('All trials are marked as bad, it is recommended to recheck the channels quality!');
+end
 
 ft_info on;
 

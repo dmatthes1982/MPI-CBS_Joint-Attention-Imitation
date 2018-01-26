@@ -123,7 +123,7 @@ for i = numOfPart
   JAI_loadData( cfg );
 
   cfg           = [];
-  cfg.length    = 5;
+  cfg.length    = 1;
   cfg.overlap   = 0;
   
   fprintf('Segmentation of Hilbert phase data at alpha (8-12Hz).\n');
@@ -154,7 +154,7 @@ for i = numOfPart
   JAI_loadData( cfg );
     
   cfg           = [];
-  cfg.length    = 5;
+  cfg.length    = 1;
   cfg.overlap   = 0;
     
   fprintf('Segmentation of Hilbert phase data at 20 Hz.\n');
@@ -184,7 +184,7 @@ for i = numOfPart
   JAI_loadData( cfg );
     
   cfg           = [];
-  cfg.length    = 5;
+  cfg.length    = 1;
   cfg.overlap   = 0;
     
   fprintf('Segmentation of Hilbert phase data at beta (13-30Hz).\n');
@@ -214,7 +214,7 @@ for i = numOfPart
   JAI_loadData( cfg );
     
   cfg           = [];
-  cfg.length    = 5;
+  cfg.length    = 1;
   cfg.overlap   = 0;
     
   fprintf('Segmentation of Hilbert phase data at gamma (31-48Hz).\n');

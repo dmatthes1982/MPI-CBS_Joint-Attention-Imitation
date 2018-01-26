@@ -314,12 +314,12 @@ switch part
     tmpPath = strcat(desPath, '04b_eyecor/');
     fileNamePre = strcat(tmpPath, 'JAI_d*_04b_eyecor_', sessionStr, '.mat');
     tmpPath = strcat(desPath, '06b_hilbert/');
-    fileNamePost = strcat(tmpPath, 'JAI_d*_06b_hilbertgamma_', sessionStr, '.mat');
+    fileNamePost = strcat(tmpPath, 'JAI_d*_06b_hilbertGamma_', sessionStr, '.mat');
   case 7
     tmpPath = strcat(desPath, '06b_hilbert/');
-    fileNamePre = strcat(tmpPath, 'JAI_d*_06b_hilbertgamma_', sessionStr, '.mat');
+    fileNamePre = strcat(tmpPath, 'JAI_d*_06b_hilbertGamma_', sessionStr, '.mat');
     tmpPath = strcat(desPath, '07c_mplv/');
-    fileNamePost = strcat(tmpPath, 'JAI_d*_07c_mplvgamma_', sessionStr, '.mat');
+    fileNamePost = strcat(tmpPath, 'JAI_d*_07c_mplvGamma_', sessionStr, '.mat');
   case 8
     tmpPath = strcat(desPath, '04b_eyecor/');
     fileNamePre = strcat(tmpPath, 'JAI_d*_04b_eyecor_', sessionStr, '.mat');
@@ -344,7 +344,7 @@ if ~isequal(fileNamePre, 0)
     fileListPre = dir(fileNamePre);
     if isempty(fileListPre)
       cprintf([1,0.5,0], ['Selected part [%d] can not be executed, no '...'
-            'input data available\n Please choose a previous part.\n']);
+            'input data available\n Please choose a previous part.\n'], part);
       clear desPath fileNamePost fileNamePre fileNum i numOfSources ...
             selection sourceList srcPath x y dyadsSpec fileListPre ... 
             sessionList sessionNum numOfSessions session part sessionStr ...
