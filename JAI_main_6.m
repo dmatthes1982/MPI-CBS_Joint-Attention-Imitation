@@ -45,6 +45,7 @@ for i = numOfPart
   cfg           = [];
   cfg.bpfreq    = [1.9 2.1];
   cfg.filtorder = fix(500 / filtCoeffDiv);
+  cfg.channel   = {'all', '-REF', '-EOGV', '-EOGH', '-V1', '-V2'}; 
 
   data_bpfilt_2Hz = JAI_bpFiltering(cfg, data_eyecor);
   
@@ -67,7 +68,8 @@ for i = numOfPart
   cfg           = [];
   cfg.bpfreq    = [4 7];
   cfg.filtorder = fix(500 / filtCoeffDiv);
-
+  cfg.channel   = {'all', '-REF', '-EOGV', '-EOGH', '-V1', '-V2'};
+  
   data_bpfilt_theta = JAI_bpFiltering(cfg, data_eyecor);
   
   % export the filtered data into a *.mat file
@@ -89,6 +91,7 @@ for i = numOfPart
   cfg           = [];
   cfg.bpfreq    = [8 12];
   cfg.filtorder = fix(250 / filtCoeffDiv);
+  cfg.channel   = {'all', '-REF', '-EOGV', '-EOGH', '-V1', '-V2'};
   
   data_bpfilt_alpha = JAI_bpFiltering(cfg, data_eyecor);
   
@@ -111,6 +114,7 @@ for i = numOfPart
   cfg           = [];
   cfg.bpfreq    = [19 21];
   cfg.filtorder = fix(250 / filtCoeffDiv);
+  cfg.channel   = {'all', '-REF', '-EOGV', '-EOGH', '-V1', '-V2'};
   
   data_bpfilt_20Hz = JAI_bpFiltering(cfg, data_eyecor);
 
@@ -133,6 +137,7 @@ for i = numOfPart
   cfg           = [];
   cfg.bpfreq    = [13 30];
   cfg.filtorder = fix(250 / filtCoeffDiv);
+  cfg.channel   = {'all', '-REF', '-EOGV', '-EOGH', '-V1', '-V2'};
   
   data_bpfilt_beta = JAI_bpFiltering(cfg, data_eyecor);
 
@@ -155,6 +160,7 @@ for i = numOfPart
   cfg           = [];
   cfg.bpfreq    = [31 48];
   cfg.filtorder = fix(250 / filtCoeffDiv);
+  cfg.channel   = {'all', '-REF', '-EOGV', '-EOGH', '-V1', '-V2'};
   
   data_bpfilt_gamma = JAI_bpFiltering(cfg, data_eyecor);
 
