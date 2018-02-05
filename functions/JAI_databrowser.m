@@ -3,7 +3,7 @@ function [ cfgArtifacts ] = JAI_databrowser( cfg, data )
 % dataset using a appropriate scaling.
 %
 % Use as
-%   JAI_databrowser( data )
+%   JAI_databrowser( cfg, data )
 %
 % where the input can be the result of JAI_IMPORTDATASET,
 % JAI_PREPROCESSING or JAI_SEGMENTATION
@@ -15,7 +15,7 @@ function [ cfgArtifacts ] = JAI_databrowser( cfg, data )
 %
 % This function requires the fieldtrip toolbox
 %
-% See also JAI_IMPORTALLDATASETS, JAI_PREPROCESSING, JAI_SEGMENTATION, 
+% See also JAI_IMPORTDATASET, JAI_PREPROCESSING, JAI_SEGMENTATION, 
 % JAI_DATASTRUCTURE, FT_DATABROWSER
 
 % Copyright (C) 2017, Daniel Matthes, MPI CBS
@@ -69,20 +69,27 @@ cfg.showcallinfo                  = 'no';
 
 fprintf('Databrowser - Participant: %d\n', part);
 
-
 switch part
   case 1
+    if ~isfield(data.part1, 'trialinfo')
+      cfg.blocksize = 1000;
+    end
     if nargout == 0
       ft_databrowser(cfg, data.part1);
     else
       cfgArtifacts = ft_databrowser(cfg, data.part1);
     end
+    
   case 2
+    if ~isfield(data.part2, 'trialinfo')
+      cfg.blocksize = 1000;
+    end
     if nargout == 0
       ft_databrowser(cfg, data.part2);
     else
       cfgArtifacts = ft_databrowser(cfg, data.part2);
     end
+    
 end
 
 end

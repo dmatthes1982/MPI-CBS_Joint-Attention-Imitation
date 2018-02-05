@@ -37,8 +37,9 @@ end
 for i = numOfPart
   cfg       = [];
   cfg.path  = srcPath;
-  cfg.dyad  = i;  
-
+  cfg.dyad  = i;
+  cfg.continuous  = 'no';
+  
   fprintf('Import data of dyad %d from: %s ...\n', i, cfg.path);
   ft_info off;
   data_raw = JAI_importDataset( cfg );

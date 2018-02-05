@@ -6,8 +6,9 @@ function [ data ] = JAI_importDataset(cfg)
 %   [ data ] = JAI_importDataset(cfg)
 %
 % The configuration options are
-%   cfg.path = source path' (i.e. '/data/pt_01826/eegData/DualEEG_JAI_rawData/')
-%   cfg.dyad = number of dyad
+%   cfg.path        = source path' (i.e. '/data/pt_01826/eegData/DualEEG_JAI_rawData/')
+%   cfg.dyad        = number of dyad
+%   cfg.continuous  = 'yes' or 'no' (default: 'no')
 %
 % You can use relativ path specifications (i.e. '../../MATLAB/data/') or 
 % absolute path specifications like in the example. Please be aware that 
@@ -25,6 +26,7 @@ function [ data ] = JAI_importDataset(cfg)
 % -------------------------------------------------------------------------
 path = ft_getopt(cfg, 'path', []);
 dyad = ft_getopt(cfg, 'dyad', []);
+continuous  = ft_getopt(cfg, 'continuous', 'no');
 
 if isempty(path)
   error('No source path is specified!');
@@ -36,54 +38,65 @@ end
 
 headerfile = sprintf('%sDualEEG_JAI_%02d.vhdr', path, dyad);
 
-% -------------------------------------------------------------------------
-% Load general definitions
-% -------------------------------------------------------------------------
-filepath = fileparts(mfilename('fullpath'));
-load(sprintf('%s/../general/JAI_generalDefinitions.mat', filepath), ...
+if strcmp(continuous, 'no')
+  % -----------------------------------------------------------------------
+  % Load general definitions
+  % -------------------------------------------------------------------------
+  filepath = fileparts(mfilename('fullpath'));
+  load(sprintf('%s/../general/JAI_generalDefinitions.mat', filepath), ...
      'generalDefinitions');
 
-% definition of all possible stimuli, two for each condition, the first on 
-% is the original one and the second one handles the 'video trigger bug'
-eventvalues = [ generalDefinitions.condMark(1,:) ...
+  % definition of all possible stimuli, two for each condition, the first 
+  % on is the original one and the second one handles the 'video trigger 
+  % bug'
+  eventvalues = [ generalDefinitions.condMark(1,:) ...
                 generalDefinitions.condMark(2,:) ];
-samplingRate = 500;
-dur = generalDefinitions.duration * samplingRate;
+  samplingRate = 500;
+  dur = generalDefinitions.duration * samplingRate;
               
+  % -----------------------------------------------------------------------
+  % Generate trial definition
+  % -----------------------------------------------------------------------
+  % basis configuration for data import
+  cfg                     = [];
+  cfg.dataset             = headerfile;
+  cfg.trialfun            = 'ft_trialfun_general';
+  cfg.trialdef.eventtype  = 'Stimulus';
+  cfg.trialdef.prestim    = 0;
+  cfg.showcallinfo        = 'no';
+  cfg.feedback            = 'error';
+  cfg.trialdef.eventvalue = eventvalues;
+
+  cfg = ft_definetrial(cfg);                                                % generate config for segmentation
+  cfg = rmfield(cfg, {'notification'});                                     % workarround for mergeconfig bug                       
+
+  for i = 1:1:size(cfg.trl, 1)                                              % correct false stimulus numbers
+    if any(generalDefinitions.condNum128Bug == cfg.trl(i,4))
+      element = generalDefinitions.condNum128Bug == cfg.trl(i,4);
+      cfg.trl(i,4) = generalDefinitions.condNum(element);
+    end
+  end
+
+  for i = 1:1:size(cfg.trl, 1)                                              % set specific trial lengths
+    element = generalDefinitions.condNum == cfg.trl(i,4);
+    cfg.trl(i, 2) = dur(element) + cfg.trl(i, 1) - 1;
+  end
+
+  for i = size(cfg.trl):-1:2                                                % reject duplicates
+    if cfg.trl(i,4) == cfg.trl(i-1,4)
+      cfg.trl(i-1,:) = [];
+    end
+  end
+else
+  cfg                     = [];
+  cfg.dataset             = headerfile;
+  cfg.showcallinfo        = 'no';
+  cfg.feedback            = 'no';
+end
+
 % -------------------------------------------------------------------------
 % Data import
 % -------------------------------------------------------------------------
-% basis configuration for data import
-cfg                     = [];
-cfg.dataset             = headerfile;
-cfg.trialfun            = 'ft_trialfun_general';
-cfg.trialdef.eventtype  = 'Stimulus';
-cfg.trialdef.prestim    = 0;
-cfg.showcallinfo        = 'no';
-cfg.feedback            = 'error';
-cfg.trialdef.eventvalue = eventvalues;
-
-cfg = ft_definetrial(cfg);                                                  % generate config for segmentation
-cfg = rmfield(cfg, {'notification'});                                       % workarround for mergeconfig bug                       
-
-for i = 1:1:size(cfg.trl, 1)                                                % correct false stimulus numbers
-  if any(generalDefinitions.condNum128Bug == cfg.trl(i,4))
-    element = generalDefinitions.condNum128Bug == cfg.trl(i,4);
-    cfg.trl(i,4) = generalDefinitions.condNum(element);
-  end
-end
-
-for i = 1:1:size(cfg.trl, 1)                                                % set specific trial lengths
-  element = generalDefinitions.condNum == cfg.trl(i,4);
-  cfg.trl(i, 2) = dur(element) + cfg.trl(i, 1) - 1;
-end
-
-for i = size(cfg.trl):-1:2                                                  % reject duplicates
-  if cfg.trl(i,4) == cfg.trl(i-1,4)
-    cfg.trl(i-1,:) = [];
-  end
-end
-
 dataTmp = ft_preprocessing(cfg);                                            % import data
 
 data.part1 = dataTmp;                                                       % split dataset into two datasets, one for each participant
