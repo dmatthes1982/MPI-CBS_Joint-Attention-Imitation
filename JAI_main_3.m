@@ -58,7 +58,7 @@ for i = numOfPart
   trl         = JAI_genTrl(cfg, data_continuous);                           % define artifact detection intervals
   
   cfg             = [];
-  cfg.chan        = 'all';                                                  % use all channels
+  cfg.channel     = {'all', '-EOGV', '-EOGH', '-REF'};                      % use all channels for EOG decomposition expect EOGV, EOGH and REF
   cfg.continuous  = 'yes';
   cfg.trl         = trl; 
   cfg.method      = 1;                                                      % method: range

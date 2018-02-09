@@ -12,6 +12,7 @@ function [ cfgArtifacts ] = JAI_databrowser( cfg, data )
 %   cfg.dyad      = number of dyad (no default value)
 %   cfg.part      = number of participant (default: 1)
 %   cfg.artifact  = Nx2 matrix with artifact segments (default: [])
+%   cfg.channel   = channels of interest (default: 'all')
 %
 % This function requires the fieldtrip toolbox
 %
@@ -26,6 +27,7 @@ function [ cfgArtifacts ] = JAI_databrowser( cfg, data )
 dyad      = ft_getopt(cfg, 'dyad', []);
 part      = ft_getopt(cfg, 'part', 1);
 artifact  = ft_getopt(cfg, 'artifact', []);
+channel   = ft_getopt(cfg, 'channel', 'all');
 
 if isempty(dyad)                                                            % if dyad number is not specified
   event = [];                                                               % the associated markers cannot be loaded and displayed
@@ -63,7 +65,7 @@ cfg.ylim                          = [-100 100];
 cfg.viewmode                      = 'vertical';
 cfg.artfctdef.threshold.artifact  = artifact;
 cfg.continuous                    = 'no';
-cfg.channel                       = 'all';
+cfg.channel                       = channel;
 cfg.event                         = event;
 cfg.showcallinfo                  = 'no';
 

@@ -87,6 +87,18 @@ if strcmp(continuous, 'no')
       cfg.trl(i-1,:) = [];
     end
   end
+  
+  overlapping = find(cfg.trl(1:end-1,2) > cfg.trl(2:end, 1));               % in case of overlapping trials, remove the first of theses trials
+  if ~isempty(overlapping)
+    for i = 1:1:length(overlapping)
+      warning off backtrace;
+      warning(['trial %d with marker ''S%3d''  will be removed due to '...
+               'overlapping data with its successor.'], ...
+               overlapping(i), cfg.trl(overlapping(i), 4));
+      warning on backtrace;
+    end
+    cfg.trl(overlapping, :) = []; 
+  end
 else
   cfg                     = [];
   cfg.dataset             = headerfile;

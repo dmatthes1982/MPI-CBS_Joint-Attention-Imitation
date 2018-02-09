@@ -26,6 +26,7 @@ artifact  = ft_getopt(cfg, 'artifact', []);
 % Initialize settings, build output structure
 % -------------------------------------------------------------------------
 cfg             = [];
+cfg.channel     = {'all', '-V1', '-V2'};
 cfgAllArt.part1 = [];                                       
 cfgAllArt.part2 = [];
 

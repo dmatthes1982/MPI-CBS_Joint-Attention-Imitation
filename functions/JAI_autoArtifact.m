@@ -87,7 +87,7 @@ cfgAutoArt.part1    = ft_artifact_threshold(cfg, data.part1);
 cfgAutoArt.part1    = keepfields(cfgAutoArt.part1, ...
                                       {'artfctdef', 'showcallinfo'});
 cfgAutoArt.bad1Num  = calcBadNum( cfgAutoArt.part1.artfctdef.threshold );
-fprintf('%d segments of 1 second with artifacts detected!\n', cfgAutoArt.bad1Num);
+fprintf('%d segments with artifacts detected!\n', cfgAutoArt.bad1Num);
 
 if cfgAutoArt.bad1Num == sum(generalDefinitions.trialNum1sec)
   warning('All trials are marked as bad, it is recommended to recheck the channels quality!');
@@ -98,7 +98,7 @@ cfgAutoArt.part2    = ft_artifact_threshold(cfg, data.part2);
 cfgAutoArt.part2    = keepfields(cfgAutoArt.part2, ...
                                       {'artfctdef', 'showcallinfo'});
 cfgAutoArt.bad2Num  = calcBadNum( cfgAutoArt.part2.artfctdef.threshold );
-fprintf('%d segments of 1 second with artifacts detected!\n', cfgAutoArt.bad2Num);
+fprintf('%d segments with artifacts detected!\n', cfgAutoArt.bad2Num);
 
 if cfgAutoArt.bad2Num == sum(generalDefinitions.trialNum1sec)
   warning('All trials are marked as bad, it is recommended to recheck the channels quality!');
