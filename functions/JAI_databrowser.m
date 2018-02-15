@@ -13,6 +13,8 @@ function [ cfgArtifacts ] = JAI_databrowser( cfg, data )
 %   cfg.part      = number of participant (default: 1)
 %   cfg.artifact  = Nx2 matrix with artifact segments (default: [])
 %   cfg.channel   = channels of interest (default: 'all')
+%   cfg.ylim      = vertical scaling (default: [-100 100]);
+%   cfg.blocksize = duration in seconds for cutting the data up (default: [])
 %
 % This function requires the fieldtrip toolbox
 %
@@ -28,6 +30,8 @@ dyad      = ft_getopt(cfg, 'dyad', []);
 part      = ft_getopt(cfg, 'part', 1);
 artifact  = ft_getopt(cfg, 'artifact', []);
 channel   = ft_getopt(cfg, 'channel', 'all');
+ylim      = ft_getopt(cfg, 'ylim', [-100 100]);
+blocksize = ft_getopt(cfg, 'blocksize', []);
 
 if isempty(dyad)                                                            % if dyad number is not specified
   event = [];                                                               % the associated markers cannot be loaded and displayed
@@ -61,7 +65,8 @@ end
 % Configure and start databrowser
 % -------------------------------------------------------------------------
 cfg                               = [];
-cfg.ylim                          = [-100 100];
+cfg.ylim                          = ylim;
+cfg.blocksize                     = blocksize;
 cfg.viewmode                      = 'vertical';
 cfg.artfctdef.threshold.artifact  = artifact;
 cfg.continuous                    = 'no';
@@ -73,23 +78,17 @@ fprintf('Databrowser - Participant: %d\n', part);
 
 switch part
   case 1
-    if ~isfield(data.part1, 'trialinfo')
-      cfg.blocksize = 1000;
-    end
-    if nargout == 0
-      ft_databrowser(cfg, data.part1);
-    else
+    if nargout > 0
       cfgArtifacts = ft_databrowser(cfg, data.part1);
+    else
+      ft_databrowser(cfg, data.part1);
     end
     
   case 2
-    if ~isfield(data.part2, 'trialinfo')
-      cfg.blocksize = 1000;
-    end
-    if nargout == 0
-      ft_databrowser(cfg, data.part2);
-    else
+    if nargout > 0
       cfgArtifacts = ft_databrowser(cfg, data.part2);
+    else
+      ft_databrowser(cfg, data.part2);
     end
     
 end
