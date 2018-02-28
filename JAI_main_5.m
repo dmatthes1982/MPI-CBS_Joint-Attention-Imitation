@@ -45,7 +45,8 @@ for i = numOfPart
   trl             = JAI_genTrl(cfg, data_eyecor);                           % define artifact detection intervals
   
   cfg             = [];
-  cfg.chan        = {'Cz', 'O1', 'O2'};
+  cfg.channel     = {'all', '-V1', '-V2', '-REF', ...
+                     '-EOGV', '-EOGH'};
   cfg.continuous  = 'no';                                                   % data is trial-based
   cfg.trl         = trl;
   cfg.method      = 0;                                                      % method: maxmin threshold

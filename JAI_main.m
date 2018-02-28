@@ -45,8 +45,14 @@ end
 if ~exist(strcat(desPath, '00_settings'), 'dir')
   mkdir(strcat(desPath, '00_settings'));
 end
-if ~exist(strcat(desPath, '01_raw'), 'dir')
-  mkdir(strcat(desPath, '01_raw'));
+if ~exist(strcat(desPath, '01a_raw'), 'dir')
+  mkdir(strcat(desPath, '01a_raw'));
+end
+if ~exist(strcat(desPath, '01b_badchan'), 'dir')
+  mkdir(strcat(desPath, '01b_badchan'));
+end
+if ~exist(strcat(desPath, '01c_repaired'), 'dir')
+  mkdir(strcat(desPath, '01c_repaired'));
 end
 if ~exist(strcat(desPath, '02_preproc'), 'dir')
   mkdir(strcat(desPath, '02_preproc'));
@@ -107,9 +113,9 @@ clear sessionStr numOfPart part newPaths
 % -------------------------------------------------------------------------
 selection = false;
 
-tmpPath = strcat(desPath, '01_raw/');
+tmpPath = strcat(desPath, '01a_raw/');
 
-sessionList     = dir([tmpPath, 'JAI_d*_01_raw_*.mat']);
+sessionList     = dir([tmpPath, 'JAI_d*_01a_raw_*.mat']);
 sessionList     = struct2cell(sessionList);
 sessionList     = sessionList(1,:);
 numOfSessions   = length(sessionList);
@@ -118,7 +124,7 @@ sessionNum      = zeros(1, numOfSessions);
 sessionListCopy = sessionList;
 
 for i=1:1:numOfSessions
-  sessionListCopy{i} = strsplit(sessionList{i}, '01_raw_');
+  sessionListCopy{i} = strsplit(sessionList{i}, '01a_raw_');
   sessionListCopy{i} = sessionListCopy{i}{end};
   sessionNum(i) = sscanf(sessionListCopy{i}, '%d.mat');
 end
@@ -216,7 +222,7 @@ if session == 0
 else
   while selection == false
     fprintf('\nPlease select what you want to do with the selected dyads:\n');
-    fprintf('[1]  - Import and basic preprocessing\n');
+    fprintf('[1]  - Data import and repairing of bad channels\n');
     fprintf('[2]  - Preprocessing, filtering, re-referencing\n');
     fprintf('[3]  - ICA decomposition\n');
     fprintf('[4]  - Estimation and correction of eye artifacts \n');
@@ -288,11 +294,11 @@ end
 switch part
   case 1
     fileNamePre = [];
-    tmpPath = strcat(desPath, '01_raw/');
-    fileNamePost = strcat(tmpPath, 'JAI_d*_01_raw_', sessionStr, '.mat');
+    tmpPath = strcat(desPath, '01a_raw/');
+    fileNamePost = strcat(tmpPath, 'JAI_d*_01a_raw_', sessionStr, '.mat');
   case 2
-    tmpPath = strcat(desPath, '01_raw/');
-    fileNamePre = strcat(tmpPath, 'JAI_d*_01_raw_', sessionStr, '.mat');
+    tmpPath = strcat(desPath, '01c_repaired/');
+    fileNamePre = strcat(tmpPath, 'JAI_d*_01c_repaired_', sessionStr, '.mat');
     tmpPath = strcat(desPath, '02_preproc/');
     fileNamePost = strcat(tmpPath, 'JAI_d*_02_preproc_', sessionStr, '.mat');
   case 3

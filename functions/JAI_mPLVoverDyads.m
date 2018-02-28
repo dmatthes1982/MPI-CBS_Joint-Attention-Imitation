@@ -133,6 +133,7 @@ end
 function dataTmp = fixTrialOrder( dataTmp, trInf, trInfOrg, dyadNum )
 
 emptyMatrix = NaN * ones(size(dataTmp{1}{1}, 1), size(dataTmp{1}{1}, 2));   % empty matrix with NaNs
+fixed = false;
 
 for k = 1:1:size(dataTmp, 2)
   if ~isequal(trInf{k}, trInfOrg)
@@ -153,7 +154,12 @@ for k = 1:1:size(dataTmp, 2)
       end
     end
     dataTmp{k} = tmpBuffer;
+    fixed = true;
   end
+end
+
+if fixed == true
+  fprintf('\n');
 end
 
 end

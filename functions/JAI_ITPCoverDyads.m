@@ -114,7 +114,9 @@ end
 %--------------------------------------------------------------------------
 function dataTmp = fixTrialOrder( dataTmp, trInf, trInfOrg, dyadNum )
 
-emptyMatrix = NaN * ones(35,95,5);                                          % empty matrix with NaNs
+emptyMatrix = NaN * ones(35,95,50);                                         % empty matrix with NaNs
+fixed = false;
+part = [ones(1,length(dyadNum)/2) 2*ones(1,length(dyadNum)/2)];
 
 for k = 1:1:size(dataTmp, 2)
   if ~isequal(trInf{k}, trInfOrg')
@@ -122,8 +124,8 @@ for k = 1:1:size(dataTmp, 2)
     missingPhases = trInfOrg(missingPhases);
     missingPhases = join_str(', ', num2cell(missingPhases)');
     cprintf([0,0.6,0], ...
-            sprintf('Dyad %d: Phase(s) %s missing. Empty matrix(matrices) with NaNs created.\n', ...
-            dyadNum(k), missingPhases));
+            sprintf('Dyad %d/%d: Phase(s) %s missing. Empty matrix(matrices) with NaNs created.\n', ...
+            dyadNum(k), part(k), missingPhases));
     [~, loc] = ismember(trInfOrg, trInf{k});
     tmpBuffer = [];
     tmpBuffer{length(trInfOrg)} = [];                                       %#ok<AGROW>
@@ -135,7 +137,12 @@ for k = 1:1:size(dataTmp, 2)
       end
     end
     dataTmp{k} = tmpBuffer;
+    fixed = true;
   end
+end
+
+if fixed == true
+  fprintf('\n');
 end
 
 end

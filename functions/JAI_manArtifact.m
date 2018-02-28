@@ -27,6 +27,7 @@ artifact  = ft_getopt(cfg, 'artifact', []);
 % -------------------------------------------------------------------------
 cfg             = [];
 cfg.channel     = {'all', '-V1', '-V2'};
+cfg.ylim        = [-100 100];
 cfgAllArt.part1 = [];                                       
 cfgAllArt.part2 = [];
 

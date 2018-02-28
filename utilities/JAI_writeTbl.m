@@ -63,23 +63,54 @@ load(sprintf('%s/../general/JAI_generalDefinitions.mat', filepath), ...
 % -------------------------------------------------------------------------
 if strcmp(type, 'plv')
   trialinfo = data.dyad.trialinfo';
-end
-if strcmp(type, 'itpc')
-  trialinfo = data.part1.trialinfo';
-end
-if any(trialinfo ~= generalDefinitions.condNum)
-  error([ 'Something weird happend. The trialinfo of dyad %s is not ' ...
-          'identical with the general Definitons']);
+  [~, loc] = ismember(generalDefinitions.condNum, trialinfo);
+  if any(loc == 0)
+    emptyCond = (loc == 0);
+    emptyCond = generalDefinitions.condNum(emptyCond);
+    str = vec2str(emptyCond);
+    warning(['The following trials are completely rejected: ' str]);
+  end
+  goodtrials = zeros(1, length(generalDefinitions.condNum));
+  for i = 1:1:length(generalDefinitions.condNum)
+    if loc(i) ~= 0
+      goodtrials(i) = data.dyad.goodtrials(loc(i));
+    end
+  end
+  goodtrials = num2cell(goodtrials);
 end
 
-if strcmp(type, 'plv')
-  goodtrials = data.dyad.goodtrials;
-  goodtrials = num2cell(goodtrials');
-elseif strcmp(type, 'itpc')
-  goodtrials1 = data.part1.goodtrials;
-  goodtrials1 = num2cell(goodtrials1');
-  goodtrials2 = data.part2.goodtrials;
-  goodtrials2 = num2cell(goodtrials2');
+if strcmp(type, 'itpc')
+  trialinfoP1 = data.part1.trialinfo';
+  [~, loc] = ismember(generalDefinitions.condNum, trialinfoP1);
+  if any(loc == 0)
+    emptyCond = (loc == 0);
+    emptyCond = generalDefinitions.condNum(emptyCond);
+    str = vec2str(emptyCond);
+    warning(['The following trials of participant 1 are completely rejected: ' str]);
+  end
+  goodtrials1 = zeros(1, length(generalDefinitions.condNum));
+  for i = 1:1:length(generalDefinitions.condNum)
+    if loc(i) ~= 0
+      goodtrials1(i) = data.part1.goodtrials(loc(i));
+    end
+  end
+  goodtrials1 = num2cell(goodtrials1);
+  
+  trialinfoP2 = data.part2.trialinfo';
+  [~, loc] = ismember(generalDefinitions.condNum, trialinfoP2);
+  if any(loc == 0)
+    emptyCond = (loc == 0);
+    emptyCond = generalDefinitions.condNum(emptyCond);
+    str = vec2str(emptyCond);
+    warning(['The following trials of participant 2 are completely rejected: ' str]);
+  end
+  goodtrials2 = zeros(1, length(generalDefinitions.condNum));
+  for i = 1:1:length(generalDefinitions.condNum)
+    if loc(i) ~= 0
+      goodtrials2(i) = data.part2.goodtrials(loc(i));
+    end
+  end
+  goodtrials2 = num2cell(goodtrials2);
 end
 
 % -------------------------------------------------------------------------

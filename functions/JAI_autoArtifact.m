@@ -86,7 +86,8 @@ fprintf('Estimate artifacts in participant 1...\n');
 cfgAutoArt.part1    = ft_artifact_threshold(cfg, data.part1);
 cfgAutoArt.part1    = keepfields(cfgAutoArt.part1, ...
                                       {'artfctdef', 'showcallinfo'});
-cfgAutoArt.bad1Num  = calcBadNum( cfgAutoArt.part1.artfctdef.threshold );
+[cfgAutoArt.part1.artfctdef.threshold, cfgAutoArt.bad1Num] = ...
+                  combineArtifacts( cfgAutoArt.part1.artfctdef.threshold );
 fprintf('%d segments with artifacts detected!\n', cfgAutoArt.bad1Num);
 
 if cfgAutoArt.bad1Num == sum(generalDefinitions.trialNum1sec)
@@ -97,7 +98,8 @@ fprintf('Estimate artifacts in participant 2...\n');
 cfgAutoArt.part2    = ft_artifact_threshold(cfg, data.part2);
 cfgAutoArt.part2    = keepfields(cfgAutoArt.part2, ...
                                       {'artfctdef', 'showcallinfo'});
-cfgAutoArt.bad2Num  = calcBadNum( cfgAutoArt.part2.artfctdef.threshold );
+[cfgAutoArt.part2.artfctdef.threshold, cfgAutoArt.bad2Num] = ...
+                  combineArtifacts( cfgAutoArt.part2.artfctdef.threshold );
 fprintf('%d segments with artifacts detected!\n', cfgAutoArt.bad2Num);
 
 if cfgAutoArt.bad2Num == sum(generalDefinitions.trialNum1sec)
@@ -111,19 +113,16 @@ end
 % -------------------------------------------------------------------------
 % SUBFUNCTION which estimates segments of one second with artifacts
 % -------------------------------------------------------------------------
-function [ bNum ] = calcBadNum( threshold )
+function [ threshold, bNum ] = combineArtifacts( threshold )
 
 if isempty(threshold.artifact)
   bNum = 0;
   return;
 end
 
-begtrl = find(threshold.trl(:,1) <= threshold.artifact(1,1), 1, 'last');    % find first segment with artifacts
-endtrl = find(threshold.trl(:,2) >= threshold.artifact(end,2), 1, 'first'); % find last segment with artifacts
+trlMask = zeros(size(threshold.trl,1), 1);
 
-trlMask = zeros(900,1);
-
-for i = begtrl:endtrl
+for i = 1:size(threshold.trl,1)
   if any(threshold.trl(i,1) <= threshold.artifact(:,1) & ...
          threshold.trl(i,2) >= threshold.artifact(:,2))
     trlMask(i) = 1;
@@ -131,5 +130,6 @@ for i = begtrl:endtrl
 end
 
 bNum = sum(trlMask);                                                        % calc number of bad segments
+threshold.artifact = threshold.trl(logical(trlMask),1:2);                   % if trial contains artifacts, mark whole trial as artifact
 
 end

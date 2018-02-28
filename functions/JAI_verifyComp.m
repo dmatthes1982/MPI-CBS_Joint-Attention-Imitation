@@ -14,10 +14,10 @@ function [ data_eogcomp ] = JAI_verifyComp( data_eogcomp, data_icacomp )
 
 % Copyright (C) 2017, Daniel Matthes, MPI CBS
 
-fprintf('Verify EOG-correlating components at participant 1\n\n');
+fprintf('Verify EOG-correlating components at participant 1\n');
 data_eogcomp.part1 = corrComp(data_eogcomp.part1, data_icacomp.part1);
 fprintf('\n');
-fprintf('Verify EOG-correlating components at participant 2\n\n');
+fprintf('Verify EOG-correlating components at participant 2\n');
 data_eogcomp.part2 = corrComp(data_eogcomp.part2, data_icacomp.part2);
 
 end
@@ -36,14 +36,16 @@ cfg.channel       = find(ismember(dataICAcomp.label, dataEOGComp.elements))';
 cfg.blocksize     = 30;
 cfg.showcallinfo  = 'no';
 
+ft_info off;
 ft_databrowser(cfg, dataICAcomp);
 colormap jet;
+ft_info on;
 
 commandwindow;
 selection = false;
     
 while selection == false
-  fprintf('\nDo you want to deselect some of theses components?\n')
+  fprintf('Do you want to deselect some of theses components?\n')
   for i = numOfElements
     fprintf('[%d] - %s\n', i, dataEOGComp.elements{i});
   end
