@@ -67,7 +67,7 @@ if strcmp(type, 'plv')
   if any(loc == 0)
     emptyCond = (loc == 0);
     emptyCond = generalDefinitions.condNum(emptyCond);
-    str = vec2str(emptyCond);
+    str = vec2str(emptyCond, [], [], 0);
     warning(['The following trials are completely rejected: ' str]);
   end
   goodtrials = zeros(1, length(generalDefinitions.condNum));
@@ -85,7 +85,7 @@ if strcmp(type, 'itpc')
   if any(loc == 0)
     emptyCond = (loc == 0);
     emptyCond = generalDefinitions.condNum(emptyCond);
-    str = vec2str(emptyCond);
+    str = vec2str(emptyCond, [], [], 0);
     warning(['The following trials of participant 1 are completely rejected: ' str]);
   end
   goodtrials1 = zeros(1, length(generalDefinitions.condNum));
@@ -101,7 +101,7 @@ if strcmp(type, 'itpc')
   if any(loc == 0)
     emptyCond = (loc == 0);
     emptyCond = generalDefinitions.condNum(emptyCond);
-    str = vec2str(emptyCond);
+    str = vec2str(emptyCond, [], [], 0);
     warning(['The following trials of participant 2 are completely rejected: ' str]);
   end
   goodtrials2 = zeros(1, length(generalDefinitions.condNum));

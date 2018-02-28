@@ -122,7 +122,7 @@ for k = 1:1:size(dataTmp, 2)
   if ~isequal(trInf{k}, trInfOrg')
     missingPhases = ~ismember(trInfOrg, trInf{k});
     missingPhases = trInfOrg(missingPhases);
-    missingPhases = join_str(', ', num2cell(missingPhases)');
+    missingPhases = vec2str(missingPhases, [], [], 0);
     cprintf([0,0.6,0], ...
             sprintf('Dyad %d/%d: Phase(s) %s missing. Empty matrix(matrices) with NaNs created.\n', ...
             dyadNum(k), part(k), missingPhases));
@@ -143,29 +143,6 @@ end
 
 if fixed == true
   fprintf('\n');
-end
-
-end
-
-%--------------------------------------------------------------------------
-% SUBFUNCTION which transform a cell array of labels into a string
-%--------------------------------------------------------------------------
-function t = join_str(separator,cells)
-
-if isempty(cells)
-  t = '';
-  return;
-end
-
-if ischar(cells)
-  t = cells;
-  return;
-end
-
-t = char(num2str(cells{1}));
-
-for i=2:length(cells)
-  t = [t separator char(num2str(cells{i}))];                                %#ok<AGROW>
 end
 
 end
