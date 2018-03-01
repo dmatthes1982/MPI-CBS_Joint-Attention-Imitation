@@ -19,6 +19,17 @@ if isempty(cfg.badchannel)
 else
   data_repaired.part1 = ft_channelrepair(cfg, data_raw.part1);
   data_repaired.part1 = removefields(data_repaired.part1, {'elec'});
+  
+  cfgView           = [];
+  cfgView.ylim      = [-200 200];
+  cfgView.blocksize = 120;
+  cfgView.part      = 1;
+  
+  fprintf('\nVerification view for participant %d...\n', cfgView.part);
+  JAI_databrowser( cfgView, data_repaired );
+  commandwindow;
+  input('Press enter to continue!:');
+  close(gcf);
 end
 
 cfg.badchannel    = data_badchan.part2.badChan;
@@ -30,6 +41,17 @@ if isempty(cfg.badchannel)
 else
   data_repaired.part2 = ft_channelrepair(cfg, data_raw.part2);
   data_repaired.part2 = removefields(data_repaired.part2, {'elec'});
+  
+  cfgView           = [];
+  cfgView.ylim      = [-200 200];
+  cfgView.blocksize = 120;
+  cfgView.part      = 2;
+  
+  fprintf('\nVerification view for participant %d...\n', cfgView.part);
+  JAI_databrowser( cfgView, data_repaired );
+  commandwindow;
+  input('Press enter to continue!:');
+  close(gcf);
 end
 
 fprintf('\n');

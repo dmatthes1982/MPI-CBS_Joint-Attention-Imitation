@@ -25,8 +25,64 @@ if ~exist('numOfPart', 'var')                                               % es
 end
 
 %% part 5
-% auto artifact detection (threshold +-75 uV) and manual artifact detection 
-% (verification)
+% 1. auto artifact detection (threshold is default +-75 uV and adjustable) 
+% 2. manual artifact detection (verification)
+
+selection = false;
+while selection == false
+  fprintf('Do you want to use the default threshold (+-75uV) for automatic artifact detection?\n');
+  x = input('Select [y/n]: ','s');
+  if strcmp('y', x)
+    selection = true;
+    threshold = 75;
+  elseif strcmp('n', x)
+    selection = true;
+    threshold = [];
+  else
+    selection = false;
+  end
+end
+fprintf('\n');
+
+if isempty(threshold)
+  selection = false;
+  while selection == false
+    fprintf('Specify the absolut value (in uV) of the threshold limits in a range between 50 and 200!\n');
+    fprintf('i.e.: value 100 means threshold limits are +-100uV\n');
+    x = input('Value: ');
+    if isnumeric(x)
+      if (x < 50 || x > 200)
+        cprintf([1,0.5,0], 'Wrong input!\n');
+        selection = false;
+      else
+        threshold = x;
+        selection = true;
+      end
+    else
+      cprintf([1,0.5,0], 'Wrong input!\n');
+      selection = false;
+    end
+  end
+fprintf('\n');  
+end
+
+% Write selected settings to settings file
+file_path = [desPath '00_settings/' sprintf('settings_%s', sessionStr) '.xls'];
+if ~(exist(file_path, 'file') == 2)                                         % check if settings file already exist
+  cfg = [];
+  cfg.desFolder   = [desPath '00_settings/'];
+  cfg.type        = 'settings';
+  cfg.sessionStr  = sessionStr;
+  
+  JAI_createTbl(cfg);                                                       % create settings file
+end
+
+T = readtable(file_path);                                                   % update settings table
+delete(file_path);
+warning off;
+T.artThreshold(numOfPart) = threshold;
+warning on;
+writetable(T, file_path);
 
 for i = numOfPart
   cfg             = [];
@@ -50,14 +106,15 @@ for i = numOfPart
   cfg.continuous  = 'no';                                                   % data is trial-based
   cfg.trl         = trl;
   cfg.method      = 0;                                                      % method: maxmin threshold
-  cfg.minVal      = -75;                                                    % min: -75 uV
-  cfg.maxVal      = 75;                                                     % max: 75 uV
+  cfg.min         = -threshold;                                             % min: -threshold uV
+  cfg.max         = threshold;                                              % max: threshold uV
 
   cfg_autoart     = JAI_autoArtifact(cfg, data_eyecor);
   
   % verify automatic detected artifacts / manual artifact detection
   cfg           = [];
   cfg.artifact  = cfg_autoart;
+  cfg.dyad      = i;
   
   cfg_allart    = JAI_manArtifact(cfg, data_eyecor);                           
   
@@ -110,4 +167,4 @@ for i = numOfPart
 end
 
 %% clear workspace
-clear file_path numOfSources sourceList cfg i x selection
+clear file_path numOfSources sourceList cfg i x selection T threshold

@@ -64,6 +64,22 @@ end
 
 fprintf('Repairing of corrupted channels\n\n');
 
+% Create settings file if not existing
+settings_file = [desPath '00_settings/' ...
+                  sprintf('settings_%s', sessionStr) '.xls'];
+if ~(exist(settings_file, 'file') == 2)                                     % check if settings file already exist
+  cfg = [];
+  cfg.desFolder   = [desPath '00_settings/'];
+  cfg.type        = 'settings';
+  cfg.sessionStr  = sessionStr;
+  
+  JAI_createTbl(cfg);                                                       % create settings file
+end
+
+% Load settings file
+T = readtable(settings_file);
+delete(settings_file);
+
 %% repairing of corrupted channels %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 for i = numOfPart
   fprintf('Dyad %d\n\n', i);
@@ -99,6 +115,22 @@ for i = numOfPart
   fprintf('Data stored!\n\n');
   clear data_continuous
   
+  % add bad labels of bad channels to the settings file
+  if isempty(data_badchan.part1.badChan)
+    badChanPart1 = {'---'};
+  else
+    badChanPart1 = {strjoin(data_badchan.part1.badChan,',')};
+  end
+  if isempty(data_badchan.part2.badChan)
+    badChanPart2 = {'---'};
+  else
+    badChanPart2 = {strjoin(data_badchan.part2.badChan,',')};
+  end
+  warning off;
+  T.badChanPart1(i) = badChanPart1;
+  T.badChanPart2(i) = badChanPart2;
+  warning on;
+  
   % repair corrupted channels
   data_repaired = JAI_repairBadChan( data_badchan, data_raw );
   
@@ -118,5 +150,9 @@ for i = numOfPart
   clear data_repaired data_raw data_badchan 
 end
 
+% store settings table
+writetable(T, settings_file);
+
 %% clear workspace
-clear file_path cfg sourceList numOfSources i
+clear file_path cfg sourceList numOfSources i T badChanPart1 ...
+      badChanPart2 settings_file

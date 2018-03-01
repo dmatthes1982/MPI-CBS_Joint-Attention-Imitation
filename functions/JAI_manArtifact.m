@@ -10,6 +10,7 @@ function [ cfgAllArt ] = JAI_manArtifact( cfg, data )
 %
 % The configuration options are
 %   cfg.artifact  = output of JAI_autoArtifact (see file JAI_dxx_05a_autoart_yyy.mat)
+%   cfg.dyad      = number of dyad (only necessary for adding markers to databrowser view) (default: []) 
 %
 % This function requires the fieldtrip toolbox.
 %
@@ -21,11 +22,13 @@ function [ cfgAllArt ] = JAI_manArtifact( cfg, data )
 % Get and check config options
 % -------------------------------------------------------------------------
 artifact  = ft_getopt(cfg, 'artifact', []);
+dyad      = ft_getopt(cfg, 'dyad', []);
 
 % -------------------------------------------------------------------------
 % Initialize settings, build output structure
 % -------------------------------------------------------------------------
 cfg             = [];
+cfg.dyad        = dyad;
 cfg.channel     = {'all', '-V1', '-V2'};
 cfg.ylim        = [-100 100];
 cfgAllArt.part1 = [];                                       

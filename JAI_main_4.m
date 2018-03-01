@@ -51,7 +51,7 @@ fprintf('\n');
 if isempty(threshold)
   selection = false;
   while selection == false
-    fprintf('\nSpecify a threshold value in a range between 0 and 1!\n');
+    fprintf('Specify a threshold value in a range between 0 and 1!\n');
     x = input('Value: ');
     if isnumeric(x)
       if (x < 0 || x > 1)
