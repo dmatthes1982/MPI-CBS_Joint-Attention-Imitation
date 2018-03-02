@@ -88,7 +88,6 @@ end
 T = readtable(file_path);                                                   % update settings table
 delete(file_path);
 warning off;
-T.dyad(numOfPart) = numOfPart;
 T.fsample(numOfPart) = samplingRate;
 T.reference(numOfPart) = reference;
 warning on;

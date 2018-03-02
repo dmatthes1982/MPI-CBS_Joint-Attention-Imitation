@@ -5,8 +5,8 @@ function JAI_writeTbl(cfg, data)
 % Use as
 %   JAI_writeTbl( cfg )
 %
-% The input data hast to be either from JAI_INTERTRAILPHASECOH or 
-% JAI_PHASELOCKVALUE
+% The input data hast to be either from JAI_INTERTRIALPHASECOH or 
+% JAI_PHASELOCKVAL
 %
 % The configuration options are
 %   cfg.desFolder   = destination folder (default: '/data/pt_01826/eegData/DualEEG_JAI_processedData/00_settings/')

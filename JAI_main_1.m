@@ -79,6 +79,9 @@ end
 % Load settings file
 T = readtable(settings_file);
 delete(settings_file);
+warning off;
+T.dyad(numOfPart) = numOfPart;
+warning on;
 
 %% repairing of corrupted channels %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 for i = numOfPart
