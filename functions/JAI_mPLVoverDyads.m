@@ -13,7 +13,7 @@ function [ data_mplv ] = JAI_mPLVoverDyads( cfg )
 %
 % This function requires the fieldtrip toolbox
 % 
-% See also RPS_CALCMEANPLV
+% See also JAI_CALCMEANPLV
 
 % Copyright (C) 2018, Daniel Matthes, MPI CBS 
 

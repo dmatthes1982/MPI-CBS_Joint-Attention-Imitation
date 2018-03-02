@@ -5,6 +5,8 @@ function [ badLabel ] = JAI_channelCheckbox()
 %
 % Use as
 %   [ badLabel ] = JAI_channelCheckbox()
+%
+% SEE also UIFIGURE, UICHECKBOX, UIBUTTON, UIRESUME, UIWAIT
 
 % Copyright (C) 2018, Daniel Matthes, MPI CBS
 
@@ -153,7 +155,7 @@ btn.Text = 'Save';
 uiwait(SelectBadChannels);
 
 if ishandle(SelectBadChannels)                                              % if gui still exists
-  badLabel = [Fz.Value; F3.Value; F7.Value; F9.Value; FT7.Value; ...                             % return existing selection
+  badLabel = [Fz.Value; F3.Value; F7.Value; F9.Value; FT7.Value; ...        % return existing selection
               FC3.Value; FC1.Value; Cz.Value; C3.Value; T7.Value; ...
               CP3.Value; Pz.Value; P3.Value; P7.Value; PO9.Value; ...
               O1.Value; O2.Value; PO10.Value; P8.Value; P4.Value; ...

@@ -17,7 +17,7 @@ function JAI_writeTbl(cfg, data)
 %
 % This function requires the fieldtrip toolbox.
 %
-% SEE also JAI_INTERTRAILPHASECOH, JAI_PHASELOCKVALUE
+% SEE also JAI_INTERTRIALPHASECOH, JAI_PHASELOCKVAL
 
 % Copyright (C) 2018, Daniel Matthes, MPI CBS
 

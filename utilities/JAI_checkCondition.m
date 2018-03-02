@@ -1,10 +1,18 @@
 function [ num ] = JAI_checkCondition( condition )
 % JAI_CHECKCONDITION - This functions checks the defined condition. 
 %
+% Use as
+%   [ num ] = JAI_checkCondition( condition )
+%
 % If condition is a number the function checks, if this number is equal to 
 % one of the default values and return this number in case of confirmity. 
 % If condition is a string, the function returns the associated number, if
 % the given string is valid. Otherwise the function throws an error.
+%
+% All available condition strings and numbers are defined in
+% JAI_DATASTRUCTURE
+%
+% SEE also JAI_DATASTRUCTURE
 
 % Copyright (C) 2017, Daniel Matthes, MPI CBS
 

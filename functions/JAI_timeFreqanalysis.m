@@ -4,7 +4,7 @@ function [ data ] = JAI_timeFreqanalysis( cfg, data )
 % Use as
 %   [ data ] = JAI_timeFreqanalysis(cfg, data)
 %
-% where the input data have to be the result from JAI_IMPORTDATASET,
+% where the input data has to be the result from JAI_IMPORTDATASET,
 % JAI_PREPROCESSING or JAI_SEGMENTATION
 %
 % The configuration options are

@@ -1,15 +1,44 @@
 function [ data_repaired ] = JAI_repairBadChan( data_badchan, data_raw )
-% JAI_REPAIRBADCHAN 
+% JAI_REPAIRBADCHAN can be used for repairing previously selected bad
+% channels. For repairing this function uses the weighted neighbour
+% approach. After the repairing operation, the result will be displayed in
+% the fieldtrip databrowser for verification purpose.
+%
+% Use as
+%   [ data_repaired ] = JAI_repairBadChan( data_badchan, data_raw )
+%
+% where data_raw has to be raw data and data_badchan the result of
+% JAI_SELECTBADCHAN.
+%
+% Used layout and neighbour definitions:
+%   mpi_customized_acticap32.mat
+%   mpi_customized_acticap32_neighb.mat
+%
+% The function requires the fieldtrip toolbox
+%
+% SEE also JAI_DATABROWSER and FT_CHANNELREPAIR
 
+% Copyright (C) 2018, Daniel Matthes, MPI CBS
+
+% -------------------------------------------------------------------------
+% Load layout and neighbour definitions
+% -------------------------------------------------------------------------
 load('mpi_customized_acticap32_neighb.mat', 'neighbours');
 load('mpi_customized_acticap32.mat', 'lay');
 
+% -------------------------------------------------------------------------
+% Configure Repairing
+% -------------------------------------------------------------------------
 cfg               = [];
 cfg.method        = 'weighted';
 cfg.neighbours    = neighbours;
 cfg.layout        = lay;
 cfg.trials        = 'all';
 cfg.showcallinfo  = 'no';
+
+% -------------------------------------------------------------------------
+% Repairing bad channels
+% -------------------------------------------------------------------------
 cfg.badchannel    = data_badchan.part1.badChan;
 
 fprintf('Repairing bad channels of participant 1...\n');
@@ -27,7 +56,7 @@ else
   
   fprintf('\nVerification view for participant %d...\n', cfgView.part);
   JAI_databrowser( cfgView, data_repaired );
-  commandwindow;
+  commandwindow;                                                            % set focus to commandwindow
   input('Press enter to continue!:');
   close(gcf);
 end
@@ -49,7 +78,7 @@ else
   
   fprintf('\nVerification view for participant %d...\n', cfgView.part);
   JAI_databrowser( cfgView, data_repaired );
-  commandwindow;
+  commandwindow;                                                            % set focus to commandwindow
   input('Press enter to continue!:');
   close(gcf);
 end
