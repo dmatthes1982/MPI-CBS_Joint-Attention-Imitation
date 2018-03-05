@@ -34,13 +34,16 @@ end
 % 4. ICA decomposition
 % 5. Extract EOG channels from the cleaned continuous data
 
+cprintf([0,0.6,0], '<strong>[3]  - ICA decomposition</strong>\n');
+fprintf('\n');
+
 for i = numOfPart
   cfg             = [];
   cfg.srcFolder   = strcat(desPath, '02_preproc/');
   cfg.filename    = sprintf('JAI_d%02d_02_preproc', i);
   cfg.sessionStr  = sessionStr;
   
-  fprintf('Dyad %d\n', i);
+  fprintf('<strong>Dyad %d</strong>\n', i);
   fprintf('Load preprocessed data...\n');
   JAI_loadData( cfg );
   

@@ -32,7 +32,7 @@ load(sprintf('%s/../general/JAI_generalDefinitions.mat', filepath), ...
 % -------------------------------------------------------------------------
 % Select dyads
 % -------------------------------------------------------------------------    
-fprintf('Averaging ITPC values over dyads...\n');
+fprintf('<strong>Averaging ITPC values over dyads...</strong>\n');
 
 dyadsList   = dir([path, sprintf('JAI_d*_08b_itpc_%03d.mat', session)]);
 dyadsList   = struct2cell(dyadsList);

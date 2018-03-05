@@ -42,7 +42,7 @@ cfg.winlen = ft_getopt(cfg, 'winlen', 1);
 dataTmp = struct;
 dataTmp.dyad = [];
 
-fprintf('Calc PLVs with a center frequency of %g Hz...\n', ...           
+fprintf('<strong>Calc PLVs with a center frequency of %g Hz...</strong>\n', ...           
          data.centerFreq);
 dataTmp.dyad  = phaseLockingValue(cfg, data.part1, data.part2);
 dataTmp.centerFreq = data.centerFreq;

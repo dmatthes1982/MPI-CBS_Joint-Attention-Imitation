@@ -27,8 +27,11 @@ end
 %% part 9
 % Calculate TFRs of the EOG-artifact corrected data
 
+cprintf([0,0.6,0], '<strong>[9]  - Power analysis (TFR)</strong>\n');
+fprintf('\n');
+
 for i = numOfPart
-  fprintf('Dyad %d\n', i);
+  fprintf('<strong>Dyad %d</strong>\n', i);
 
   cfg             = [];                                                     % load EOG-artifact corrected data
   cfg.srcFolder   = strcat(desPath, '04b_eyecor/');

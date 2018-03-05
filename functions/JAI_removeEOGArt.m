@@ -15,9 +15,9 @@ function [ data ] = JAI_removeEOGArt( data_eogcomp, data )
 
 % Copyright (C) 2017, Daniel Matthes, MPI CBS
 
-fprintf('Cleanig data of participant 1 from eye-artifacts...\n');
+fprintf('<strong>Cleanig data of participant 1 from eye-artifacts...</strong>\n');
 data.part1 = removeArtifacts(data_eogcomp.part1, data.part1);
-fprintf('Cleanig data of participant 2 from eye-artifacts...\n');
+fprintf('<strong>Cleanig data of participant 2 from eye-artifacts...</strong>\n');
 data.part2 = removeArtifacts(data_eogcomp.part2, data.part2);
 
 end

@@ -28,6 +28,9 @@ end
 % preprocess the raw data
 % export the preprocessed data into a *.mat file
 
+cprintf([0,0.6,0], '<strong>[2]  - Preprocessing, filtering, re-referencing</strong>\n');
+fprintf('\n');
+
 selection = false;
 while selection == false
   cprintf([0,0.6,0], 'Please select sampling rate for preprocessing:\n');
@@ -99,7 +102,7 @@ for i = numOfPart
   cfg.filename    = sprintf('JAI_d%02d_01c_repaired', i);
   cfg.sessionStr  = sessionStr;
   
-  fprintf('Dyad %d\n', i);
+  fprintf('<strong>Dyad %d</strong>\n', i);
   fprintf('Load repaired raw data...\n');
   JAI_loadData( cfg );
   

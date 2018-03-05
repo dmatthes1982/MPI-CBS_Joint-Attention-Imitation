@@ -1,13 +1,13 @@
-fprintf('------------------------------------------------\n');
-fprintf('<strong>Joint attention imitation project - data processing</strong>\n');
-fprintf('Version: 0.3\n');
-fprintf('Copyright (C) 2017, Daniel Matthes, MPI CBS\n');
-fprintf('------------------------------------------------\n');
-
 % -------------------------------------------------------------------------
 % Add directory and subfolders to path
 % -------------------------------------------------------------------------
 JAI_init;
+
+cprintf([0,0.6,0], '<strong>---------------------------------------------------</strong>\n');
+cprintf([0,0.6,0], '<strong>Joint attention imitation project - data processing</strong>\n');
+cprintf([0,0.6,0], '<strong>Version: 0.3</strong>\n');
+cprintf([0,0.6,0], 'Copyright (C) 2017-2018, Daniel Matthes, MPI CBS\n');
+cprintf([0,0.6,0], '<strong>---------------------------------------------------</strong>\n');
 
 % -------------------------------------------------------------------------
 % Path settings
@@ -225,7 +225,7 @@ else
     fprintf('[1]  - Data import and repairing of bad channels\n');
     fprintf('[2]  - Preprocessing, filtering, re-referencing\n');
     fprintf('[3]  - ICA decomposition\n');
-    fprintf('[4]  - Estimation and correction of eye artifacts \n');
+    fprintf('[4]  - Estimation and correction of eye artifacts\n');
     fprintf('[5]  - Automatic and manual artifact detection\n');
     fprintf('[6]  - Narrow band filtering and Hilbert transform\n'); 
     fprintf('[7]  - Estimation of Phase Locking Values (PLV)\n');
@@ -448,8 +448,8 @@ while sessionStatus == true
       JAI_main_1;
       selection = false;
       while selection == false
-        fprintf('Continue data processing with:\n');
-        fprintf('[2] - Preprocessing, filtering, re-referencing?\n');
+        fprintf('<strong>Continue data processing with:</strong>\n');
+        fprintf('<strong>[2] - Preprocessing, filtering, re-referencing?</strong>\n');
         x = input('\nSelect [y/n]: ','s');
         if strcmp('y', x)
           selection = true;
@@ -466,8 +466,8 @@ while sessionStatus == true
       JAI_main_2;
       selection = false;
       while selection == false
-        fprintf('Continue data processing with:\n');
-        fprintf('[3] - ICA decomposition?\n');
+        fprintf('<strong>Continue data processing with:</strong>\n');
+        fprintf('<strong>[3] - ICA decomposition?</strong>\n');
         x = input('\nSelect [y/n]: ','s');
         if strcmp('y', x)
           selection = true;
@@ -484,8 +484,8 @@ while sessionStatus == true
       JAI_main_3;
       selection = false;
       while selection == false
-        fprintf('Continue data processing with:\n');
-        fprintf('[4] - Estimation and correction of eye artifacts?\n');
+        fprintf('<strong>Continue data processing with:</strong>\n');
+        fprintf('<strong>[4] - Estimation and correction of eye artifacts?</strong>\n');
         x = input('\nSelect [y/n]: ','s');
         if strcmp('y', x)
           selection = true;
@@ -502,8 +502,8 @@ while sessionStatus == true
       JAI_main_4;
       selection = false;
       while selection == false
-        fprintf('Continue data processing with:\n');
-        fprintf('[5] - Automatic and manual detection of artifacts?\n');
+        fprintf('<strong>Continue data processing with:</strong>\n');
+        fprintf('<strong>[5] - Automatic and manual detection of artifacts?</strong>\n');
         x = input('\nSelect [y/n]: ','s');
         if strcmp('y', x)
           selection = true;
@@ -520,11 +520,11 @@ while sessionStatus == true
       JAI_main_5;
       selection = false;
       while selection == false
-        fprintf('Continue data processing with:\n');
-        fprintf('[6]  - Narrow band filtering and Hilbert transform?\n');
-        fprintf('[8]  - Estimation of Inter Trial Phase Coherences (ITPC)?\n');
-        fprintf('[9]  - Power analysis (TFR)?\n');
-        fprintf('[11] - Quit data processing?\n');
+        fprintf('<strong>Continue data processing with:</strong>\n');
+        fprintf('<strong>[6]  - Narrow band filtering and Hilbert transform?</strong>\n');
+        fprintf('<strong>[8]  - Estimation of Inter Trial Phase Coherences (ITPC)?</strong>\n');
+        fprintf('<strong>[9]  - Power analysis (TFR)?</strong>\n');
+        fprintf('<strong>[11] - Quit data processing?</strong>\n');
         x = input('\nSelect one of these options: ');
         switch x
           case 6
@@ -551,8 +551,8 @@ while sessionStatus == true
       JAI_main_6;
       selection = false;
       while selection == false
-        fprintf('Continue data processing with:\n');
-        fprintf('[7] - Estimation of Phase Locking Values (PLV)?\n');
+        fprintf('<strong>Continue data processing with:</strong>\n');
+        fprintf('<strong>[7] - Estimation of Phase Locking Values (PLV)?</strong>\n');
         x = input('\nSelect [y/n]: ','s');
         if strcmp('y', x)
           selection = true;
@@ -569,11 +569,11 @@ while sessionStatus == true
       JAI_main_7;
       selection = false;
       while selection == false
-        fprintf('Continue data processing with:\n');
-        fprintf('[8]  - Estimation of Inter Trial Phase Coherences (ITPC)?\n');
-        fprintf('[9]  - Power analysis (TFR)?\n');
-        fprintf('[10] - Averaging over dyads?\n');
-        fprintf('[11] - Quit data processing?\n');
+        fprintf('<strong>Continue data processing with:</strong>\n');
+        fprintf('<strong>[8]  - Estimation of Inter Trial Phase Coherences (ITPC)?</strong>\n');
+        fprintf('<strong>[9]  - Power analysis (TFR)?</strong>\n');
+        fprintf('<strong>[10] - Averaging over dyads?</strong>\n');
+        fprintf('<strong>[11] - Quit data processing?</strong>\n');
         x = input('\nSelect one of these options: ');
         switch x
           case 8
@@ -600,10 +600,10 @@ while sessionStatus == true
       JAI_main_8;
       selection = false;
       while selection == false
-        fprintf('Continue data processing with:\n');
-        fprintf('[9]  - Power analysis (TFR)?\n');
-        fprintf('[10] - Averaging over dyads?\n');
-        fprintf('[11] - Quit data processing?\n');
+        fprintf('<strong>Continue data processing with:</strong>\n');
+        fprintf('<strong>[9]  - Power analysis (TFR)?</strong>\n');
+        fprintf('<strong>[10] - Averaging over dyads?</strong>\n');
+        fprintf('<strong>[11] - Quit data processing?</strong>\n');
         x = input('\nSelect one of these options: ');
         switch x
           case 9
@@ -626,8 +626,8 @@ while sessionStatus == true
       JAI_main_9;
       selection = false;
       while selection == false
-        fprintf('Continue data processing with:\n');
-        fprintf('[10] - Averaging over dyads?\n');
+        fprintf('<strong>Continue data processing with:</strong>\n');
+        fprintf('<strong>[10] - Averaging over dyads?</strong>\n');
         x = input('\nSelect [y/n]: ','s');
         if strcmp('y', x)
           selection = true;
@@ -649,8 +649,8 @@ while sessionStatus == true
   fprintf('\n');
 end
 
-fprintf('Data processing finished.\n');
-fprintf('Session will be closed.\n');
+fprintf('<strong>Data processing finished.</strong>\n');
+fprintf('<strong>Session will be closed.</strong>\n');
 
 clear sessionStr numOfPart srcPath desPath sessionPart sessionStatus ...
       selection x

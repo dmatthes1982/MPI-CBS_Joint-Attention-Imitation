@@ -26,6 +26,9 @@ end
 
 %% part 8
 
+cprintf([0,0.6,0], '<strong>[8]  - Estimation of Inter Trial Phase Coherences (ITPC)</strong>\n');
+fprintf('\n');
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% general adjustment
 choise = false;
@@ -44,11 +47,29 @@ while choise == false
 end
 fprintf('\n');
 
+% Write selected settings to settings file
+file_path = [desPath '00_settings/' sprintf('settings_%s', sessionStr) '.xls'];
+if ~(exist(file_path, 'file') == 2)                                         % check if settings file already exist
+  cfg = [];
+  cfg.desFolder   = [desPath '00_settings/'];
+  cfg.type        = 'settings';
+  cfg.sessionStr  = sessionStr;
+  
+  JAI_createTbl(cfg);                                                       % create settings file
+end
+
+T = readtable(file_path);                                                   % update settings table
+delete(file_path);
+warning off;
+T.artRejectITPC(numOfPart) = x;
+warning on;
+writetable(T, file_path);
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Segmentation, Artifact rejection and ITPC estimation
 
 for i = numOfPart
-  fprintf('Dyad %d\n', i);
+  fprintf('<strong>Dyad %d</strong>\n', i);
 
   cfg             = [];                                                     % load preprocessed data
   cfg.srcFolder   = strcat(desPath, '04b_eyecor/');
@@ -148,4 +169,4 @@ end
 
 %% clear workspace
 clear file_path file_num cfg dyads dyadsNew i cfg_allArt artifactRejection ...
-      x choise
+      x choise T

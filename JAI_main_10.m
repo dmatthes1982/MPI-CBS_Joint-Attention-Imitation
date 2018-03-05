@@ -13,6 +13,9 @@ end
 %% part 10
 % Averaging over dyads
 
+cprintf([0,0.6,0], '<strong>[10] - Averaging over dyads</strong>\n');
+fprintf('\n');
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Averaging mPLVs over dyads
 choise = false;

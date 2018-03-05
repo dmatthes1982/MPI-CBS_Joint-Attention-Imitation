@@ -29,9 +29,9 @@ end
 % -------------------------------------------------------------------------
 % Estimate correlating components
 % -------------------------------------------------------------------------
-fprintf('Estimate EOG-correlating components at participant 1\n');
+fprintf('<strong>Estimate EOG-correlating components at participant 1...</strong>\n');
 data_eogcomp.part1 = corrComp(data_icacomp.part1, data_sensor.part1, threshold);
-fprintf('Estimate EOG-correlating components at participant 2\n');
+fprintf('<strong>Estimate EOG-correlating components at participant 2...</strong>\n');
 data_eogcomp.part2 = corrComp(data_icacomp.part2, data_sensor.part2, threshold);
 
 end

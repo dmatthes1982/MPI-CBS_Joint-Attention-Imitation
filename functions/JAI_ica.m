@@ -34,9 +34,9 @@ cfg.demean        = 'no';
 cfg.updatesens    = 'no';
 cfg.showcallinfo  = 'no';
 
-fprintf('\nICA decomposition for participant 1...\n\n');
+fprintf('\n<strong>ICA decomposition for participant 1...</strong>\n\n');
 data.part1 = ft_componentanalysis(cfg, data.part1);
-fprintf('\nICA decomposition for participant 2...\n\n');
+fprintf('\n<strong>ICA decomposition for participant 2...</strong>\n\n');
 data.part2 = ft_componentanalysis(cfg, data.part2);
 
 end

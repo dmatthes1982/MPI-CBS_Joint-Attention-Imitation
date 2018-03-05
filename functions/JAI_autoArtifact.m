@@ -82,7 +82,7 @@ cfgAutoArt.trialsNum = [];
 
 cfgAutoArt.trialsNum = size(trl, 1);                    
 
-fprintf('Estimate artifacts in participant 1...\n');
+fprintf('<strong>Estimate artifacts in participant 1...</strong>\n');
 cfgAutoArt.part1    = ft_artifact_threshold(cfg, data.part1);
 cfgAutoArt.part1    = keepfields(cfgAutoArt.part1, ...
                                       {'artfctdef', 'showcallinfo'});
@@ -94,7 +94,7 @@ if cfgAutoArt.bad1Num == sum(generalDefinitions.trialNum1sec)
   warning('All trials are marked as bad, it is recommended to recheck the channels quality!');
 end
 
-fprintf('Estimate artifacts in participant 2...\n');
+fprintf('<strong>Estimate artifacts in participant 2...</strong>\n');
 cfgAutoArt.part2    = ft_artifact_threshold(cfg, data.part2);
 cfgAutoArt.part2    = keepfields(cfgAutoArt.part2, ...
                                       {'artfctdef', 'showcallinfo'});

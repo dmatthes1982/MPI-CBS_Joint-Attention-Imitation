@@ -32,9 +32,12 @@ end
 % 2. Verify the estimated components by using the ft_databrowser function
 % 3. Remove eye artifacts
 
+cprintf([0,0.6,0], '<strong>[4]  - Estimation and correction of eye artifacts</strong>\n');
+fprintf('\n');
+
 selection = false;
 while selection == false
-  fprintf('Do you want to use the default threshold (0.8) for EOG-artifact estimation?\n');
+  cprintf([0,0.6,0], 'Do you want to use the default threshold (0.8) for EOG-artifact estimation?\n');
   x = input('Select [y/n]: ','s');
   if strcmp('y', x)
     selection = true;
@@ -51,7 +54,7 @@ fprintf('\n');
 if isempty(threshold)
   selection = false;
   while selection == false
-    fprintf('Specify a threshold value in a range between 0 and 1!\n');
+    cprintf([0,0.6,0], 'Specify a threshold value in a range between 0 and 1!\n');
     x = input('Value: ');
     if isnumeric(x)
       if (x < 0 || x > 1)
@@ -93,14 +96,14 @@ for i = numOfPart
   cfg.filename    = sprintf('JAI_d%02d_03a_icacomp', i);
   cfg.sessionStr  = sessionStr;
   
-  fprintf('Dyad %d\n', i);
+  fprintf('<strong>Dyad %d</strong>\n', i);
   fprintf('Load ICA result...\n');
   JAI_loadData( cfg );
   
   cfg.srcFolder   = strcat(desPath, '03b_eogchan/');
   cfg.filename    = sprintf('JAI_d%02d_03b_eogchan', i);
   
-  fprintf('Load EOG data...\n\n');
+  fprintf('Load original EOG channels...\n\n');
   JAI_loadData( cfg );
   
   % Find EOG-like ICA Components (Correlation with EOGV and EOGH, 80 %

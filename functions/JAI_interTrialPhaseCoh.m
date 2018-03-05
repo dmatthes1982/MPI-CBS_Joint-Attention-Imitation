@@ -46,10 +46,10 @@ cfgSub.foi  = ft_getopt(cfg, 'foi', 1:0.5:48);
 % -------------------------------------------------------------------------
 % Estimate inter-trial phase coherence (ITPC)
 % -------------------------------------------------------------------------
-fprintf('Estimate ITPC for participant 1...\n');
+fprintf('<strong>Estimate ITPC for participant 1...</strong>\n');
 data.part1 = interTrialPhaseCoh(cfgSub, data.part1);
   
-fprintf('Estimate ITPC for participant 2...\n');
+fprintf('<strong>Estimate ITPC for participant 2...</strong>\n');
 data.part2 = interTrialPhaseCoh(cfgSub, data.part2);
 
 end

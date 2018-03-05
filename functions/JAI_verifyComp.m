@@ -14,10 +14,10 @@ function [ data_eogcomp ] = JAI_verifyComp( data_eogcomp, data_icacomp )
 
 % Copyright (C) 2017, Daniel Matthes, MPI CBS
 
-fprintf('Verify EOG-correlating components at participant 1\n');
+fprintf('<strong>Verify EOG-correlating components at participant 1...</strong>\n');
 data_eogcomp.part1 = corrComp(data_eogcomp.part1, data_icacomp.part1);
 fprintf('\n');
-fprintf('Verify EOG-correlating components at participant 2\n');
+fprintf('<strong>Verify EOG-correlating components at participant 2...</strong>\n');
 data_eogcomp.part2 = corrComp(data_eogcomp.part2, data_icacomp.part2);
 
 end

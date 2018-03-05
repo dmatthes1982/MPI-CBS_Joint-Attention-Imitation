@@ -58,8 +58,10 @@ load(sprintf('%s/../general/JAI_generalDefinitions.mat', filepath), ...
 % -------------------------------------------------------------------------
 switch type
   case 'settings'
-    T = table(1,{'unknown'},{'unknown'},0,{'unknown'},0,0);
-    T.Properties.VariableNames = {'dyad', 'badChanPart1', 'badChanPart2', 'fsample', 'reference', 'ICAcorrVal', 'artThreshold'};
+    T = table(1,{'unknown'},{'unknown'},0,{'unknown'},0,0,{'unknown'},{'unknown'});
+    T.Properties.VariableNames = ...
+        {'dyad', 'badChanPart1', 'badChanPart2', 'fsample', 'reference',...
+         'ICAcorrVal', 'artThreshold', 'artRejectPLV', 'artRejectITPC'};
     filepath = [desFolder type '_' sessionStr '.xls'];
     writetable(T, filepath);
   case 'plv'

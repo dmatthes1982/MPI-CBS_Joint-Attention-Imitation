@@ -45,7 +45,7 @@ load(sprintf('%s/../general/JAI_generalDefinitions.mat', filepath), ...
 % -------------------------------------------------------------------------
 % Select dyads
 % -------------------------------------------------------------------------    
-fprintf('Averaging of Phase Locking Values over dyads at %s...\n', passband);
+fprintf('<strong>Averaging of Phase Locking Values over dyads at %s...</strong>\n', passband);
 
 dyadsList   = dir([path, sprintf('JAI_d*_07c_mplv%s_%03d.mat', ...
                    fileSuffix, session)]);

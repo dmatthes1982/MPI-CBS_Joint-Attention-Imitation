@@ -28,6 +28,9 @@ end
 % 1. auto artifact detection (threshold is default +-75 uV and adjustable) 
 % 2. manual artifact detection (verification)
 
+cprintf([0,0.6,0], '<strong>[5]  - Automatic and manual artifact detection</strong>\n');
+fprintf('\n');
+
 selection = false;
 while selection == false
   fprintf('Do you want to use the default threshold (+-75uV) for automatic artifact detection?\n');
@@ -90,7 +93,7 @@ for i = numOfPart
   cfg.filename    = sprintf('JAI_d%02d_04b_eyecor', i);
   cfg.sessionStr  = sessionStr;
   
-  fprintf('Dyad %d\n', i);
+  fprintf('<strong>Dyad %d</strong>\n', i);
   fprintf('Load eye-artifact corrected data...\n');
   JAI_loadData( cfg );
   

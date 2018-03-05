@@ -74,7 +74,7 @@ cfgDS.showcallinfo     = 'no';                                              % pr
 % -------------------------------------------------------------------------
 % Preprocessing
 % -------------------------------------------------------------------------
-fprintf('Preproc participant 1...\n');
+fprintf('<strong>Preproc participant 1...</strong>\n');
 orgFs       = data.part1.fsample;
 data.part1  = bpfilter(cfgBP, data.part1);
 data.part1  = rereference(cfgReref, data.part1);
@@ -84,7 +84,7 @@ else
   data.part1.fsample = orgFs;
 end
   
-fprintf('Preproc participant 2...\n');
+fprintf('<strong>Preproc participant 2...</strong>\n');
 orgFs       = data.part2.fsample;
 data.part2  = bpfilter(cfgBP, data.part2);
 data.part2  = rereference(cfgReref, data.part2);

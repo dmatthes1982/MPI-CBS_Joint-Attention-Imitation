@@ -27,7 +27,7 @@ cfg.part      = 1;
 % -------------------------------------------------------------------------
 % Selection of bad channels
 % -------------------------------------------------------------------------
-fprintf('Select bad channels of participant %d...\n', cfg.part);
+fprintf('<strong>Select bad channels of participant %d...</strong>\n', cfg.part);
 JAI_databrowser( cfg, data_raw );
 badLabel = JAI_channelCheckbox();
 close(gcf);                                                                 % close also databrowser view when the channelCheckbox will be closed
@@ -42,7 +42,7 @@ end
 
 cfg.part      = 2;
   
-fprintf('Select bad channels of participant %d...\n', cfg.part);
+fprintf('<strong>Select bad channels of participant %d...</strong>\n', cfg.part);
 JAI_databrowser( cfg, data_raw );
 badLabel = JAI_channelCheckbox();
 close(gcf);                                                                 % close also databrowser view when the channelCheckbox will be closed

@@ -26,6 +26,9 @@ end
 
 %% part 7
 
+cprintf([0,0.6,0], '<strong>[7]  - Estimation of Phase Locking Values (PLV)</strong>\n');
+fprintf('\n');
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% general adjustment
 choise = false;
@@ -44,11 +47,29 @@ while choise == false
 end
 fprintf('\n');
 
+% Write selected settings to settings file
+file_path = [desPath '00_settings/' sprintf('settings_%s', sessionStr) '.xls'];
+if ~(exist(file_path, 'file') == 2)                                         % check if settings file already exist
+  cfg = [];
+  cfg.desFolder   = [desPath '00_settings/'];
+  cfg.type        = 'settings';
+  cfg.sessionStr  = sessionStr;
+  
+  JAI_createTbl(cfg);                                                       % create settings file
+end
+
+T = readtable(file_path);                                                   % update settings table
+delete(file_path);
+warning off;
+T.artRejectPLV(numOfPart) = x;
+warning on;
+writetable(T, file_path);
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Segmentation and Artifact rejection
 
 for i = numOfPart
-  fprintf('Dyad %d\n\n', i);
+  fprintf('<strong>Dyad %d</strong>\n\n', i);
   
   % Segmentation of the hilbert phase data trials for PLV estimation %%%%%%
   % split the data of every condition into subtrials with a length of 5
@@ -66,7 +87,7 @@ for i = numOfPart
   cfg.length    = 5;
   cfg.overlap   = 0;
   
-  fprintf('Segmentation of Hilbert phase data at 2 Hz.\n');
+  fprintf('<strong>Segmentation of Hilbert phase data at 2 Hz.</strong>\n');
   data_hseg_2Hz  = JAI_segmentation( cfg, data_hilbert_2Hz );
   
   % export the segmented hilbert (2 Hz) data into a *.mat file
@@ -96,7 +117,7 @@ for i = numOfPart
   cfg.length    = 5;
   cfg.overlap   = 0;
   
-  fprintf('Segmentation of Hilbert phase data at theta (4-7Hz).\n');
+  fprintf('<strong>Segmentation of Hilbert phase data at theta (4-7Hz).</strong>\n');
   data_hseg_theta  = JAI_segmentation( cfg, data_hilbert_theta );
   
   % export the segmented hilbert (theta) data into a *.mat file
@@ -126,7 +147,7 @@ for i = numOfPart
   cfg.length    = 1;
   cfg.overlap   = 0;
   
-  fprintf('Segmentation of Hilbert phase data at alpha (8-12Hz).\n');
+  fprintf('<strong>Segmentation of Hilbert phase data at alpha (8-12Hz).</strong>\n');
   data_hseg_alpha  = JAI_segmentation( cfg, data_hilbert_alpha );
   
   % export the segmented hilbert (alpha) data into a *.mat file
@@ -157,7 +178,7 @@ for i = numOfPart
   cfg.length    = 1;
   cfg.overlap   = 0;
     
-  fprintf('Segmentation of Hilbert phase data at 20 Hz.\n');
+  fprintf('<strong>Segmentation of Hilbert phase data at 20 Hz.</strong>\n');
   data_hseg_20Hz  = JAI_segmentation( cfg, data_hilbert_20Hz );
   
   % export the segmented hilbert (20 Hz) data into a *.mat file
@@ -187,7 +208,7 @@ for i = numOfPart
   cfg.length    = 1;
   cfg.overlap   = 0;
     
-  fprintf('Segmentation of Hilbert phase data at beta (13-30Hz).\n');
+  fprintf('<strong>Segmentation of Hilbert phase data at beta (13-30Hz).</strong>\n');
   data_hseg_beta  = JAI_segmentation( cfg, data_hilbert_beta );
   
   % export the segmented hilbert (beta) data into a *.mat file
@@ -217,7 +238,7 @@ for i = numOfPart
   cfg.length    = 1;
   cfg.overlap   = 0;
     
-  fprintf('Segmentation of Hilbert phase data at gamma (31-48Hz).\n');
+  fprintf('<strong>Segmentation of Hilbert phase data at gamma (31-48Hz).</strong>\n');
   data_hseg_gamma  = JAI_segmentation( cfg, data_hilbert_gamma );
   
   % export the segmented hilbert (gamma) data into a *.mat file
@@ -274,7 +295,7 @@ for i = numOfPart
       cfg.reject    = 'complete';
       cfg.target    = 'dual';
   
-      fprintf('Artifact Rejection of Hilbert phase data at 2 Hz.\n');
+      fprintf('<strong>Artifact Rejection of Hilbert phase data at 2 Hz.</strong>\n');
       data_hseg_2Hz = JAI_rejectArtifacts(cfg, data_hseg_2Hz);
       fprintf('\n');
     end
@@ -343,7 +364,7 @@ for i = numOfPart
       cfg.reject    = 'complete';
       cfg.target    = 'dual';
   
-      fprintf('Artifact Rejection of Hilbert phase data at theta (4-7Hz).\n');
+      fprintf('<strong>Artifact Rejection of Hilbert phase data at theta (4-7Hz).</strong>\n');
       data_hseg_theta = JAI_rejectArtifacts(cfg, data_hseg_theta);
       fprintf('\n');
     end
@@ -412,7 +433,7 @@ for i = numOfPart
       cfg.reject    = 'complete';
       cfg.target    = 'dual';
   
-      fprintf('Artifact Rejection of Hilbert phase data at alpha (8-12Hz).\n');
+      fprintf('<strong>Artifact Rejection of Hilbert phase data at alpha (8-12Hz).</strong>\n');
       data_hseg_alpha = JAI_rejectArtifacts(cfg, data_hseg_alpha);
       fprintf('\n');
     end
@@ -481,7 +502,7 @@ for i = numOfPart
       cfg.reject    = 'complete';
       cfg.target    = 'dual';
   
-      fprintf('Artifact Rejection of Hilbert phase data at 20 Hz.\n');
+      fprintf('<strong>Artifact Rejection of Hilbert phase data at 20 Hz.</strong>\n');
       data_hseg_20Hz = JAI_rejectArtifacts(cfg, data_hseg_20Hz);
       fprintf('\n');
     end
@@ -550,7 +571,7 @@ for i = numOfPart
       cfg.reject    = 'complete';
       cfg.target    = 'dual';
   
-      fprintf('Artifact Rejection of Hilbert phase data at beta (13-30Hz).\n');
+      fprintf('<strong>Artifact Rejection of Hilbert phase data at beta (13-30Hz).</strong>\n');
       data_hseg_beta = JAI_rejectArtifacts(cfg, data_hseg_beta);
       fprintf('\n');
     end
@@ -619,7 +640,7 @@ for i = numOfPart
       cfg.reject    = 'complete';
       cfg.target    = 'dual';
   
-      fprintf('Artifact Rejection of Hilbert phase data at gamma (31-48Hz).\n');
+      fprintf('<strong>Artifact Rejection of Hilbert phase data at gamma (31-48Hz).</strong>\n');
       data_hseg_gamma = JAI_rejectArtifacts(cfg, data_hseg_gamma);
       fprintf('\n');
       
@@ -677,4 +698,4 @@ end
 
 %% clear workspace
 clear cfg file_path sourceList numOfSources i artifactRejection ...
-      artifactAvailable x choise
+      artifactAvailable x choise T

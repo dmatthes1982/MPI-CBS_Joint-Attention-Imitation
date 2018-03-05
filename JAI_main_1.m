@@ -35,6 +35,9 @@ end
 % 2. select corrupted channels 
 % 3. repair corrupted channels
 
+cprintf([0,0.6,0], '<strong>[1]  - Data import and repairing of bad channels</strong>\n');
+fprintf('\n');
+
 %% import data from brain vision eeg files %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 for i = numOfPart
   cfg       = [];
@@ -42,7 +45,7 @@ for i = numOfPart
   cfg.dyad  = i;
   cfg.continuous  = 'no';
   
-  fprintf('Import data of dyad %d from: %s ...\n', i, cfg.path);
+  fprintf('<strong>Import data of dyad %d</strong> from: %s ...\n', i, cfg.path);
   ft_info off;
   data_raw = JAI_importDataset( cfg );
   ft_info on;
@@ -62,7 +65,7 @@ for i = numOfPart
   clear data_raw
 end
 
-fprintf('Repairing of corrupted channels\n\n');
+fprintf('<strong>Repairing of corrupted channels</strong>\n\n');
 
 % Create settings file if not existing
 settings_file = [desPath '00_settings/' ...
@@ -85,7 +88,7 @@ warning on;
 
 %% repairing of corrupted channels %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 for i = numOfPart
-  fprintf('Dyad %d\n\n', i);
+  fprintf('<strong>Dyad %d</strong>\n\n', i);
   
   cfg             = [];
   cfg.srcFolder   = strcat(desPath, '01a_raw/');

@@ -54,7 +54,7 @@ end
 % -------------------------------------------------------------------------
 % Clean Data
 % -------------------------------------------------------------------------
-fprintf('\nCleaning data of participant 1...\n');
+fprintf('\n<strong>Cleaning data of participant 1...</strong>\n');
 ft_warning off;
 data.part1 = ft_rejectartifact(artifact.part1, data.part1);
 if strcmp(target, 'dual')
@@ -62,7 +62,7 @@ if strcmp(target, 'dual')
   data.part1 = ft_rejectartifact(artifact.part2, data.part1);
 end
   
-fprintf('\nCleaning data of participant 2...\n');
+fprintf('\n<strong>Cleaning data of participant 2...</strong>\n');
 ft_warning off;
 data.part2 = ft_rejectartifact(artifact.part2, data.part2);
 if strcmp(target, 'dual')

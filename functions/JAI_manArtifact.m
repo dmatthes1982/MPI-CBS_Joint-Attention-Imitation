@@ -38,14 +38,14 @@ cfgAllArt.part2 = [];
 % Check Data
 % -------------------------------------------------------------------------
 
-fprintf('\nSearch for artifacts with part 1...\n');
+fprintf('\n<strong>Search for artifacts with participant 1...</strong>\n');
 cfg.part = 1;
 cfg.artifact = artifact.part1.artfctdef.threshold.artifact;
 ft_warning off;
 cfgAllArt.part1 = JAI_databrowser(cfg, data);
 cfgAllArt.part1 = keepfields(cfgAllArt.part1, {'artfctdef', 'showcallinfo'});
   
-fprintf('\nSearch for artifacts with part 2...\n');
+fprintf('\n<strong>Search for artifacts with participant 2...</strong>\n');
 cfg.part = 2;
 cfg.artifact = artifact.part2.artfctdef.threshold.artifact;
 ft_warning off;
