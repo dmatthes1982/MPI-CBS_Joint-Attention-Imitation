@@ -26,7 +26,7 @@ end
 
 %% part 7
 
-cprintf([0,0.6,0], '<strong>[7]  - Estimation of Phase Locking Values (PLV)</strong>\n');
+cprintf([0,0.6,0], '<strong>[7] - Estimation of Phase Locking Values (PLV)</strong>\n');
 fprintf('\n');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

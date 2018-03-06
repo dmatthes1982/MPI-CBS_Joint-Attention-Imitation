@@ -26,7 +26,7 @@ end
 
 %% part 8
 
-cprintf([0,0.6,0], '<strong>[8]  - Estimation of Inter Trial Phase Coherences (ITPC)</strong>\n');
+cprintf([0,0.6,0], '<strong>[8] - Estimation of Inter Trial Phase Coherences (ITPC)</strong>\n');
 fprintf('\n');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

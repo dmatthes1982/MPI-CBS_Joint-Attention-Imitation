@@ -26,7 +26,7 @@ end
 
 %% part 6
 
-cprintf([0,0.6,0], '<strong>[6]  - Narrow band filtering and Hilbert transform</strong>\n');
+cprintf([0,0.6,0], '<strong>[6] - Narrow band filtering and Hilbert transform</strong>\n');
 fprintf('\n');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

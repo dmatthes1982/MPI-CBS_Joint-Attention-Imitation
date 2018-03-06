@@ -34,7 +34,7 @@ end
 % 4. ICA decomposition
 % 5. Extract EOG channels from the cleaned continuous data
 
-cprintf([0,0.6,0], '<strong>[3]  - ICA decomposition</strong>\n');
+cprintf([0,0.6,0], '<strong>[3] - ICA decomposition</strong>\n');
 fprintf('\n');
 
 for i = numOfPart

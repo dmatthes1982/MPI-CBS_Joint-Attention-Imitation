@@ -74,6 +74,9 @@ else
   data_repaired.part2 = removefields(data_repaired.part2, {'elec'});
 end
 
+% -------------------------------------------------------------------------
+% Visual verification
+% -------------------------------------------------------------------------
 cfgView           = [];
 cfgView.ylim      = [-200 200];
 cfgView.blocksize = 120;

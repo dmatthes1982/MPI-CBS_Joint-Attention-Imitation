@@ -28,12 +28,12 @@ end
 % 1. auto artifact detection (threshold is default +-75 uV and adjustable) 
 % 2. manual artifact detection (verification)
 
-cprintf([0,0.6,0], '<strong>[5]  - Automatic and manual artifact detection</strong>\n');
+cprintf([0,0.6,0], '<strong>[5] - Automatic and manual artifact detection</strong>\n');
 fprintf('\n');
 
 selection = false;
 while selection == false
-  fprintf('Do you want to use the default threshold (+-75uV) for automatic artifact detection?\n');
+  cprintf([0,0.6,0], 'Do you want to use the default threshold (+-75uV) for automatic artifact detection?\n');
   x = input('Select [y/n]: ','s');
   if strcmp('y', x)
     selection = true;
@@ -50,8 +50,8 @@ fprintf('\n');
 if isempty(threshold)
   selection = false;
   while selection == false
-    fprintf('Specify the absolut value (in uV) of the threshold limits in a range between 50 and 200!\n');
-    fprintf('i.e.: value 100 means threshold limits are +-100uV\n');
+    cprintf([0,0.6,0], 'Specify the absolut value (in uV) of the threshold limits in a range between 50 and 200!\n');
+    cprintf([0,0.6,0], 'i.e.: value 100 means threshold limits are +-100uV\n');
     x = input('Value: ');
     if isnumeric(x)
       if (x < 50 || x > 200)

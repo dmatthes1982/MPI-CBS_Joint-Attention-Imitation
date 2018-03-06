@@ -35,7 +35,7 @@ end
 % 2. select corrupted channels 
 % 3. repair corrupted channels
 
-cprintf([0,0.6,0], '<strong>[1]  - Data import and repairing of bad channels</strong>\n');
+cprintf([0,0.6,0], '<strong>[1] - Data import and repairing of bad channels</strong>\n');
 fprintf('\n');
 
 %% import data from brain vision eeg files %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

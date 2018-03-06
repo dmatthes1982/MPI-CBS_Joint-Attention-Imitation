@@ -32,7 +32,7 @@ end
 % 2. Verify the estimated components by using the ft_databrowser function
 % 3. Remove eye artifacts
 
-cprintf([0,0.6,0], '<strong>[4]  - Estimation and correction of eye artifacts</strong>\n');
+cprintf([0,0.6,0], '<strong>[4] - Estimation and correction of eye artifacts</strong>\n');
 fprintf('\n');
 
 selection = false;

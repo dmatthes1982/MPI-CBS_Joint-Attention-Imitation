@@ -28,7 +28,7 @@ end
 % preprocess the raw data
 % export the preprocessed data into a *.mat file
 
-cprintf([0,0.6,0], '<strong>[2]  - Preprocessing, filtering, re-referencing</strong>\n');
+cprintf([0,0.6,0], '<strong>[2] - Preprocessing, filtering, re-referencing</strong>\n');
 fprintf('\n');
 
 selection = false;

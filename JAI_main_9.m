@@ -27,7 +27,7 @@ end
 %% part 9
 % Calculate TFRs of the EOG-artifact corrected data
 
-cprintf([0,0.6,0], '<strong>[9]  - Power analysis (TFR)</strong>\n');
+cprintf([0,0.6,0], '<strong>[9] - Power analysis (TFR)</strong>\n');
 fprintf('\n');
 
 for i = numOfPart
