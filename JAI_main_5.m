@@ -81,10 +81,10 @@ if ~(exist(file_path, 'file') == 2)                                         % ch
 end
 
 T = readtable(file_path);                                                   % update settings table
-delete(file_path);
 warning off;
 T.artThreshold(numOfPart) = threshold;
 warning on;
+delete(file_path);
 writetable(T, file_path);
 
 for i = numOfPart

@@ -89,11 +89,11 @@ if ~(exist(file_path, 'file') == 2)                                         % ch
 end
 
 T = readtable(file_path);                                                   % update settings table
-delete(file_path);
 warning off;
 T.fsample(numOfPart) = samplingRate;
 T.reference(numOfPart) = reference;
 warning on;
+delete(file_path);
 writetable(T, file_path);
 
 for i = numOfPart

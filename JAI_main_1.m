@@ -81,7 +81,6 @@ end
 
 % Load settings file
 T = readtable(settings_file);
-delete(settings_file);
 warning off;
 T.dyad(numOfPart) = numOfPart;
 warning on;
@@ -157,6 +156,7 @@ for i = numOfPart
 end
 
 % store settings table
+delete(settings_file);
 writetable(T, settings_file);
 
 %% clear workspace
