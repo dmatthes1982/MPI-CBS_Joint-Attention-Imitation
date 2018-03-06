@@ -50,7 +50,8 @@ else                                                                        % el
     for i=3:size(eventCell, 1)
       eventNum(i-2) = sscanf(eventCell{i,2},'S%d');    
     end
-    eventNum = eventNum - 128;
+    match = eventNum > 128;
+    eventNum(match) = eventNum(match) - 128;
     for i=3:size(eventCell, 1)
       event(i).value = sprintf('S%3d', eventNum(i-2));    
     end
