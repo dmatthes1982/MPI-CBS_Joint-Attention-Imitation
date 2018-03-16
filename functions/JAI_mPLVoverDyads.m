@@ -9,7 +9,7 @@ function [ data_mplv ] = JAI_mPLVoverDyads( cfg )
 %   cfg.path      = source path' (i.e. '/data/pt_01826/eegData/DualEEG_JAI_processedData/07c_mplv/')
 %   cfg.session   = session number (default: 1)
 %   cfg.passband  = select passband of interest (default: 2Hz)
-%                   (accepted values: 2Hz, Theta, Alpha, 20Hz, Beta, Gamma)
+%                   (accepted values: 2Hz, theta, alpha, 20Hz, beta, gamma)
 %
 % This function requires the fieldtrip toolbox
 % 
