@@ -37,11 +37,11 @@ fprintf('\n');
 
 selection = false;
 while selection == false
-  cprintf([0,0.6,0], 'Do you want to use the default threshold (0.8) for EOG-artifact estimation?\n');
+  cprintf([0,0.6,0], 'Do you want to use the default threshold (0.8) for EOG-artifact estimation for both participants?\n');
   x = input('Select [y/n]: ','s');
   if strcmp('y', x)
     selection = true;
-    threshold = 0.8;
+    threshold = [0.8 0.8];
   elseif strcmp('n', x)
     selection = true;
     threshold = [];
@@ -52,21 +52,23 @@ end
 fprintf('\n');
 
 if isempty(threshold)
-  selection = false;
-  while selection == false
-    cprintf([0,0.6,0], 'Specify a threshold value in a range between 0 and 1!\n');
-    x = input('Value: ');
-    if isnumeric(x)
-      if (x < 0 || x > 1)
+  for i = 1:1:2                                                             % specify a independent threshold for each participant
+    selection = false;
+    while selection == false
+      cprintf([0,0.6,0], 'Specify a threshold value for participant %d in a range between 0 and 1!\n', i);
+      x = input('Value: ');
+      if isnumeric(x)
+        if (x < 0 || x > 1)
+          cprintf([1,0.5,0], 'Wrong input!\n');
+          selection = false;
+        else
+          threshold(i) = x;
+          selection = true;
+        end
+      else
         cprintf([1,0.5,0], 'Wrong input!\n');
         selection = false;
-      else
-        threshold = x;
-        selection = true;
       end
-    else
-      cprintf([1,0.5,0], 'Wrong input!\n');
-      selection = false;
     end
   end
 fprintf('\n');  
@@ -85,7 +87,8 @@ end
 
 T = readtable(file_path);                                                   % update settings table
 warning off;
-T.ICAcorrVal(numOfPart) = threshold;
+T.ICAcorrVal1(numOfPart) = threshold(1);
+T.ICAcorrVal2(numOfPart) = threshold(2);
 warning on;
 delete(file_path);
 writetable(T, file_path);
