@@ -64,7 +64,7 @@ ft_warning off;
 % Plot time frequency spectrum
 % -------------------------------------------------------------------------
 filepath = fileparts(mfilename('fullpath'));
-load(sprintf('%s/../headmodels/mpi_customized_acticap32.mat', filepath),...
+load(sprintf('%s/../layouts/mpi_customized_acticap32.mat', filepath),...
      'lay');
 
 colormap 'jet';
