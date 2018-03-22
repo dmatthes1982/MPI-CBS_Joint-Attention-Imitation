@@ -21,9 +21,9 @@ function [ data ] = JAI_interTrialPhaseCoh(cfg, data)
 % linear coherence (ITLC) between recorded EEG activity and an event-phase 
 % indicator function.  The  most  common (and  default) version is inter-
 % trial phase coherence.
-%                                       n
-% Equation:         ITPC(f,t) = 1/n * Sigma( F_k(f,t) / |F_k(f,t)| ) 
-%                                      k=1
+%                                         n
+% Equation:         ITPC(f,t) = 1/n * | Sigma( F_k(f,t) / |F_k(f,t)| ) | 
+%                                        k=1
 %
 % References:
 %   [Delorme2004]   "EEGLAB: an open source toolbox for analysis of 

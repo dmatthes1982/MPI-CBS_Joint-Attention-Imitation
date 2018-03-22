@@ -31,6 +31,22 @@ fprintf('<strong>Select bad channels of participant %d...</strong>\n', cfg.part)
 JAI_databrowser( cfg, data_raw );
 badLabel = JAI_channelCheckbox();
 close(gcf);                                                                 % close also databrowser view when the channelCheckbox will be closed
+if any(strcmp(badLabel, 'TP10'))
+  warning backtrace off;
+  warning(['You have repaired ''TP10'', accordingly selecting linked ' ...
+           'mastoid as reference in step [2] - preprocessing is not '...
+           'longer recommended.']);
+  warning backtrace on;
+end
+if length(badLabel) >= 2
+  warning backtrace off;
+  warning(['You have selected more than one channel. Please compare your ' ... 
+           'selection with the neighbour definitions in 00_settings/general. ' ...
+           'Bad channels will exluded from a repairing operation of a ' ...
+           'likewise bad neighbour, but each channel should have at least '...
+           'two good neighbours.']);
+  warning backtrace on;
+end
 fprintf('\n');
   
 if ~isempty(badLabel)
@@ -46,6 +62,22 @@ fprintf('<strong>Select bad channels of participant %d...</strong>\n', cfg.part)
 JAI_databrowser( cfg, data_raw );
 badLabel = JAI_channelCheckbox();
 close(gcf);                                                                 % close also databrowser view when the channelCheckbox will be closed
+if any(strcmp(badLabel, 'TP10'))
+  warning backtrace off;
+  warning(['You have repaired ''TP10'', accordingly selecting linked ' ...
+           'mastoid as reference in step [2] - preprocessing is not '...
+           'longer recommended']);
+  warning backtrace on;
+end
+if length(badLabel) >= 2
+  warning backtrace off;
+  warning(['You marked more than one channel. Please compare your ' ... 
+           'selection with the neighbour overview in 00_settings/general. ' ...
+           'Bad channels will not used for repairing a likewise bad ' ...
+           'neighbour, but each channel should have at least two good '...
+           'neighbours.']);
+  warning backtrace on;
+end
 fprintf('\n');
   
 if ~isempty(badLabel)
