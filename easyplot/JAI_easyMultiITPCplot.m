@@ -75,7 +75,6 @@ trialinfo = dataPlot.trialinfo;                                             % ge
 filepath = fileparts(mfilename('fullpath'));
 addpath(sprintf('%s/../utilities', filepath));
 
-
 cfg.cond = JAI_checkCondition( cfg.cond );                                  % check cfg.condition definition    
 if isempty(find(trialinfo == cfg.cond, 1))
   error('The selected dataset contains no condition %d.', cfg.cond);
