@@ -43,7 +43,10 @@ end
 
 trialinfo = data.trialinfo;                                                 % get trialinfo
 
-addpath('../utilities');
+filepath = fileparts(mfilename('fullpath'));
+addpath(sprintf('%s/../utilities', filepath));
+
+
 cond    = JAI_checkCondition( cond );                                       % check cfg.condition definition    
 trials  = find(trialinfo == cond);
 if isempty(trials)

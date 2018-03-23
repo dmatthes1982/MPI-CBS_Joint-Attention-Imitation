@@ -13,7 +13,7 @@ function JAI_easyITPCplot(cfg, data)
 %                     0 - plot the averaged data
 %                     1 - plot data of participant 1
 %                     2 - plot data of participant 2   
-%   cfg.condition   = condition (default: 111 or 'SameObjectB', see JAI_DATASTRUCTURE)
+%   cfg.condition   = condition (default: 7 or 'Single_2Hz', see JAI_DATASTRUCTURE)
 %   cfg.electrode   = number of electrodes (default: {'Cz'} repsectively [7])
 %                     examples: {'Cz'}, {'F3', 'Fz', 'F4'}, [7] or [2, 1, 27] 
 %  
@@ -27,7 +27,7 @@ function JAI_easyITPCplot(cfg, data)
 % Get and check config options
 % -------------------------------------------------------------------------
 part    = ft_getopt(cfg, 'part', 1);
-cond    = ft_getopt(cfg, 'condition', 111);
+cond    = ft_getopt(cfg, 'condition', 7);
 elec    = ft_getopt(cfg, 'electrode', {'Cz'});
 
 if ~ismember(part, [0,1,2])                                                 % check cfg.part definition
@@ -36,16 +36,36 @@ end
 
 switch part
   case 0
+    if isfield(data, 'part1')
+      warning backtrace off;
+      warning('You are using dyad-specific data. Please specify either cfg.part = 1 or cfg.part = 2');
+      warning backtrace on;
+      return;
+    end
   case 1
+    if ~isfield(data, 'part1')
+      warning backtrace off;
+      warning('You are using data averaged over dyads. Please specify cfg.part = 0');
+      warning backtrace on;
+      return;
+    end
     data = data.part1;
   case 2
+    if ~isfield(data, 'part2')
+      warning backtrace off;
+      warning('You are using data averaged over dyads. Please specify cfg.part = 0');
+      warning backtrace on;
+      return;
+    end
     data = data.part2;
 end
 
 trialinfo = data.trialinfo;                                                 % get trialinfo
 label     = data.label;                                                     % get labels                                             
 
-addpath('../utilities');
+filepath = fileparts(mfilename('fullpath'));
+addpath(sprintf('%s/../utilities', filepath));
+
 cond    = JAI_checkCondition( cond );                                       % check cfg.condition definition    
 if isempty(find(trialinfo == cond, 1))
   error('The selected dataset contains no condition %d.', cond);
