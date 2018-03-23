@@ -62,7 +62,7 @@ fprintf('\n');
 % -------------------------------------------------------------------------
 % Load and organize data
 % -------------------------------------------------------------------------
-data_out.trialinfo = generalDefinitions.condNum;
+data_out.trialinfo = generalDefinitions.condNumITPC;
 
 data{1, 2 * numOfDyads} = [];
 trialinfo{1, 2 * numOfDyads} = []; 
@@ -87,7 +87,7 @@ for i=1:1:numOfDyads
 end
 fprintf('\n');
 
-data = fixTrialOrder( data, trialinfo, generalDefinitions.condNum, ...
+data = fixTrialOrder( data, trialinfo, generalDefinitions.condNumITPC, ...
                       repmat(listOfDyads,1,2) );
 
 for j=1:1:2*numOfDyads

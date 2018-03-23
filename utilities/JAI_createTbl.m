@@ -78,9 +78,9 @@ switch type
     writetable(T, filepath); 
   case 'itpc'
     A(1) = {1};
-    A(2:51) = {0};
+    A(2:33) = {0};
     T = cell2table(A); 
-    B = num2cell(generalDefinitions.condNum);
+    B = num2cell(generalDefinitions.condNumITPC);
     C = cellfun(@(x) sprintf('S%d_01', x), B, 'UniformOutput', 0);
     D = cellfun(@(x) sprintf('S%d_02', x), B, 'UniformOutput', 0);
     VarNames = [{'dyad'} C D];

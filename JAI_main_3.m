@@ -110,6 +110,7 @@ for i = numOfPart
   % Extract EOG channels from the cleaned continuous data 
   cfg               = [];
   cfg.channel       = {'EOGV', 'EOGH'};
+  cfg.trials        = 'all';
   data_eogchan      = JAI_selectdata(cfg, data_cleaned);
   
   clear data_cleaned

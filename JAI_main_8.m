@@ -79,6 +79,13 @@ for i = numOfPart
   fprintf('Load eye-artifact corrected data...\n\n');
   JAI_loadData( cfg );
   
+  % Keep only necessary conditions in the dataset
+  cfg         = [];
+  cfg.channel = 'all';
+  cfg.trials  = [7,8,9,10,11,12,20,21,22,100,101,102];
+  
+  data_eyecor = JAI_selectdata( cfg, data_eyecor );
+  
   % Segmentation of the preprocessed trials for ITPC estimation %%%%%%%%%%%
   % split the data of every condition into subtrials with a length of 10
   % seconds

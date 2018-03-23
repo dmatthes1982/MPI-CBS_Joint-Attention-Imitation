@@ -68,7 +68,9 @@ if strcmp(type, 'plv')
     emptyCond = (loc == 0);
     emptyCond = generalDefinitions.condNum(emptyCond);
     str = vec2str(emptyCond, [], [], 0);
+    warning backtrace off;
     warning(['The following trials are completely rejected: ' str]);
+    warning backtrace on;
   end
   goodtrials = zeros(1, length(generalDefinitions.condNum));
   for i = 1:1:length(generalDefinitions.condNum)
@@ -81,15 +83,17 @@ end
 
 if strcmp(type, 'itpc')
   trialinfoP1 = data.part1.trialinfo';
-  [~, loc] = ismember(generalDefinitions.condNum, trialinfoP1);
+  [~, loc] = ismember(generalDefinitions.condNumITPC, trialinfoP1);
   if any(loc == 0)
     emptyCond = (loc == 0);
-    emptyCond = generalDefinitions.condNum(emptyCond);
+    emptyCond = generalDefinitions.condNumITPC(emptyCond);
     str = vec2str(emptyCond, [], [], 0);
+    warning backtrace off;
     warning(['The following trials of participant 1 are completely rejected: ' str]);
+    warning backtrace on;
   end
-  goodtrials1 = zeros(1, length(generalDefinitions.condNum));
-  for i = 1:1:length(generalDefinitions.condNum)
+  goodtrials1 = zeros(1, length(generalDefinitions.condNumITPC));
+  for i = 1:1:length(generalDefinitions.condNumITPC)
     if loc(i) ~= 0
       goodtrials1(i) = data.part1.goodtrials(loc(i));
     end
@@ -97,15 +101,17 @@ if strcmp(type, 'itpc')
   goodtrials1 = num2cell(goodtrials1);
   
   trialinfoP2 = data.part2.trialinfo';
-  [~, loc] = ismember(generalDefinitions.condNum, trialinfoP2);
+  [~, loc] = ismember(generalDefinitions.condNumITPC, trialinfoP2);
   if any(loc == 0)
     emptyCond = (loc == 0);
-    emptyCond = generalDefinitions.condNum(emptyCond);
+    emptyCond = generalDefinitions.condNumITPC(emptyCond);
     str = vec2str(emptyCond, [], [], 0);
+    warning backtrace off;
     warning(['The following trials of participant 2 are completely rejected: ' str]);
+    warning backtrace on;
   end
-  goodtrials2 = zeros(1, length(generalDefinitions.condNum));
-  for i = 1:1:length(generalDefinitions.condNum)
+  goodtrials2 = zeros(1, length(generalDefinitions.condNumITPC));
+  for i = 1:1:length(generalDefinitions.condNumITPC)
     if loc(i) ~= 0
       goodtrials2(i) = data.part2.goodtrials(loc(i));
     end

@@ -35,7 +35,7 @@ function [ data ] = JAI_interTrialPhaseCoh(cfg, data)
 %
 % See also JAI_DATASTRUCTURE, JAI_SEGMENTATION
 
-% Copyright (C) 2017, Daniel Matthes, MPI CBS 
+% Copyright (C) 2017-2018, Daniel Matthes, MPI CBS 
 
 % -------------------------------------------------------------------------
 % Get and check config options
@@ -67,10 +67,10 @@ filepath = fileparts(mfilename('fullpath'));
 load(sprintf('%s/../general/JAI_generalDefinitions.mat', filepath), ...
      'generalDefinitions');    
 trialinfo     = unique(data_in.trialinfo, 'stable');                        % extract trialinfo
-tf            = ismember(generalDefinitions.condNum, trialinfo);            % bring trials into a correct order
-idx           = 1:length(generalDefinitions.condNum);
+tf            = ismember(generalDefinitions.condNumITPC, trialinfo);        % bring trials into a correct order
+idx           = 1:length(generalDefinitions.condNumITPC);
 idx           = idx(tf);
-trialinfo     = generalDefinitions.condNum(idx)';
+trialinfo     = generalDefinitions.condNumITPC(idx)';
 
 % -------------------------------------------------------------------------
 % Calculate spectrum
@@ -88,6 +88,86 @@ data_in.time(:) = { 0:(1/data_in.fsample): ...
                     ((length(data_in.time{1})-1)/data_in.fsample) };
 data_freq       = ft_freqanalysis(cfgFrq, data_in);
 ft_notice on;
+
+% -------------------------------------------------------------------------
+% Generate and add the meta conditions:
+% MetaNo (201), Meta2Hz (202), Meta10Hz (203), Meta20Hz (204)
+% -------------------------------------------------------------------------
+cfg               = [];
+cfg.channel       = 'all';
+cfg.showcallinfo  = 'no';
+
+cfg.trials  = [100,101,102];                                                % generate MetaNo condition
+val = ismember(data_freq.trialinfo, cfg.trials);                            % estimate trial indices
+cfg.trials = find(val);
+if ~isempty(cfg.trials)
+  trialinfo = [trialinfo; 201];
+  data_metaNo = ft_selectdata(cfg, data_freq);
+  data_metaNo.trialinfo(:) = 201;
+else
+  data_metaNo = [];
+end
+
+
+cfg.trials  = [7,8,9];                                                      % generate Meta20Hz condition
+val = ismember(data_freq.trialinfo, cfg.trials);                            % estimate trial indices
+cfg.trials = find(val);
+if ~isempty(cfg.trials)
+  trialinfo = [trialinfo; 202];
+  data_meta2Hz = ft_selectdata(cfg, data_freq);
+  data_meta2Hz.trialinfo(:) = 202;
+else
+  data_meta2Hz = [];
+end
+
+
+cfg.trials  = [10,11,12];                                                   % generate Meta10Hz condition
+val = ismember(data_freq.trialinfo, cfg.trials);                            % estimate trial indices
+cfg.trials = find(val);
+if ~isempty(cfg.trials)
+  trialinfo = [trialinfo; 203];
+  data_meta10Hz = ft_selectdata(cfg, data_freq);
+  data_meta10Hz.trialinfo(:) = 203;
+else
+  data_meta10Hz = [];
+end
+
+
+cfg.trials  = [20,21,22];                                                   % generate Meta20Hz condition
+val = ismember(data_freq.trialinfo, cfg.trials);                            % estimate trial indices
+cfg.trials = find(val);
+if ~isempty(cfg.trials)
+  trialinfo = [trialinfo; 204];
+  data_meta20Hz = ft_selectdata(cfg, data_freq);
+  data_meta20Hz.trialinfo(:) = 204;
+else
+  data_meta20Hz = [];
+end
+
+data_meta = {data_metaNo, data_meta2Hz, data_meta10Hz, data_meta20Hz};
+val = cellfun(@(x) ~isempty(x), data_meta);
+data_meta = data_meta(val);
+
+cfg               = [];                                                     % add new conditions to the data struct
+cfg.showcallinfo  = 'no';
+ft_info off;
+data_freq         = ft_appendfreq(cfg, data_freq, data_meta{:});
+ft_info on;
+
+% -------------------------------------------------------------------------
+% Exclude all trials from ITPC calculation which have only one good trial
+% -------------------------------------------------------------------------
+for i = length(trialinfo):-1:1
+  trials = find(data_freq.trialinfo == trialinfo(i));
+  N = size(trials, 1);
+  if N == 1
+    warning backtrace off;
+    warning(['Condition %d has only one good trial. Condition will be '...
+             'removed for this dyad.'], trialinfo(i));
+    warning backtrace on;
+    trialinfo(i) = [];
+  end
+end
 
 % -------------------------------------------------------------------------
 % Calculate Inter-Trial-Coherence
