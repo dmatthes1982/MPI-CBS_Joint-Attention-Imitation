@@ -112,7 +112,7 @@ if length(listOfDyads) > 1
 end
 
 % -------------------------------------------------------------------------
-% Estimate averaged phase Locking Value (over dyads)
+% Estimate averaged phase locking value (over dyads)
 % ------------------------------------------------------------------------- 
 if length(listOfDyads) > 1
   data = nanmean(data, 4);

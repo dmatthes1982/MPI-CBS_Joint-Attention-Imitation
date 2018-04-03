@@ -6,7 +6,7 @@ function  [ data_pwelch ] = JAI_PSDoverDyads( cfg )
 %   [ data_psdod ] = JAI_PSDoverDyads( cfg )
 %
 % The configuration options are
-%   cfg.path      = source path' (i.e. '/data/pt_01843/eegData/DualEEG_JAI_processedData/09b_pwelch/')
+%   cfg.path      = source path' (i.e. '/data/pt_01826/eegData/DualEEG_JAI_processedData/09b_pwelch/')
 %   cfg.session   = session number (default: 1)
 %
 % This function requires the fieldtrip toolbox
@@ -62,7 +62,7 @@ fprintf('\n');
 % -------------------------------------------------------------------------
 % Load and organize data
 % -------------------------------------------------------------------------
-data_out.trialinfo = generalDefinitions.condNum;
+data_out.trialinfo = generalDefinitions.condNum';
 
 data{1, 2 * numOfDyads} = [];
 trialinfo{1, 2 * numOfDyads} = [];
@@ -98,6 +98,7 @@ data = fixTrialOrder( data, trialinfo, generalDefinitions.condNum, ...
 
 for i=1:1:2*numOfDyads
   data{i} = cat(3, data{i}{:});
+  data{i} = shiftdim(data{i}, 2);
 end
 data = cat(4, data{:});
 
@@ -106,8 +107,8 @@ data = cat(4, data{:});
 % -------------------------------------------------------------------------
 data = nanmean(data, 4);
 
-data_out.pwelch  = data;
-data_out.dyads = listOfDyads;
+data_out.powspctrm  = data;
+data_out.dyads      = listOfDyads;
 
 data_pwelch = data_out;
 

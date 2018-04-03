@@ -204,7 +204,7 @@ if pwelch == true
     data_pwelch = data_eyecor;                                              % to save need of RAM
     clear data_eyecor
     
-    % export TFR data into a *.mat file
+    % export PSD data into a *.mat file
     cfg             = [];
     cfg.desFolder   = strcat(desPath, '09b_pwelch/');
     cfg.filename    = sprintf('JAI_d%02d_09b_pwelch', i);

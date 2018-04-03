@@ -233,7 +233,7 @@ if avgOverDyads == true
   fprintf('%s ...\n', file_path);
   JAI_saveData(cfg, 'data_pwelchod', data_pwelchod);
   fprintf('Data stored!\n');
-  clear data_psdod
+  clear data_pwelchod
 end
 
 %% clear workspace
