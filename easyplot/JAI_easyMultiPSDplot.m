@@ -1,42 +1,38 @@
-function JAI_easyMultiITPCplot(cfg, data)
-% JAI_EASYMULTIITPCPLOT is a function, which makes it easier to plot a 
-% multi inter-trial phase coherence representation of all electrodes in a 
-% specific condition on a head model.
+function JAI_easyMultiPSDplot(cfg, data)
+% JAI_EASYMULTIPSDPLOT is a function, which makes it easier to plot the
+% power spectral density of all electrodes within a specific condition on a
+% head model.
 %
 % Use as
-%   JAI_easyMultiITPCplot(cfg, data)
+%   JAI_easyMultiPSDplot(cfg, data)
 %
-% where the input data have to be a result from JAI_INTERTRAILPHASECOH.
+% where the input data have to be a result from JAI_PWELCH.
 %
 % The configuration options are 
 %   cfg.part        = number of participant (default: 1)
 %                     0 - plot the averaged data
 %                     1 - plot data of participant 1
-%                     2 - plot data of participant 2
-%   cfg.condition   = condition (default: 7 or 'Single_2Hz', see JAI_DATASTRUCTURE)
-%   cfg.freqlimits  = [begin end] (default: [1 48])
-%   cfg.timelimits  = [begin end] (default: [0.2 9.8])
-%  
+%                     2 - plot data of participant 2   
+%   cfg.condition   = condition (default: 111 or 'SameObjectB', see JAI_DATASTRUCTURE)
+%
 % This function requires the fieldtrip toolbox
 %
-% See also JAI_INTERTRIALPHASECOH, JAI_DATASTRUCTURE
+% See also JAI_PWELCH, JAI_DATASTRUCTURE
 
-% Copyright (C) 2017-2018, Daniel Matthes, MPI CBS
+% Copyright (C) 2018, Daniel Matthes, MPI CBS
 
 % -------------------------------------------------------------------------
 % Get and check config options
 % -------------------------------------------------------------------------
 cfg.part    = ft_getopt(cfg, 'part', 1);
-cfg.cond    = ft_getopt(cfg, 'condition', 7);
-freqlim = ft_getopt(cfg, 'freqlimits', [1 48]);
-timelim = ft_getopt(cfg, 'timelimits', [0.2 9.8]);
-
-filepath = fileparts(mfilename('fullpath'));                                % add utilities folder to path
-addpath(sprintf('%s/../utilities', filepath));
+cfg.cond    = ft_getopt(cfg, 'condition', 111);
 
 if ~ismember(cfg.part, [0,1,2])                                             % check cfg.part definition
   error('cfg.part has to either 0, 1 or 2');
 end
+
+filepath = fileparts(mfilename('fullpath'));                                % add utilities folder to path
+addpath(sprintf('%s/../utilities', filepath));
 
 switch cfg.part                                                             % check validity of cfg.part
   case 0
@@ -65,14 +61,6 @@ switch cfg.part                                                             % ch
     dataPlot = data.part2;
 end
 
-if length(freqlim) ~= 2                                                     % check cfg.freqlimits definition
-  error('cfg.freqlimits has to be a 1x2 vector: [begin end]');
-end
-
-if length(timelim) ~= 2                                                     % check cfg.timelimits definition
-  error('cfg.timelimits has to be a 1x2 vector: [begin end]');
-end
-
 trialinfo = dataPlot.trialinfo;                                             % get trialinfo
 
 cfg.cond = JAI_checkCondition( cfg.cond );                                  % check cfg.condition definition    
@@ -83,45 +71,28 @@ else
 end
 
 % -------------------------------------------------------------------------
-% estimate actual limits
-% -------------------------------------------------------------------------
-time = dataPlot.time{trialNum};
-freq = dataPlot.freq;
-
-[~, idxf1] = min(abs(freq-freqlim(1)));                                     % estimate frequency range 
-freqlim(1) = freq(idxf1);
-
-[~, idxf2] = min(abs(freq-freqlim(2)));
-freqlim(2) = freq(idxf2);
-
-[~, idxt1] = min(abs(time-timelim(1)));                                     % estimate time range
-timelim(1) = time(idxt1);
-
-[~, idxt2] = min(abs(time-timelim(2)));
-timelim(2) = time(idxt2);
-
-itpcMin = nanmin(dataPlot.itpc{trialNum}(:));                               % estimate itpc limits
-itpcMax = nanmax(dataPlot.itpc{trialNum}(:));
-
-itpclim = [itpcMin itpcMax];
-
-% -------------------------------------------------------------------------
 % Load layout informations
 % -------------------------------------------------------------------------
 filepath = fileparts(mfilename('fullpath'));
 load(sprintf('%s/../layouts/mpi_customized_acticap32.mat', filepath),...
      'lay');
 
-[selchan, sellay] = match_str(dataPlot.label, lay.label);                   % take the subselection of channels that is contained in the layout
+[selchan, sellay] = match_str(dataPlot.label, lay.label);                   % extract the subselection of channels that is part of the layout
+eogvchan          = match_str(dataPlot.label, {'V1', 'V2'});                % determine the vertical eog channles 
 chanX             = lay.pos(sellay, 1);
 chanY             = lay.pos(sellay, 2);
 chanWidth         = lay.width(sellay);
 chanHeight        = lay.height(sellay);
 
 % -------------------------------------------------------------------------
-% Multi inter-trial phase coherence representation
+% Multi power spectral density (PSD) plot 
 % -------------------------------------------------------------------------
-datamatrix = dataPlot.itpc{trialNum}(selchan, idxf1:idxf2, idxt1:idxt2);    % extract the data matrix    
+datamatrix  = squeeze(dataPlot.powspctrm(trialNum, selchan, :));            %#ok<FNDSB> % extract the powerspctrm matrix    
+xval        = dataPlot.freq;                                                % extract the freq vector
+xmax        = max(xval);                                                    % determine the frequency maximum
+val         = ~ismember(selchan, eogvchan);                                 
+ymaxchan    = selchan(val);
+ymax        = max(max(datamatrix(ymaxchan, :)));                            % determine the power maximum of all channels expect V1 und V2
 
 hold on;                                                                    % hold the figure
 cla;                                                                        % clear all axis
@@ -132,46 +103,40 @@ ft_plot_lay(lay, 'box', 0, 'label', 0, 'outline', 1, 'point', 'no', ...
             1.4*median(lay.height/2), 'labelalignh', 'center', ...
             'chanindx', find(~ismember(lay.label, {'COMNT', 'SCALE'})) );
 
-
 % plot the channels
-for k=1:length(selchan)                                                     
-  cdata = squeeze(datamatrix(k, :, :));
-  nans_mask = ~isnan(cdata);
-  mask = double(nans_mask);
-  ft_plot_matrix(cdata, 'clim', itpclim, 'tag', 'cip', 'highlightstyle',... 
-                'saturation', 'highlight', mask, 'hpos', chanX(k), ...
-                'vpos', chanY(k), 'width', chanWidth(k), ...
-                'height', chanHeight(k));
+for k=1:length(selchan) 
+  yval = datamatrix(k, :);
+  setChanBackground([0 xmax], [0 ymax], chanX(k), chanY(k), ...             % set background of the channel boxes to white
+                    chanWidth(k), chanHeight(k));
+  ft_plot_vector(xval, yval, 'width', chanWidth(k), 'height', chanHeight(k),...
+                'hpos', chanX(k), 'vpos', chanY(k), 'hlim', [0 xmax], ...
+                'vlim', [0 ymax], 'box', 0);
 end
 
 % add the comment field
 k = find(strcmp('COMNT', lay.label));
 comment = date;
-comment = sprintf('%0s\nxlim=[%.3g %.3g]', comment, timelim(1), timelim(2));
-comment = sprintf('%0s\nylim=[%.3g %.3g]', comment, freqlim(1), freqlim(2));
-comment = sprintf('%0s\nzlim=[%.3g %.3g]', comment, itpclim(1), itpclim(2));
+comment = sprintf('%0s\nxlim=[%.3g %.3g]', comment, 0, xmax);
+comment = sprintf('%0s\nylim=[%.3g %.3g]', comment, 0, ymax);
 
 ft_plot_text(lay.pos(k, 1), lay.pos(k, 2), sprintf(comment), ...
              'FontSize', 8, 'FontWeight', []);
 
 % plot the SCALE object
 k = find(strcmp('SCALE', lay.label));
-cdata = squeeze(mean(datamatrix, 1));
-mask = ~isnan(cdata);
-mask = double(mask);
-ft_plot_matrix(cdata, 'clim', itpclim, 'tag', 'cip', 'highlightstyle',...
-               'saturation', 'highlight', mask, 'hpos', lay.pos(k, 1), ...
-               'vpos', lay.pos(k, 2), 'width', lay.width(k), ...
-               'height', lay.height(k))
+if ~isempty(k)
+  x = lay.pos(k,1);
+  y = lay.pos(k,2);
+  plotScales([0 xmax], [0 ymax], x, y, chanWidth(1), chanHeight(1));
+end
 
 % set figure title
 if cfg.part == 0
-  title(sprintf('ITPC - Cond.: %d', cfg.cond));
+  title(sprintf('PSD - Cond.: %d', cfg.cond));
 else
-  title(sprintf('ITPC - Part.: %d - Cond.: %d', cfg.part, cfg.cond));
+  title(sprintf('PSD - Part.: %d - Cond.: %d', cfg.part, cfg.cond));
 end
-             
-colorbar;                                                                   % add the colorbar                                                                
+
 axis tight;                                                                 % format the layout
 axis off;                                                                   % remove the axis
 hold off;                                                                   % release the figure
@@ -189,35 +154,72 @@ info.(ident).cfg      = cfg;
 info.(ident).data     = data;
 guidata(gcf, info);
 set(gcf, 'WindowButtonUpFcn', {@ft_select_channel, 'multiple', ...
-    true, 'callback', {@select_easyITPCplot}, ...
+    true, 'callback', {@select_easyPSDplot}, ...
     'event', 'WindowButtonUpFcn'});
 set(gcf, 'WindowButtonDownFcn', {@ft_select_channel, 'multiple', ...
-    true, 'callback', {@select_easyITPCplot}, ...
+    true, 'callback', {@select_easyPSDplot}, ...
     'event', 'WindowButtonDownFcn'});
 set(gcf, 'WindowButtonMotionFcn', {@ft_select_channel, 'multiple', ...
-    true, 'callback', {@select_easyITPCplot}, ...
+    true, 'callback', {@select_easyPSDplot}, ...
     'event', 'WindowButtonMotionFcn'});
+
+end
+
+%--------------------------------------------------------------------------
+% SUBFUNCTION for plotting the SCALE information
+%--------------------------------------------------------------------------
+function plotScales(hlim, vlim, hpos, vpos, width, height)
+
+% the placement of all elements is identical
+placement = {'hpos', hpos, 'vpos', vpos, 'width', width, 'height', height, 'hlim', hlim, 'vlim', vlim};
+
+ft_plot_box([hlim vlim], placement{:}, 'edgecolor', 'k' , 'facecolor', 'white');
+
+if hlim(1)<=0 && hlim(2)>=0
+  ft_plot_vector([0 0], vlim, placement{:}, 'color', 'b');
+end
+
+if vlim(1)<=0 && vlim(2)>=0
+  ft_plot_vector(hlim, [0 0], placement{:}, 'color', 'b');
+end
+
+ft_plot_text(hlim(1), vlim(1), [num2str(hlim(1), 3) ' '], placement{:}, 'rotation', 90, 'HorizontalAlignment', 'Right', 'VerticalAlignment', 'top', 'FontSize', 8);
+ft_plot_text(hlim(2), vlim(1), [num2str(hlim(2), 3) ' '], placement{:}, 'rotation', 90, 'HorizontalAlignment', 'Right', 'VerticalAlignment', 'top', 'FontSize', 8);
+ft_plot_text(hlim(1), vlim(1), [num2str(vlim(1), 3) ' '], placement{:}, 'HorizontalAlignment', 'Right', 'VerticalAlignment', 'bottom', 'FontSize', 8);
+ft_plot_text(hlim(1), vlim(2), [num2str(vlim(2), 3) ' '], placement{:}, 'HorizontalAlignment', 'Right', 'VerticalAlignment', 'bottom', 'FontSize', 8);
+
+end
+
+%--------------------------------------------------------------------------
+% SUBFUNCTION which creates channel boxes with a white background
+%--------------------------------------------------------------------------
+function setChanBackground(hlim, vlim, hpos, vpos, width, height)
+
+% the placement of all elements is identical
+placement = {'hpos', hpos, 'vpos', vpos, 'width', width, 'height', height, 'hlim', hlim, 'vlim', vlim};
+
+ft_plot_box([hlim vlim], placement{:}, 'edgecolor', 'k' , 'facecolor', 'white');
 
 end
 
 %--------------------------------------------------------------------------
 % SUBFUNCTION which is called after selecting channels
 %--------------------------------------------------------------------------
-function select_easyITPCplot(label, varargin)
+function select_easyPSDplot(label, varargin)
 % fetch cfg/data based on axis indentifier given as tag
 ident = get(gca,'tag');
 info  = guidata(gcf);
 cfg   = info.(ident).cfg;
 data  = info.(ident).data;
 if ~isempty(label)
-  if any(ismember(label, {'SCALE', 'F9', 'F10', 'V1', 'V2'}))
+  if any(ismember(label, {'SCALE'}))
     cprintf([1,0.5,0], 'Selection of SCALE, F9, F10, V1, or V2 is currently not supported.\n');
   else
     cfg.electrode = label;
     fprintf('selected cfg.electrode = {%s}\n', vec2str(cfg.electrode, [], [], 0));
     % ensure that the new figure appears at the same position
     figure('Position', get(gcf, 'Position'));
-    JAI_easyITPCplot(cfg, data);
+    JAI_easyPSDplot(cfg, data);
   end
 end
 

@@ -1,6 +1,6 @@
 function [ data_itpc ] = JAI_ITPCoverDyads( cfg )
 % JAI_MPLVOVERDYADS estimates the mean of the inter-trial phase coherence 
-% values for all conditions and over all dyads.
+% values for all conditions and over all participants.
 %
 % Use as
 %   [ data_itpc ] = JAI_ITPCoverDyads( cfg )
@@ -11,7 +11,7 @@ function [ data_itpc ] = JAI_ITPCoverDyads( cfg )
 %
 % This function requires the fieldtrip toolbox
 % 
-% See also RPS_CALCMEANPLV
+% See also JAI_INTERTRIALPHASECOH
 
 % Copyright (C) 2018, Daniel Matthes, MPI CBS 
 
@@ -19,7 +19,7 @@ function [ data_itpc ] = JAI_ITPCoverDyads( cfg )
 % Get and check config options
 % -------------------------------------------------------------------------
 path      = ft_getopt(cfg, 'path', ...
-              '/data/pt_01843/eegData/DualEEG_JAI_processedData/08b_itpc/');
+              '/data/pt_01826/eegData/DualEEG_JAI_processedData/08b_itpc/');
 session   = ft_getopt(cfg, 'session', 1);
 
 % -------------------------------------------------------------------------
@@ -90,13 +90,13 @@ fprintf('\n');
 data = fixTrialOrder( data, trialinfo, generalDefinitions.condNumITPC, ...
                       repmat(listOfDyads,1,2) );
 
-for j=1:1:2*numOfDyads
-  data{j} = cat(4, data{j}{:});
+for i=1:1:2*numOfDyads
+  data{i} = cat(4, data{i}{:});
 end
 data = cat(5, data{:});
 
 % -------------------------------------------------------------------------
-% Estimate averaged Phase Locking Value (over dyads)
+% Estimate averaged inter-trial phase coherence (over dyads)
 % ------------------------------------------------------------------------- 
 data = nanmean(data, 5);
 data = squeeze(num2cell(data, [1 2 3]))';
@@ -109,8 +109,8 @@ data_itpc = data_out;
 end
 
 %--------------------------------------------------------------------------
-% SUBFUNCTION which fixes trial Order an creates empty matrices for missing
-% phases.
+% SUBFUNCTION which fixes trial order and creates empty matrices for 
+% missing phases.
 %--------------------------------------------------------------------------
 function dataTmp = fixTrialOrder( dataTmp, trInf, trInfOrg, dyadNum )
 

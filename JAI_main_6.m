@@ -33,12 +33,13 @@ fprintf('\n');
 %% bandpass filtering
 
 for i = numOfPart
+  fprintf('<strong>Dyad %d</strong>\n', i);
+  
   cfg             = [];
   cfg.srcFolder   = strcat(desPath, '04b_eyecor/');
   cfg.filename    = sprintf('JAI_d%02d_04b_eyecor', i);
   cfg.sessionStr  = sessionStr;
   
-  fprintf('<strong>Dyad %d</strong>\n', i);
   fprintf('Load eye-artifact corrected data...\n\n');
   JAI_loadData( cfg );
   
@@ -194,6 +195,7 @@ for i = numOfPart
   cfg.srcFolder   = strcat(desPath, '06a_bpfilt/');
   cfg.filename    = sprintf('JAI_d%02d_06a_bpfilt2Hz', i);
   cfg.sessionStr  = sessionStr;
+  
   fprintf('Load the at 2Hz bandpass filtered data...\n');
   JAI_loadData( cfg );
   

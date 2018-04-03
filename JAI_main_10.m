@@ -154,6 +154,7 @@ if avgOverDyads == true
   clear data_mplvod_gamma
 end
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Averaging iptc over dyads
 choise = false;
 while choise == false
@@ -190,8 +191,49 @@ if avgOverDyads == true
   fprintf('Saving IPTCs over dyads in:\n'); 
   fprintf('%s ...\n', file_path);
   JAI_saveData(cfg, 'data_itpcod', data_itpcod);
-  fprintf('Data stored!\n');
+  fprintf('Data stored!\n\n');
   clear data_itpcod
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Averaging psd over dyads
+choise = false;
+while choise == false
+  cprintf([0,0.6,0], 'Averaging PSD over dyads?\n');
+  x = input('Select [y/n]: ','s');
+  if strcmp('y', x)
+    choise = true;
+    avgOverDyads = true;
+  elseif strcmp('n', x)
+    choise = true;
+    avgOverDyads = false;
+  else
+    choise = false;
+  end
+end
+fprintf('\n');
+
+if avgOverDyads == true
+  cfg             = [];
+  cfg.path        = strcat(desPath, '09b_pwelch/');
+  cfg.session     = str2num(sessionStr);                                    %#ok<ST2NM>
+  
+  data_pwelchod     = JAI_PSDoverDyads( cfg );
+  
+  % export the averaged PSD values into a *.mat file
+  cfg             = [];
+  cfg.desFolder   = strcat(desPath, '10c_pwelchod/');
+  cfg.filename    = 'JAI_10c_pwelchod';
+  cfg.sessionStr  = sessionStr;
+
+  file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
+                     '.mat');
+                   
+  fprintf('Saving PSD values over dyads in:\n'); 
+  fprintf('%s ...\n', file_path);
+  JAI_saveData(cfg, 'data_pwelchod', data_pwelchod);
+  fprintf('Data stored!\n');
+  clear data_psdod
 end
 
 %% clear workspace

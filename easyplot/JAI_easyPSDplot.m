@@ -1,33 +1,32 @@
-function JAI_easyITPCplot(cfg, data)
-% JAI_EASYITPCPLOT is a function, which makes it easier to plot a
-% inter-trial phase coherence representation within a specific condition of 
-% the JAI_DATASTRUCTURE.
+function JAI_easyPSDplot(cfg, data)
+% JAI_EASYPSDPLOT is a function, which makes it easier to plot the power
+% spectral density within a specific condition of the JAI_DATASTRUCTURE
 %
 % Use as
-%   JAI_easyITCplot(cfg, data)
+%   JAI_easyPSDplot(cfg, data)
 %
-% where the input data have to be a result from JAI_INTERTRAILPHASECOH.
+% where the input data have to be a result from JAI_PWELCH.
 %
 % The configuration options are 
 %   cfg.part        = number of participant (default: 1)
 %                     0 - plot the averaged data
 %                     1 - plot data of participant 1
 %                     2 - plot data of participant 2   
-%   cfg.condition   = condition (default: 7 or 'Single_2Hz', see JAI_DATASTRUCTURE)
+%   cfg.condition   = condition (default: 111 or 'SameObjectB', see JAI_DATASTRUCTURE)
 %   cfg.electrode   = number of electrodes (default: {'Cz'} repsectively [8])
-%                     examples: {'Cz'}, {'F3', 'Fz', 'F4'}, [8] or [2, 1, 28] 
-%  
+%                     examples: {'Cz'}, {'F3', 'Fz', 'F4'}, [8] or [2, 1, 28]
+%
 % This function requires the fieldtrip toolbox
 %
-% See also JAI_INTERTRIALPHASECOH, JAI_DATASTRUCTURE
+% See also JAI_PWELCH, JAI_DATASTRUCTURE
 
-% Copyright (C) 2017-2018, Daniel Matthes, MPI CBS
+% Copyright (C) 2018, Daniel Matthes, MPI CBS
 
 % -------------------------------------------------------------------------
 % Get and check config options
 % -------------------------------------------------------------------------
 part    = ft_getopt(cfg, 'part', 1);
-cond    = ft_getopt(cfg, 'condition', 7);
+cond    = ft_getopt(cfg, 'condition', 111);
 elec    = ft_getopt(cfg, 'electrode', {'Cz'});
 
 filepath = fileparts(mfilename('fullpath'));                                % add utilities folder to path
@@ -64,7 +63,7 @@ switch part                                                                 % ch
 end
 
 trialinfo = data.trialinfo;                                                 % get trialinfo
-label     = data.label;                                                     % get labels                                             
+label     = data.label;                                                     % get labels 
 
 cond    = JAI_checkCondition( cond );                                       % check cfg.condition definition    
 if isempty(find(trialinfo == cond, 1))
@@ -91,21 +90,18 @@ else
 end
 
 % -------------------------------------------------------------------------
-% Inter-trial phase coherence representation
+% Plot power spectral density (PSD)
 % -------------------------------------------------------------------------
-imagesc(data.time{trialNum}(2:end), data.freq, ...
-        squeeze(mean(data.itpc{trialNum}(elec,:,2:end),1)));
+plot(data.freq, squeeze(data.powspctrm(trialNum, elec,:)));                 %#ok<FNDSB>
 labelString = strjoin(data.label(elec), ',');
-if part == 0
-  title(sprintf('ITPC - Cond.: %d - Elec.: %s', cond, labelString));
+if part == 0                                                                % set figure title
+  title(sprintf('PSD - Cond.: %d - Elec.: %s', cond, labelString));
 else
-  title(sprintf('ITPC - Part.: %d - Cond.: %d - Elec.: %s', ...
+  title(sprintf('PSD - Part.: %d - Cond.: %d - Elec.: %s', ...
         part, cond, labelString));
 end
 
-axis xy;
-xlabel('time in sec');                                                      % set xlabel
-ylabel('frequency in Hz');                                                  % set ylabel
-colorbar;
+xlabel('frequency in Hz');                                                  % set xlabel
+ylabel('PSD');                                                              % set ylabel
 
 end

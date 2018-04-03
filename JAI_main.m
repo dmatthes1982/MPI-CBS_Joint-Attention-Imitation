@@ -100,11 +100,17 @@ end
 if ~exist(strcat(desPath, '09a_tfr'), 'dir')
   mkdir(strcat(desPath, '09a_tfr'));
 end
+if ~exist(strcat(desPath, '09b_pwelch'), 'dir')
+  mkdir(strcat(desPath, '09b_pwelch'));
+end
 if ~exist(strcat(desPath, '10a_mplvod'), 'dir')
   mkdir(strcat(desPath, '10a_mplvod'));
 end
 if ~exist(strcat(desPath, '10b_itpcod'), 'dir')
   mkdir(strcat(desPath, '10b_itpcod'));
+end
+if ~exist(strcat(desPath, '10c_pwelchod'), 'dir')
+  mkdir(strcat(desPath, '10c_pwelchod'));
 end
 
 clear sessionStr numOfPart part newPaths
@@ -231,7 +237,7 @@ else
     fprintf('[6]  - Narrow band filtering and Hilbert transform\n'); 
     fprintf('[7]  - Estimation of Phase Locking Values (PLV)\n');
     fprintf('[8]  - Estimation of Inter Trial Phase Coherences (ITPC)\n');
-    fprintf('[9]  - Power analysis (TFR)\n');
+    fprintf('[9]  - Power analysis (TFR, pWelch)\n');
     fprintf('[10] - Averaging over dyads\n');
     fprintf('[11] - Quit data processing\n\n');
     x = input('Option: ');
@@ -335,8 +341,8 @@ switch part
   case 9
     tmpPath = strcat(desPath, '04b_eyecor/');
     fileNamePre = strcat(tmpPath, 'JAI_d*_04b_eyecor_', sessionStr, '.mat');
-    tmpPath = strcat(desPath, '09a_tfr/');
-    fileNamePost = strcat(tmpPath, 'JAI_d*_09a_tfr_', sessionStr, '.mat');
+    tmpPath = strcat(desPath, '09b_pwelch/');
+    fileNamePost = strcat(tmpPath, 'JAI_d*_09b_pwelch_', sessionStr, '.mat');
   case 10
     fileNamePre = 0;
   otherwise
@@ -524,7 +530,7 @@ while sessionStatus == true
         fprintf('<strong>Continue data processing with:</strong>\n');
         fprintf('<strong>[6]  - Narrow band filtering and Hilbert transform?</strong>\n');
         fprintf('<strong>[8]  - Estimation of Inter Trial Phase Coherences (ITPC)?</strong>\n');
-        fprintf('<strong>[9]  - Power analysis (TFR)?</strong>\n');
+        fprintf('<strong>[9]  - Power analysis (TFR, pWelch)?</strong>\n');
         fprintf('<strong>[11] - Quit data processing?</strong>\n');
         x = input('\nSelect one of these options: ');
         switch x
@@ -572,7 +578,7 @@ while sessionStatus == true
       while selection == false
         fprintf('<strong>Continue data processing with:</strong>\n');
         fprintf('<strong>[8]  - Estimation of Inter Trial Phase Coherences (ITPC)?</strong>\n');
-        fprintf('<strong>[9]  - Power analysis (TFR)?</strong>\n');
+        fprintf('<strong>[9]  - Power analysis (TFR, pWelch)?</strong>\n');
         fprintf('<strong>[10] - Averaging over dyads?</strong>\n');
         fprintf('<strong>[11] - Quit data processing?</strong>\n');
         x = input('\nSelect one of these options: ');
@@ -602,7 +608,7 @@ while sessionStatus == true
       selection = false;
       while selection == false
         fprintf('<strong>Continue data processing with:</strong>\n');
-        fprintf('<strong>[9]  - Power analysis (TFR)?</strong>\n');
+        fprintf('<strong>[9]  - Power analysis (TFR, pWelch)?</strong>\n');
         fprintf('<strong>[10] - Averaging over dyads?</strong>\n');
         fprintf('<strong>[11] - Quit data processing?</strong>\n');
         x = input('\nSelect one of these options: ');
