@@ -32,6 +32,7 @@ numOfElements = 1:length(dataEOGComp.elements);
 cfg               = [];
 cfg.layout        = 'mpi_customized_acticap32.mat';
 cfg.viewmode      = 'component';
+cfg.zlim          = 'maxabs';
 cfg.channel       = find(ismember(dataICAcomp.label, dataEOGComp.elements))';
 cfg.blocksize     = 30;
 cfg.showcallinfo  = 'no';
