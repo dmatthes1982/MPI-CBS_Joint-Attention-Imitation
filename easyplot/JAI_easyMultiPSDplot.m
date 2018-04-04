@@ -92,7 +92,7 @@ xval        = dataPlot.freq;                                                % ex
 xmax        = max(xval);                                                    % determine the frequency maximum
 val         = ~ismember(selchan, eogvchan);                                 
 ymaxchan    = selchan(val);
-ymax        = max(max(datamatrix(ymaxchan, :)));                            % determine the power maximum of all channels expect V1 und V2
+ymax        = max(max(datamatrix(ymaxchan, 1:48)));                         % determine the power maximum of all channels expect V1 und V2
 
 hold on;                                                                    % hold the figure
 cla;                                                                        % clear all axis
