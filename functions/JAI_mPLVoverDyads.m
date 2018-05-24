@@ -101,7 +101,7 @@ for i=1:1:length(listOfDyads)
 end
 fprintf('\n');
 
-data = fixTrialOrder( data, trialinfo, generalDefinitions.condNum', ...
+data = fixTrialOrder( data, trialinfo, generalDefinitions.condNum, ...
                       listOfDyads );
 
 for j=1:1:length(listOfDyads)
@@ -130,23 +130,23 @@ end
 % SUBFUNCTION which fixes trial order and creates empty matrices for 
 % missing phases.
 %--------------------------------------------------------------------------
-function dataTmp = fixTrialOrder( dataTmp, trInf, trInfOrg, dyadNum )
+function dataTmp = fixTrialOrder( dataTmp, trlInf, trlInfOrg, dyadNum )
 
 emptyMatrix = NaN * ones(size(dataTmp{1}{1}, 1), size(dataTmp{1}{1}, 2));   % empty matrix with NaNs
 fixed = false;
 
 for k = 1:1:size(dataTmp, 2)
-  if ~isequal(trInf{k}, trInfOrg)
-    missingPhases = ~ismember(trInfOrg, trInf{k});
-    missingPhases = trInfOrg(missingPhases);
+  if ~isequal(trlInf{k}, trlInfOrg')
+    missingPhases = ~ismember(trlInfOrg, trlInf{k});
+    missingPhases = trlInfOrg(missingPhases);
     missingPhases = vec2str(missingPhases, [], [], 0);
     cprintf([0,0.6,0], ...
             sprintf('Dyad %d: Phase(s) %s missing. Empty matrix(matrices) with NaNs created.\n', ...
             dyadNum(k), missingPhases));
-    [~, loc] = ismember(trInfOrg, trInf{k});
+    [~, loc] = ismember(trlInfOrg, trlInf{k});
     tmpBuffer = [];
-    tmpBuffer{length(trInfOrg)} = [];                                       %#ok<AGROW>
-    for l = 1:1:length(trInfOrg)
+    tmpBuffer{length(trlInfOrg)} = [];                                       %#ok<AGROW>
+    for l = 1:1:length(trlInfOrg)
       if loc(l) == 0
         tmpBuffer{l} = emptyMatrix;
       else

@@ -97,13 +97,8 @@ for i = numOfPart
   fprintf('Load raw data...\n');
   JAI_loadData( cfg );
   
-  % Concatenated raw trials to a continuous stream
-  data_continuous = JAI_concatData( data_raw );
-  
-  fprintf('\n');
-  
   % select corrupted channels
-  data_badchan = JAI_selectBadChan( data_continuous );
+  data_badchan = JAI_selectBadChan( data_raw );
   
   % export the bad channels in a *.mat file
   cfg             = [];
@@ -118,7 +113,6 @@ for i = numOfPart
   fprintf('%s ...\n', file_path);
   JAI_saveData(cfg, 'data_badchan', data_badchan);
   fprintf('Data stored!\n\n');
-  clear data_continuous
   
   % add bad labels of bad channels to the settings file
   if isempty(data_badchan.part1.badChan)

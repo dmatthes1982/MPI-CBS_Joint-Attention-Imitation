@@ -43,7 +43,7 @@ if strcmp(type, 'plv')
 end
 
 if isempty(sessionStr)
-  error('cfg.sessionNum has to be specified');
+  error('cfg.sessionStr has to be specified');
 end
 
 % -------------------------------------------------------------------------

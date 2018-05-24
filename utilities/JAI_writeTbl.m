@@ -3,7 +3,7 @@ function JAI_writeTbl(cfg, data)
 % specific dyad in plv or itpc estimations to the associated files.
 %
 % Use as
-%   JAI_writeTbl( cfg )
+%   JAI_writeTbl( cfg, data )
 %
 % The input data hast to be either from JAI_INTERTRIALPHASECOH or 
 % JAI_PHASELOCKVAL
@@ -11,7 +11,7 @@ function JAI_writeTbl(cfg, data)
 % The configuration options are
 %   cfg.desFolder   = destination folder (default: '/data/pt_01826/eegData/DualEEG_JAI_processedData/00_settings/')
 %   cfg.dyad        = number of dyad
-%   cfg.type        = type of documentation file (options: settings, plv, itpc)
+%   cfg.type        = type of documentation file (options: plv, itpc)
 %   cfg.param       = additional params for type 'plv' (options: '2Hz', 'theta', 'alpha', '20Hz', 'beta', 'gamma');
 %   cfg.sessionStr  = number of session, format: %03d, i.e.: '003' (default: '001')
 %

@@ -1,4 +1,4 @@
-function [ data ] = JAI_pWelch( cfg, data)
+function [ data ] = JAI_pWelch( cfg, data )
 % JAI_PWELCH calculates the power spectral density using Welch's method for
 % every condition of every participant in the dataset.
 %
@@ -8,7 +8,7 @@ function [ data ] = JAI_pWelch( cfg, data)
 % where the input data hast to be the result from JAI_SEGMENTATION
 %
 % The configuration options are
-%   config.foi = frequency of interest - begin:resolution:end (default: 1:1:50)
+%   cfg.foi = frequency of interest - begin:resolution:end (default: 1:1:50)
 %
 % This function requires the fieldtrip toolbox.
 %

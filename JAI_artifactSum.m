@@ -138,5 +138,6 @@ writetable(T, file_path);
 fprintf('Number of segments with artifacts per dyad exported to:\n');
 fprintf('%s\n', file_path);
 
+%% clear workspace
 clear tmpPath path sessionStr fileList numOfFiles numOfPart i ...
-      file_path cfg_autoart
+      file_path cfg_autoart T
