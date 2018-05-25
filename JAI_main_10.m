@@ -1,8 +1,8 @@
 %% check if basic variables are defined
 if ~exist('sessionStr', 'var')
   cfg           = [];
-  cfg.subFolder = '07c_mplv/';
-  cfg.filename  = 'JAI_d01_07c_mplvGamma';
+  cfg.subFolder = '07b_mplv/';
+  cfg.filename  = 'JAI_d01_07b_mplvGamma';
   sessionStr    = sprintf('%03d', JAI_getSessionNum( cfg ));                % estimate current session number
 end
 
@@ -36,7 +36,7 @@ fprintf('\n');
 
 if avgOverDyads == true
   cfg               = [];
-  cfg.path          = strcat(desPath, '07c_mplv/');
+  cfg.path          = strcat(desPath, '07b_mplv/');
   cfg.session       = str2num(sessionStr);                                  %#ok<ST2NM>
   cfg.passband      = '2Hz';
 
@@ -174,7 +174,7 @@ fprintf('\n');
 
 if avgOverDyads == true
   cfg             = [];
-  cfg.path        = strcat(desPath, '08b_itpc/');
+  cfg.path        = strcat(desPath, '08_itpc/');
   cfg.session     = str2num(sessionStr);                                    %#ok<ST2NM>
   
   data_itpcod     = JAI_ITPCoverDyads( cfg );

@@ -93,23 +93,8 @@ for i = numOfPart
   cfg.length    = 10;
   cfg.overlap   = 0;
 
-  data_iseg  = JAI_segmentation( cfg, data_eyecor );
-  clear data_eyecor
-
-  % export the segmented data into a *.mat file
-  cfg             = [];
-  cfg.desFolder   = strcat(desPath, '08a_iseg/');
-  cfg.filename    = sprintf('JAI_d%02d_08a_iseg', i);
-  cfg.sessionStr  = sessionStr;
-
-  file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
-                     '.mat');
-                   
-  fprintf('The segmented data of dyad %d will be saved in:\n', i); 
-  fprintf('%s ...\n', file_path);
-  JAI_saveData(cfg, 'data_iseg', data_iseg);
-  fprintf('Data stored!\n\n');
-
+  data_eyecor  = JAI_segmentation( cfg, data_eyecor );
+  
   % artifact rejection
   if artifactRejection == true                                              % load artifact definitions
     cfg             = [];
@@ -136,7 +121,7 @@ for i = numOfPart
     cfg.reject    = 'complete';
     cfg.target    = 'single';
   
-    data_iseg = JAI_rejectArtifacts(cfg, data_iseg);
+    data_eyecor = JAI_rejectArtifacts(cfg, data_eyecor);
     fprintf('\n');
     
     clear cfg_allart
@@ -147,8 +132,8 @@ for i = numOfPart
   cfg.toi       = 0:0.2:9.8;
   cfg.foi       = 1:0.5:48;
 
-  data_itpc = JAI_interTrialPhaseCoh(cfg, data_iseg);
-  clear data_iseg
+  data_itpc = JAI_interTrialPhaseCoh(cfg, data_eyecor);
+  clear data_eyecor
   
   % export number of good trials into a spreadsheet
   cfg           = [];
@@ -160,8 +145,8 @@ for i = numOfPart
   
   % export the itpc data into a *.mat file
   cfg             = [];
-  cfg.desFolder   = strcat(desPath, '08b_itpc/');
-  cfg.filename    = sprintf('JAI_d%02d_08b_itpc', i);
+  cfg.desFolder   = strcat(desPath, '08_itpc/');
+  cfg.filename    = sprintf('JAI_d%02d_08_itpc', i);
   cfg.sessionStr  = sessionStr;
 
   file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...

@@ -82,20 +82,14 @@ end
 if ~exist(strcat(desPath, '06b_hilbert'), 'dir')
   mkdir(strcat(desPath, '06b_hilbert'));
 end
-if ~exist(strcat(desPath, '07a_hseg'), 'dir')
-  mkdir(strcat(desPath, '07a_hseg'));
+if ~exist(strcat(desPath, '07a_plv'), 'dir')
+  mkdir(strcat(desPath, '07a_plv'));
 end
-if ~exist(strcat(desPath, '07b_plv'), 'dir')
-  mkdir(strcat(desPath, '07b_plv'));
+if ~exist(strcat(desPath, '07b_mplv'), 'dir')
+  mkdir(strcat(desPath, '07b_mplv'));
 end
-if ~exist(strcat(desPath, '07c_mplv'), 'dir')
-  mkdir(strcat(desPath, '07c_mplv'));
-end
-if ~exist(strcat(desPath, '08a_iseg'), 'dir')
-  mkdir(strcat(desPath, '08a_iseg'));
-end
-if ~exist(strcat(desPath, '08b_itpc'), 'dir')
-  mkdir(strcat(desPath, '08b_itpc'));
+if ~exist(strcat(desPath, '08_itpc'), 'dir')
+  mkdir(strcat(desPath, '08_itpc'));
 end
 if ~exist(strcat(desPath, '09a_tfr'), 'dir')
   mkdir(strcat(desPath, '09a_tfr'));
@@ -331,13 +325,13 @@ switch part
   case 7
     tmpPath = strcat(desPath, '06b_hilbert/');
     fileNamePre = strcat(tmpPath, 'JAI_d*_06b_hilbertGamma_', sessionStr, '.mat');
-    tmpPath = strcat(desPath, '07c_mplv/');
-    fileNamePost = strcat(tmpPath, 'JAI_d*_07c_mplvGamma_', sessionStr, '.mat');
+    tmpPath = strcat(desPath, '07b_mplv/');
+    fileNamePost = strcat(tmpPath, 'JAI_d*_07b_mplvGamma_', sessionStr, '.mat');
   case 8
     tmpPath = strcat(desPath, '04b_eyecor/');
     fileNamePre = strcat(tmpPath, 'JAI_d*_04b_eyecor_', sessionStr, '.mat');
-    tmpPath = strcat(desPath, '08b_itpc/');
-    fileNamePost = strcat(tmpPath, 'JAI_d*_08b_itpc_', sessionStr, '.mat');
+    tmpPath = strcat(desPath, '08_itpc/');
+    fileNamePost = strcat(tmpPath, 'JAI_d*_08_itpc_', sessionStr, '.mat');
   case 9
     tmpPath = strcat(desPath, '04b_eyecor/');
     fileNamePre = strcat(tmpPath, 'JAI_d*_04b_eyecor_', sessionStr, '.mat');
