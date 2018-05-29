@@ -25,7 +25,7 @@ if ~exist('numOfPart', 'var')                                               % es
 end
 
 %% part 5
-% 1. auto artifact detection (threshold is default +-75 uV and adjustable) 
+% 1. auto artifact detection (threshold and method is selectable - default: 'minmax', +-75 uV)
 % 2. manual artifact detection (verification)
 
 cprintf([0,0.6,0], '<strong>[5] - Automatic and manual artifact detection</strong>\n');
@@ -99,18 +99,19 @@ for i = numOfPart
   
   % automatic artifact detection (threshold +-75 uV)
   cfg             = [];
-  cfg.length      = 1000;                                                   % window length: 1 sec       
-  cfg.overlap     = 0;                                                      % no overlap
-  trl             = JAI_genTrl(cfg, data_eyecor);                           % define artifact detection intervals
-  
-  cfg             = [];
   cfg.channel     = {'all', '-V1', '-V2', '-REF', ...
                      '-EOGV', '-EOGH'};
+  cfg.method      = 'minmax';
+  cfg.sliding     = 'no';
+  cfg.winsize     = 1000;
   cfg.continuous  = 'no';                                                   % data is trial-based
-  cfg.trl         = trl;
-  cfg.method      = 0;                                                      % method: maxmin threshold
+  cfg.trllength   = 1000;                                                   % minimal subtrial length: 1 sec
+  cfg.overlap     = 0;                                                      % no overlap
   cfg.min         = -threshold;                                             % min: -threshold uV
   cfg.max         = threshold;                                              % max: threshold uV
+  cfg.range       = threshold;                                              % range: threshold uV
+  cfg.stddev      = threshold;                                              % stddev: threshold uV
+  cfg.mad         = threshold;                                              % mad: multiples of median absolute deviation
 
   cfg_autoart     = JAI_autoArtifact(cfg, data_eyecor);
   
