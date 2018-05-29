@@ -134,7 +134,7 @@ for i = numOfPart
   
   data_plv_2Hz  = JAI_phaseLockVal(cfg, data_hilbert_2Hz);
   data_mplv_2Hz = JAI_calcMeanPLV(data_plv_2Hz);
-  clear data_hseg_2Hz
+  clear data_hilbert_2Hz
   
   % export number of good trials into a spreadsheet
   cfg           = [];
@@ -212,7 +212,7 @@ for i = numOfPart
   
   data_plv_theta  = JAI_phaseLockVal(cfg, data_hilbert_theta);
   data_mplv_theta = JAI_calcMeanPLV(data_plv_theta);
-  clear data_hseg_theta
+  clear data_hilbert_theta
   
   % export number of good trials into a spreadsheet
   cfg           = [];
@@ -290,7 +290,7 @@ for i = numOfPart
   
   data_plv_alpha  = JAI_phaseLockVal(cfg, data_hilbert_alpha);
   data_mplv_alpha = JAI_calcMeanPLV(data_plv_alpha);
-  clear data_hseg_alpha
+  clear data_hilbert_alpha
   
   % export number of good trials into a spreadsheet
   cfg           = [];
@@ -368,7 +368,7 @@ for i = numOfPart
   
   data_plv_20Hz  = JAI_phaseLockVal(cfg, data_hilbert_20Hz);
   data_mplv_20Hz = JAI_calcMeanPLV(data_plv_20Hz);
-  clear data_hseg_20Hz
+  clear data_hilbert_20Hz
   
   % export number of good trials into a spreadsheet
   cfg           = [];
@@ -446,7 +446,7 @@ for i = numOfPart
   
   data_plv_beta  = JAI_phaseLockVal(cfg, data_hilbert_beta);
   data_mplv_beta = JAI_calcMeanPLV(data_plv_beta);
-  clear data_hseg_beta
+  clear data_hilbert_beta
   
   % export number of good trials into a spreadsheet
   cfg           = [];
@@ -526,7 +526,7 @@ for i = numOfPart
   
   data_plv_gamma  = JAI_phaseLockVal(cfg, data_hilbert_gamma);
   data_mplv_gamma = JAI_calcMeanPLV(data_plv_gamma);
-  clear data_hseg_gamma
+  clear data_hilbert_gamma
   
   % export number of good trials into a spreadsheet
   cfg           = [];

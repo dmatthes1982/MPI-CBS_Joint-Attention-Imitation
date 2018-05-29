@@ -6,7 +6,7 @@ function [ data_mplv ] = JAI_mPLVoverDyads( cfg )
 %   [ data_mplv ] = JAI_mPLVoverDyads( cfg )
 %
 % The configuration options are
-%   cfg.path      = source path' (i.e. '/data/pt_01826/eegData/DualEEG_JAI_processedData/07c_mplv/')
+%   cfg.path      = source path' (i.e. '/data/pt_01826/eegData/DualEEG_JAI_processedData/07b_mplv/')
 %   cfg.session   = session number (default: 1)
 %   cfg.passband  = select passband of interest (default: 2Hz)
 %                   (accepted values: 2Hz, theta, alpha, 20Hz, beta, gamma)
@@ -21,7 +21,7 @@ function [ data_mplv ] = JAI_mPLVoverDyads( cfg )
 % Get and check config options
 % -------------------------------------------------------------------------
 path      = ft_getopt(cfg, 'path', ...
-              '/data/pt_01826/eegData/DualEEG_JAI_processedData/07c_mplv/');
+              '/data/pt_01826/eegData/DualEEG_JAI_processedData/07b_mplv/');
 session   = ft_getopt(cfg, 'session', 1);
 passband  = ft_getopt(cfg, 'passband', '2Hz');
 
@@ -47,14 +47,14 @@ load(sprintf('%s/../general/JAI_generalDefinitions.mat', filepath), ...
 % -------------------------------------------------------------------------    
 fprintf('<strong>Averaging of Phase Locking Values over dyads at %s...</strong>\n', passband);
 
-dyadsList   = dir([path, sprintf('JAI_d*_07c_mplv%s_%03d.mat', ...
+dyadsList   = dir([path, sprintf('JAI_d*_07b_mplv%s_%03d.mat', ...
                    fileSuffix, session)]);
 dyadsList   = struct2cell(dyadsList);
 dyadsList   = dyadsList(1,:);
 numOfDyads  = length(dyadsList);
 
 for i=1:1:numOfDyads
-  listOfDyads(i) = sscanf(dyadsList{i}, ['JAI_d%d_07c'...
+  listOfDyads(i) = sscanf(dyadsList{i}, ['JAI_d%d_07b'...
                                    sprintf('%s_', fileSuffix) ...
                                    sprintf('%03d.mat', session)]);          %#ok<AGROW>
 end
@@ -83,7 +83,7 @@ data{1, length(listOfDyads)} = [];
 trialinfo{1, length(listOfDyads)} = []; 
 
 for i=1:1:length(listOfDyads)
-  filename = sprintf('JAI_d%02d_07c_mplv%s_%03d.mat', listOfDyads(i), ...
+  filename = sprintf('JAI_d%02d_07b_mplv%s_%03d.mat', listOfDyads(i), ...
                     fileSuffix, session);
   file = strcat(path, filename);
   fprintf('Load %s ...\n', filename);

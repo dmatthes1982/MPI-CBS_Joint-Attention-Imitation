@@ -6,7 +6,7 @@ function [ data_itpc ] = JAI_ITPCoverDyads( cfg )
 %   [ data_itpc ] = JAI_ITPCoverDyads( cfg )
 %
 % The configuration options are
-%   cfg.path      = source path' (i.e. '/data/pt_01826/eegData/DualEEG_JAI_processedData/08b_itpc/')
+%   cfg.path      = source path' (i.e. '/data/pt_01826/eegData/DualEEG_JAI_processedData/08_itpc/')
 %   cfg.session   = session number (default: 1)
 %
 % This function requires the fieldtrip toolbox
@@ -19,7 +19,7 @@ function [ data_itpc ] = JAI_ITPCoverDyads( cfg )
 % Get and check config options
 % -------------------------------------------------------------------------
 path      = ft_getopt(cfg, 'path', ...
-              '/data/pt_01826/eegData/DualEEG_JAI_processedData/08b_itpc/');
+              '/data/pt_01826/eegData/DualEEG_JAI_processedData/08_itpc/');
 session   = ft_getopt(cfg, 'session', 1);
 
 % -------------------------------------------------------------------------
@@ -34,7 +34,7 @@ load(sprintf('%s/../general/JAI_generalDefinitions.mat', filepath), ...
 % -------------------------------------------------------------------------    
 fprintf('<strong>Averaging ITPC values over dyads...</strong>\n');
 
-dyadsList   = dir([path, sprintf('JAI_d*_08b_itpc_%03d.mat', session)]);
+dyadsList   = dir([path, sprintf('JAI_d*_08_itpc_%03d.mat', session)]);
 dyadsList   = struct2cell(dyadsList);
 dyadsList   = dyadsList(1,:);
 numOfDyads  = length(dyadsList);
@@ -68,7 +68,7 @@ data{1, 2 * numOfDyads} = [];
 trialinfo{1, 2 * numOfDyads} = []; 
 
 for i=1:1:numOfDyads
-  filename = sprintf('JAI_d%02d_08b_itpc_%03d.mat', listOfDyads(i), ...
+  filename = sprintf('JAI_d%02d_08_itpc_%03d.mat', listOfDyads(i), ...
                      session);
   file = strcat(path, filename);
   fprintf('Load %s ...\n', filename);
