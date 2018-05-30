@@ -37,8 +37,6 @@ if newPaths == true
   path = strcat(path, '/');
 end
 
-clear newPaths
-
 % -------------------------------------------------------------------------
 % Session selection
 % -------------------------------------------------------------------------
@@ -97,8 +95,7 @@ end
 
 fprintf('\n');
 
-clear sessionNum fileListCopy x y userList match filePath cmdout attrib ...
-      selection 
+clear sessionNum fileListCopy y userList match filePath cmdout attrib ... 
 
 % -------------------------------------------------------------------------
 % Extract and export number of artifacts
@@ -129,15 +126,36 @@ for i = 1:1:length(fileList)
 end
 
 file_path = strcat(path, '00_settings/', 'numOfArtifacts_', sessionStr, '.xls');
+fprintf('The default file path is: %s\n', file_path);
+
+selection = false;
+while selection == false
+  fprintf('\nDo you want to use the default file path and possibly overwrite an existing file?\n');
+  x = input('Select [y/n]: ','s');
+  if strcmp('y', x)
+    selection = true;
+    newPaths = false;
+  elseif strcmp('n', x)
+    selection = true;
+    newPaths = true;
+  else
+    selection = false;
+  end
+end
+
+if newPaths == true
+  [filename, file_path] = uiputfile(file_path, 'Specify a destination file...');
+  file_path = [file_path, filename];
+end
 
 if exist(file_path, 'file')
   delete(file_path);
 end
 writetable(T, file_path);
 
-fprintf('Number of segments with artifacts per dyad exported to:\n');
+fprintf('\nNumber of segments with artifacts per dyad exported to:\n');
 fprintf('%s\n', file_path);
 
 %% clear workspace
 clear tmpPath path sessionStr fileList numOfFiles numOfPart i ...
-      file_path cfg_autoart T
+      file_path cfg_autoart T newPaths filename selection x

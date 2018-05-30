@@ -31,14 +31,65 @@ end
 cprintf([0,0.6,0], '<strong>[5] - Automatic and manual artifact detection</strong>\n');
 fprintf('\n');
 
+default_threshold = [75,   ...                                              % default for method 'minmax'
+                     100,  ...                                              % default for method 'range'
+                     50,   ...                                              % default for method 'stddev'
+                     7];                                                    % default for method 'mad'
+threshold_range   = [50, 200; ...                                           % range for method 'minmax'
+                     50, 200; ...                                           % range for method 'range'
+                     20, 80; ...                                            % range for method 'stddev'
+                     3, 7];                                                 % range for method 'mad'
+
+% method selectiom
 selection = false;
 while selection == false
-  cprintf([0,0.6,0], 'Do you want to use the default threshold (+-75uV) for automatic artifact detection?\n');
-  x = input('Select [y/n]: ','s');
-  if strcmp('y', x)
+  cprintf([0,0.6,0], 'Please select an artifact detection method:\n');
+  fprintf('[1] - minmax threshold\n');
+  fprintf('[2] - range threshold within 200us, sliding window\n');
+  fprintf('[3] - stddev threshold within 200us, sliding window\n');
+  fprintf('[4] - mutiple of median absolute deviation, sliding window\n');
+  x = input('Option: ');
+
+  switch x
+    case 1
+      selection = true;
+      method = 'minmax';
+      winsize = [];
+      sliding = 'no';
+    case 2
+      selection = true;
+      method = 'range';
+      winsize = 200;
+      sliding = 'yes';
+    case 3
+      selection = true;
+      method = 'stddev';
+      winsize = 200;
+      sliding = 'yes';
+    case 4
+      selection = true;
+      method = 'mad';
+      winsize = 200;
+      sliding = 'yes';
+    otherwise
+      cprintf([1,0.5,0], 'Wrong input!\n');
+  end
+end
+fprintf('\n');
+
+% use default settings
+selection = false;
+while selection == false
+  if x ~= 4
+    cprintf([0,0.6,0], 'Do you want to use the default threshold of %d uV for automatic artifact detection?\n', default_threshold(x));
+  else
+    cprintf([0,0.6,0], 'Do you want to use the default threshold of %d times of mad for automatic artifact detection?\n', default_threshold(x));
+  end
+  y = input('Select [y/n]: ','s');
+  if strcmp('y', y)
     selection = true;
-    threshold = 75;
-  elseif strcmp('n', x)
+    threshold = default_threshold(x);
+  elseif strcmp('n', y)
     selection = true;
     threshold = [];
   else
@@ -47,22 +98,29 @@ while selection == false
 end
 fprintf('\n');
 
+% use alternative settings
 if isempty(threshold)
   selection = false;
   while selection == false
-    cprintf([0,0.6,0], 'Specify the absolut value (in uV) of the threshold limits in a range between 50 and 200!\n');
-    cprintf([0,0.6,0], 'i.e.: value 100 means threshold limits are +-100uV\n');
-    x = input('Value: ');
-    if isnumeric(x)
-      if (x < 50 || x > 200)
-        cprintf([1,0.5,0], 'Wrong input!\n');
+    if x ~= 4
+      cprintf([0,0.6,0], 'Define the threshold (in uV) with a value from the range between %d and %d!\n', threshold_range(x,:));
+      if x == 1
+        cprintf([0,0.6,0], 'Note: i.e. value 100 means threshold limits are +-100uV\n');
+      end
+    else
+      cprintf([0,0.6,0], 'Define the threshold (in mutiples of mad) with a value from the range between %d and %d!\n', threshold_range(x,:));
+    end
+    y = input('Value: ');
+    if isnumeric(y)
+      if (y < threshold_range(x,1) || y > threshold_range(x,2))
+        cprintf([1,0.5,0], '\nWrong input!\n\n');
         selection = false;
       else
-        threshold = x;
+        threshold = y;
         selection = true;
       end
     else
-      cprintf([1,0.5,0], 'Wrong input!\n');
+      cprintf([1,0.5,0], '\nWrong input!\n\n');
       selection = false;
     end
   end
@@ -82,6 +140,7 @@ end
 
 T = readtable(file_path);                                                   % update settings table
 warning off;
+T.artMethod(numOfPart) = {method};
 T.artThreshold(numOfPart) = threshold;
 warning on;
 delete(file_path);
@@ -97,13 +156,13 @@ for i = numOfPart
   fprintf('Load eye-artifact corrected data...\n');
   JAI_loadData( cfg );
   
-  % automatic artifact detection (threshold +-75 uV)
+  % automatic artifact detection
   cfg             = [];
   cfg.channel     = {'all', '-V1', '-V2', '-REF', ...
                      '-EOGV', '-EOGH'};
-  cfg.method      = 'minmax';
-  cfg.sliding     = 'no';
-  cfg.winsize     = 1000;
+  cfg.method      = method;                                                 % artifact detection method
+  cfg.sliding     = sliding;                                                % use sliding window or not
+  cfg.winsize     = winsize;                                                % size of sliding window
   cfg.continuous  = 'no';                                                   % data is trial-based
   cfg.trllength   = 1000;                                                   % minimal subtrial length: 1 sec
   cfg.overlap     = 0;                                                      % no overlap
@@ -171,4 +230,5 @@ for i = numOfPart
 end
 
 %% clear workspace
-clear file_path numOfSources sourceList cfg i x selection T threshold
+clear file_path numOfSources sourceList cfg i x y selection T threshold ...
+      method winsize sliding default_threshold threshold_range

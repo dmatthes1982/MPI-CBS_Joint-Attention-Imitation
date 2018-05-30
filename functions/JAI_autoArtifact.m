@@ -246,9 +246,12 @@ function [ autoart ] = artifact_threshold(cfgT, data_in)
   winsize   = cfgT.artfctdef.threshold.winsize * data_in.fsample / 1000;    % convert window size from milliseconds to number of samples
   artifact  = zeros(0,2);                                                   % initialize artifact variable
 
+  channel = ft_channelselection(cfgT.artfctdef.threshold.channel, ...
+              data_in.label);
+
   for i = 1:1:numOfTrl
-   data_in.trial{i} = data_in.trial{i}(ismember(data_in.label, ...          % prune the available data to the channels of interest
-                        cfgT.artfctdef.threshold.channel) ,:);
+    data_in.trial{i} = data_in.trial{i}(ismember(data_in.label, ...         % prune the available data to the channels of interest
+                        channel) ,:);
   end
 
   if isfield(cfgT.artfctdef.threshold, 'range')                             % check for range violations
