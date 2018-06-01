@@ -1,9 +1,9 @@
-function  [ data_pwelch ] = JAI_PSDoverDyads( cfg )
+function  [ data_pwelchod ] = JAI_PSDoverDyads( cfg )
 % JAI_PSDOVERDYADS estimates the mean of the power spectral density values 
 % for all conditions and over all participants.
 %
 % Use as
-%   [ data_psdod ] = JAI_PSDoverDyads( cfg )
+%   [ data_pwelchod ] = JAI_PSDoverDyads( cfg )
 %
 % The configuration options are
 %   cfg.path      = source path' (i.e. '/data/pt_01826/eegData/DualEEG_JAI_processedData/09b_pwelch/')
@@ -73,7 +73,7 @@ for i=1:1:numOfDyads
   file = strcat(path, filename);
   fprintf('Load %s ...\n', filename);
   load(file, 'data_pwelch');
-  data{i}                   = data_pwelch.part1.powspctrm;                   %#ok<NODEF>
+  data{i}                   = data_pwelch.part1.powspctrm;
   data{i+numOfDyads}        = data_pwelch.part2.powspctrm;
   trialinfo{i}              = data_pwelch.part1.trialinfo;
   trialinfo{i + numOfDyads} = data_pwelch.part2.trialinfo;
@@ -86,20 +86,17 @@ for i=1:1:numOfDyads
 end
 fprintf('\n');
 
+data = cellfun(@(x) num2cell(x, [2,3])', data, 'UniformOutput', false);
+
 for i=1:1:2*numOfDyads
-  data{i} = num2cell(data{i}, [2 3])';
-  for j=1:1:size(trialinfo{i}, 1)
-    data{i}{j} = squeeze(data{i}{j});
-  end
+  data{i} = cellfun(@(x) squeeze(x), data{i}, 'UniformOutput', false);
 end
 
 data = fixTrialOrder( data, trialinfo, generalDefinitions.condNum, ...
                       repmat(listOfDyads,1,2) );
 
-for i=1:1:2*numOfDyads
-  data{i} = cat(3, data{i}{:});
-  data{i} = shiftdim(data{i}, 2);
-end
+data = cellfun(@(x) cat(3, x{:}), data, 'UniformOutput', false);
+data = cellfun(@(x) shiftdim(x, 2), data, 'UniformOutput', false);
 data = cat(4, data{:});
 
 % -------------------------------------------------------------------------
@@ -110,7 +107,7 @@ data = nanmean(data, 4);
 data_out.powspctrm  = data;
 data_out.dyads      = listOfDyads;
 
-data_pwelch = data_out;
+data_pwelchod = data_out;
 
 end
 
