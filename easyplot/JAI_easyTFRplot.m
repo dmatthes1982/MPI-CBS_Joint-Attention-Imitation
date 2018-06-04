@@ -10,6 +10,9 @@ function JAI_easyTFRplot(cfg, data)
 %
 % The configuration options are 
 %   cfg.part        = number of participant (default: 1)
+%                     0 - plot the averaged data
+%                     1 - plot data of participant 1
+%                     2 - plot data of participant 2 
 %   cfg.condition   = condition (default: 111 or 'SameObjectB', see JAI_DATASTRUCTURE)
 %   cfg.electrode   = number of electrode (default: 'Cz')
 %   cfg.trial       = number of trial (default: 1)
@@ -32,14 +35,29 @@ trl     = ft_getopt(cfg, 'trial', 1);
 freqlim = ft_getopt(cfg, 'freqlimits', [2 50]);
 timelim = ft_getopt(cfg, 'timelimits', [4 116]);
 
-if ~ismember(part, [1,2])                                                   % check cfg.part definition
-  error('cfg.part has to either 1 or 2');
-end
-
-switch part
+switch part                                                                 % check validity of cfg.part
+  case 0
+    if isfield(data, 'part1')
+      warning backtrace off;
+      warning('You are using dyad-specific data. Please specify either cfg.part = 1 or cfg.part = 2');
+      warning backtrace on;
+      return;
+    end
   case 1
+    if ~isfield(data, 'part1')
+      warning backtrace off;
+      warning('You are using data averaged over dyads. Please specify cfg.part = 0');
+      warning backtrace on;
+      return;
+    end
     data = data.part1;
   case 2
+    if ~isfield(data, 'part2')
+      warning backtrace off;
+      warning('You are using data averaged over dyads. Please specify cfg.part = 0');
+      warning backtrace on;
+      return;
+    end
     data = data.part2;
 end
 

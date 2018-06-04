@@ -103,8 +103,11 @@ end
 if ~exist(strcat(desPath, '10b_itpcod'), 'dir')
   mkdir(strcat(desPath, '10b_itpcod'));
 end
-if ~exist(strcat(desPath, '10c_pwelchod'), 'dir')
-  mkdir(strcat(desPath, '10c_pwelchod'));
+if ~exist(strcat(desPath, '10c_tfrod'), 'dir')
+  mkdir(strcat(desPath, '10c_tfrod'));
+end
+if ~exist(strcat(desPath, '10d_pwelchod'), 'dir')
+  mkdir(strcat(desPath, '10d_pwelchod'));
 end
 
 clear sessionStr numOfPart part newPaths

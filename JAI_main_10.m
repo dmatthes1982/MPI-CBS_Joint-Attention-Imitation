@@ -37,7 +37,7 @@ fprintf('\n');
 if avgOverDyads == true
   cfg               = [];
   cfg.path          = strcat(desPath, '07b_mplv/');
-  cfg.session       = str2num(sessionStr);                                  %#ok<ST2NM>
+  cfg.session       = str2double(sessionStr);
   cfg.passband      = '2Hz';
 
   data_mplvod_2Hz   = JAI_mPLVoverDyads( cfg );
@@ -175,7 +175,7 @@ fprintf('\n');
 if avgOverDyads == true
   cfg             = [];
   cfg.path        = strcat(desPath, '08_itpc/');
-  cfg.session     = str2num(sessionStr);                                    %#ok<ST2NM>
+  cfg.session     = str2double(sessionStr);
   
   data_itpcod     = JAI_ITPCoverDyads( cfg );
   
@@ -195,11 +195,12 @@ if avgOverDyads == true
   clear data_itpcod
 end
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Averaging psd over dyads
+%% Averaging TFR over dyads
 choise = false;
 while choise == false
-  cprintf([0,0.6,0], 'Averaging PSD over dyads?\n');
+  cprintf([0,0.6,0], 'Averaging TFR over dyads?\n');
   x = input('Select [y/n]: ','s');
   if strcmp('y', x)
     choise = true;
@@ -215,15 +216,57 @@ fprintf('\n');
 
 if avgOverDyads == true
   cfg             = [];
+  cfg.path        = strcat(desPath, '09a_tfr/');
+  cfg.session     = str2double(sessionStr);
+  
+  data_tfrod     = JAI_TFRoverDyads( cfg );
+  
+  % export the averaged PSD values into a *.mat file
+  cfg             = [];
+  cfg.desFolder   = strcat(desPath, '10c_tfrod/');
+  cfg.filename    = 'JAI_10c_tfrod';
+  cfg.sessionStr  = sessionStr;
+
+  file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
+                     '.mat');
+                   
+  fprintf('Saving PSD values over dyads in:\n'); 
+  fprintf('%s ...\n', file_path);
+  JAI_saveData(cfg, 'data_tfrod', data_tfrod);
+  fprintf('Data stored!\n\n');
+  clear data_tfrod
+end
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Averaging PSD over dyads
+choise = false;
+while choise == false
+  cprintf([0,0.6,0], 'Averaging PSD over dyads?\n');
+  x = input('Select [y/n]: ','s');
+  if strcmp('y', x)
+    choise = true;
+    avgOverDyads = true;
+    fprintf('\n');
+  elseif strcmp('n', x)
+    choise = true;
+    avgOverDyads = false;
+  else
+    choise = false;
+  end
+end
+
+if avgOverDyads == true
+  cfg             = [];
   cfg.path        = strcat(desPath, '09b_pwelch/');
-  cfg.session     = str2num(sessionStr);                                    %#ok<ST2NM>
+  cfg.session     = str2double(sessionStr);
   
   data_pwelchod     = JAI_PSDoverDyads( cfg );
   
   % export the averaged PSD values into a *.mat file
   cfg             = [];
-  cfg.desFolder   = strcat(desPath, '10c_pwelchod/');
-  cfg.filename    = 'JAI_10c_pwelchod';
+  cfg.desFolder   = strcat(desPath, '10d_pwelchod/');
+  cfg.filename    = 'JAI_10d_pwelchod';
   cfg.sessionStr  = sessionStr;
 
   file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...

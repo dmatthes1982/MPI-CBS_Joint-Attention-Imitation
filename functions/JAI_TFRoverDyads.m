@@ -80,6 +80,7 @@ for i=1:1:numOfDyads
     data_out.label  = data_tfr.part1.label;
     data_out.dimord = data_tfr.part1.dimord;
     data_out.freq   = data_tfr.part1.freq;
+    data_out.time   = data_tfr.part1.time;
     tfr(:) = {zeros(length(data_out.label), length(data_out.freq), ...
                     length(data_tfr.part1.time))};
   end
