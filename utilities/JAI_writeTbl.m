@@ -1,4 +1,4 @@
-function JAI_writeTbl(cfg, data)
+function JAI_writeTbl( cfg, data )
 % JAI_WRITETBL writes the numbers of good trials for each condition of a 
 % specific dyad in plv or itpc estimations to the associated files.
 %

@@ -95,7 +95,7 @@ end
 
 fprintf('\n');
 
-clear sessionNum fileListCopy y userList match filePath cmdout attrib ... 
+clear sessionNum fileListCopy y userList match filePath cmdout attrib
 
 % -------------------------------------------------------------------------
 % Extract and export number of artifacts

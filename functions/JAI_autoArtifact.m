@@ -7,8 +7,7 @@ function [ cfgAutoArt ] = JAI_autoArtifact( cfg, data )
 % Use as
 %   [ cfgAutoArt ] = JAI_autoArtifact(cfg, data)
 %
-% where data have to be a result of JAI_PREPROCESSING, JAI_SEGMENTATION or 
-% JAI_CONCATDATA
+% where data have to be a result of JAI_PREPROCESSING or JAI_CONCATDATA
 %
 % The configuration options are
 %   cfg.channel     = cell-array with channel labels (default: {'Cz', 'O1', 'O2'}))
