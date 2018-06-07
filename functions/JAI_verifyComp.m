@@ -39,6 +39,8 @@ cfg.showcallinfo  = 'no';
 
 ft_info off;
 ft_databrowser(cfg, dataICAcomp);
+set(gcf, 'Position', [0, 0, 1000, 500]);
+movegui(gcf, 'center');
 colormap jet;
 ft_info on;
 
