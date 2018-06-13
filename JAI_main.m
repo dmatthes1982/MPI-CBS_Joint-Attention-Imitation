@@ -4,6 +4,12 @@
 clc;
 JAI_init;
 
+% -------------------------------------------------------------------------
+% Set number of cores/threads to 4
+% -------------------------------------------------------------------------
+LASTN = maxNumCompThreads(4);                                               %#ok<NASGU>
+clear LASTN
+
 cprintf([0,0.6,0], '<strong>---------------------------------------------------</strong>\n');
 cprintf([0,0.6,0], '<strong>Joint attention imitation project - data processing</strong>\n');
 cprintf([0,0.6,0], '<strong>Version: 0.3</strong>\n');
