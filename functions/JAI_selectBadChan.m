@@ -19,10 +19,11 @@ function [ data_badchan ] = JAI_selectBadChan( data_raw )
 % -------------------------------------------------------------------------
 % Databrowser settings
 % -------------------------------------------------------------------------
-cfg           = [];
-cfg.ylim      = [-200 200];
-cfg.blocksize = 120;
-cfg.part      = 1;
+cfg             = [];
+cfg.ylim        = [-200 200];
+cfg.blocksize   = 120;
+cfg.part        = 1;
+cfg.plotevents  = 'no';
 
 % -------------------------------------------------------------------------
 % Selection of bad channels

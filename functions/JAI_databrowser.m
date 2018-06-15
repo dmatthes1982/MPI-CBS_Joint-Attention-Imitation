@@ -9,12 +9,15 @@ function [ cfgArtifacts ] = JAI_databrowser( cfg, data )
 % JAI_PREPROCESSING or JAI_SEGMENTATION
 %
 % The configuration options are
-%   cfg.dyad      = number of dyad (no default value)
-%   cfg.part      = number of participant (default: 1)
-%   cfg.artifact  = Nx2 matrix with artifact segments (default: [])
-%   cfg.channel   = channels of interest (default: 'all')
-%   cfg.ylim      = vertical scaling (default: [-100 100]);
-%   cfg.blocksize = duration in seconds for cutting the data up (default: [])
+%   cfg.dyad        = number of dyad (no default value)
+%   cfg.part        = number of participant (default: 1)
+%   cfg.artifact    = Nx2 matrix with artifact segments (default: [])
+%   cfg.channel     = channels of interest (default: 'all')
+%   cfg.ylim        = vertical scaling (default: [-100 100]);
+%   cfg.blocksize   = duration in seconds for cutting the data up (default: [])
+%   cfg.plotevents  = 'yes' or 'no' (default: 'yes'), if it is no raw data
+%                     you have to specify cfg.dyad otherwise the events
+%                     will be not found and therfore not plotted
 %
 % This function requires the fieldtrip toolbox
 %
@@ -26,12 +29,13 @@ function [ cfgArtifacts ] = JAI_databrowser( cfg, data )
 % -------------------------------------------------------------------------
 % Get and check config options
 % -------------------------------------------------------------------------
-dyad      = ft_getopt(cfg, 'dyad', []);
-part      = ft_getopt(cfg, 'part', 1);
-artifact  = ft_getopt(cfg, 'artifact', []);
-channel   = ft_getopt(cfg, 'channel', 'all');
-ylim      = ft_getopt(cfg, 'ylim', [-100 100]);
-blocksize = ft_getopt(cfg, 'blocksize', []);
+dyad        = ft_getopt(cfg, 'dyad', []);
+part        = ft_getopt(cfg, 'part', 1);
+artifact    = ft_getopt(cfg, 'artifact', []);
+channel     = ft_getopt(cfg, 'channel', 'all');
+ylim        = ft_getopt(cfg, 'ylim', [-100 100]);
+blocksize   = ft_getopt(cfg, 'blocksize', []);
+plotevents  = ft_getopt(cfg, 'plotevents', 'yes');
 
 if isempty(dyad)                                                            % if dyad number is not specified
   event = [];                                                               % the associated markers cannot be loaded and displayed
@@ -72,6 +76,7 @@ cfg.viewmode                      = 'vertical';
 cfg.artfctdef.threshold.artifact  = artifact;
 cfg.continuous                    = 'no';
 cfg.channel                       = channel;
+cfg.plotevents                    = plotevents;
 cfg.event                         = event;
 cfg.showcallinfo                  = 'no';
 
