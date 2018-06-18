@@ -234,6 +234,19 @@ end
 bNum = sum(trlMask);                                                        % calc number of bad segments
 threshold.artifact = threshold.trl(logical(trlMask),1:2);                   % if trial contains artifacts, mark whole trial as artifact
 
+if isfield(threshold, 'artfctmap')
+  map = [];
+
+  for i=1:1:size(threshold.artfctmap, 2)
+    for j = 1:trll:(size(threshold.artfctmap{i},2) - trll + 1)
+      map = [map sum(threshold.artfctmap{i}(:,j:j+trll-1) == 1, 2) > 0];    %#ok<AGROW>
+    end
+    threshold.artfctmap{i} = map;
+    map = [];
+  end
+
+end
+
 end
 
 % -------------------------------------------------------------------------
@@ -244,6 +257,7 @@ function [ autoart ] = artifact_threshold(cfgT, data_in)
   numOfTrl  = length(data_in.trialinfo);                                    % get number of trials in the data
   winsize   = cfgT.artfctdef.threshold.winsize * data_in.fsample / 1000;    % convert window size from milliseconds to number of samples
   artifact  = zeros(0,2);                                                   % initialize artifact variable
+  artfctmap{1,numOfTrl} = [];
 
   channel = ft_channelselection(cfgT.artfctdef.threshold.channel, ...
               data_in.label);
@@ -268,14 +282,20 @@ function [ autoart ] = artifact_threshold(cfgT, data_in)
       else
         tmpmax = tmpmax(:, (winsize/2 + 1):(end-winsize/2 + 1));
       end
-
       tmp = abs(tmpmin - tmpmax);                                           % estimate a moving maximum difference
-      [~, col] = find(tmp > cfgT.artfctdef.threshold.range);                % find all violations
-      if ~isempty(col)
-        col = unique(col);                                                  % select all unique violations
-        col = col + data_in.sampleinfo(i,1) - 1;                            % convert relative sample number into an absolute one
-        col(:,2) = col(:,1) + winsize - 1;
-        artifact = [artifact; col];                                         %#ok<AGROW> add results to the artifacts matrix
+
+      artfctmap{i} = tmp > cfgT.artfctdef.threshold.range;                  % find all violations
+      [channum, begnum] = find(artfctmap{i});                               % estimate pairs of channel numbers and begin numbers for each violation
+      artfctmap{i} = [artfctmap{i} false(length(channel), winsize - 1)];    % extend artfctmap to trial size
+      endnum = begnum + winsize - 1;                                        % estimate end numbers for each violation
+      for j=1:1:length(channum)
+        artfctmap{i}(channum(j), begnum(j):endnum(j)) = true;               % extend the violations in the map to the window size
+      end
+      if ~isempty(begnum)
+        begnum = unique(begnum);                                            % select all unique violations
+        begnum = begnum + data_in.sampleinfo(i,1) - 1;                      % convert relative sample number into an absolute one
+        begnum(:,2) = begnum(:,1) + winsize - 1;
+        artifact = [artifact; begnum];                                      %#ok<AGROW> add results to the artifacts matrix
       end
     end
   elseif isfield(cfgT.artfctdef.threshold, 'stddev')                        % check for standard deviation violations
@@ -287,12 +307,18 @@ function [ autoart ] = artifact_threshold(cfgT, data_in)
         tmp = tmp(:, (winsize/2 + 1):(end-winsize/2 + 1));
       end
 
-      [~, col] = find(tmp > cfgT.artfctdef.threshold.stddev);               % find all violations
-      if ~isempty(col)
-        col = unique(col);                                                  % select all unique violations
-        col = col + data_in.sampleinfo(i,1) - 1;                            % convert relative sample number into an absolute one
-        col(:,2) = col(:,1) + winsize - 1;
-        artifact = [artifact; col];                                          %#ok<AGROW> add results to the artifacts matrix
+      artfctmap{i} = tmp > cfgT.artfctdef.threshold.stddev;                 % find all violations
+      [channum, begnum] = find(artfctmap{i});                               % estimate pairs of channel numbers and begin numbers for each violation
+      artfctmap{i} = [artfctmap{i} false(length(channel), winsize - 1)];    % extend artfctmap to trial size
+      endnum = begnum + winsize - 1;                                        % estimate end numbers for each violation
+      for j=1:1:length(channum)
+        artfctmap{i}(channum(j), begnum(j):endnum(j)) = true;               % extend the violations in the map to the window size
+      end
+      if ~isempty(begnum)
+        begnum = unique(begnum);                                            % select all unique violations
+        begnum = begnum + data_in.sampleinfo(i,1) - 1;                      % convert relative sample number into an absolute one
+        begnum(:,2) = begnum(:,1) + winsize - 1;
+        artifact = [artifact; begnum];                                      %#ok<AGROW> add results to the artifacts matrix
       end
     end
   elseif isfield(cfgT.artfctdef.threshold, 'mad')                           % check for median absolute deviation violations
@@ -320,12 +346,18 @@ function [ autoart ] = artifact_threshold(cfgT, data_in)
       tmp = cat(3, tmpdiffmax, tmpdiffmin);                                 % select always the maximum absolute difference
       tmp = max(tmp, [], 3);
 
-      [~, col] = find(tmp > cfgT.artfctdef.threshold.mad*tmpmad);           % find all violations
-      if ~isempty(col)
-        col = unique(col);                                                  % select all unique violations
-        col = col + data_in.sampleinfo(i,1) - 1;                            % convert relative sample number into an absolute one
-        col(:,2) = col(:,1) + winsize - 1;
-        artifact = [artifact; col];                                          %#ok<AGROW>  add results to the artifacts matrix
+      artfctmap{i} = tmp > cfgT.artfctdef.threshold.mad*tmpmad;             % find all violations
+      [channum, begnum] = find(artfctmap{i});                               % estimate pairs of channel numbers and begin numbers for each violation
+      artfctmap{i} = [artfctmap{i} false(length(channel), winsize - 1)];    % extend artfctmap to trial size
+      endnum = begnum + winsize - 1;                                        % estimate end numbers for each violation
+      for j=1:1:length(channum)
+        artfctmap{i}(channum(j), begnum(j):endnum(j)) = true;               % extend the violations in the map to the window size
+      end
+      if ~isempty(begnum)
+        begnum = unique(begnum);                                            % select all unique violations
+        begnum = begnum + data_in.sampleinfo(i,1) - 1;                      % convert relative sample number into an absolute one
+        begnum(:,2) = begnum(:,1) + winsize - 1;
+        artifact = [artifact; begnum];                                      %#ok<AGROW>  add results to the artifacts matrix
       end
     end
   end
@@ -333,6 +365,7 @@ function [ autoart ] = artifact_threshold(cfgT, data_in)
   autoart.artfctdef     = cfgT.artfctdef;                                   % generate output data structure
   autoart.showcallinfo  = cfgT.showcallinfo;
   autoart.artfctdef.threshold.artifact  = artifact;
+  autoart.artfctdef.threshold.artfctmap = artfctmap;
   autoart.artfctdef.threshold.sliding   = 'yes';
 
 end
