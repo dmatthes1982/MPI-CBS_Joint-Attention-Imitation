@@ -107,6 +107,8 @@ end
 % Artifact detection settings
 % -------------------------------------------------------------------------
 cfg = [];
+cfg.method                        = method;
+cfg.sliding                       = sliding;
 cfg.artfctdef.threshold.channel   = chan;                                   % specify channels of interest
 cfg.artfctdef.threshold.bpfilter  = 'no';                                   % use no additional bandpass
 cfg.artfctdef.threshold.bpfreq    = [];                                     % use no additional bandpass
@@ -154,97 +156,50 @@ cfgAutoArt.bad1Num = [];
 cfgAutoArt.bad2Num = [];
 cfgAutoArt.trialsNum = size(trl, 1);
 
-if strcmp(sliding, 'no')                                                    % no sliding window --> use ft_artifacts_threshold function
-  ft_info off;
+ft_info off;
 
-  fprintf('<strong>Estimate artifacts in participant 1...</strong>\n');     % participant one
-  cfgAutoArt.part1 = ft_artifact_threshold(cfg, data.part1);
-  cfgAutoArt.part1 = keepfields(cfgAutoArt.part1, {'artfctdef', 'showcallinfo'});
-  [cfgAutoArt.part1.artfctdef.threshold, cfgAutoArt.bad1Num] = ...          % extend artifacts to subtrial definition
-                  combineArtifacts( overlap, trllength, cfgAutoArt.part1.artfctdef.threshold );
-  fprintf('%d segments with artifacts detected!\n', cfgAutoArt.bad1Num);
+fprintf('<strong>Estimate artifacts in participant 1...</strong>\n');       % participant one
+cfgAutoArt.part1 = artifact_detect(cfg, data.part1);
+cfgAutoArt.part1 = keepfields(cfgAutoArt.part1, {'artfctdef', 'showcallinfo'});
+[cfgAutoArt.part1.artfctdef.threshold, cfgAutoArt.bad1Num] = ...            % extend artifacts to subtrial definition
+                combineArtifacts( overlap, trllength, cfgAutoArt.part1.artfctdef.threshold );
+fprintf('%d segments with artifacts detected!\n', cfgAutoArt.bad1Num);
 
-  if cfgAutoArt.bad1Num == sum(generalDefinitions.trialNum1sec)
-    warning('All trials are marked as bad, it is recommended to recheck the channels quality!');
-  end
-
-  fprintf('<strong>Estimate artifacts in participant 2...</strong>\n');     % participant two
-  cfgAutoArt.part2 = ft_artifact_threshold(cfg, data.part2);
-  cfgAutoArt.part2 = keepfields(cfgAutoArt.part2, {'artfctdef', 'showcallinfo'});
-  [cfgAutoArt.part2.artfctdef.threshold, cfgAutoArt.bad2Num] = ...          % extend artifacts to subtrial definition
-                  combineArtifacts( overlap, trllength, cfgAutoArt.part2.artfctdef.threshold );
-  fprintf('%d segments with artifacts detected!\n', cfgAutoArt.bad2Num);
-
-  if cfgAutoArt.bad2Num == sum(generalDefinitions.trialNum1sec)
-    warning('All trials are marked as bad, it is recommended to recheck the channels quality!');
-  end
-
-  ft_info on;
-else                                                                        % sliding window --> use own artifacts_threshold function
-  fprintf('<strong>Estimate artifacts in participant 1...</strong>\n');     % participant one
-  cfgAutoArt.part1 = artifact_threshold(cfg, data.part1);
-  [cfgAutoArt.part1.artfctdef.threshold, cfgAutoArt.bad1Num] = ...          % extend artifacts to subtrial definition
-                  combineArtifacts( overlap, trllength, cfgAutoArt.part1.artfctdef.threshold );
-  fprintf('%d segments with artifacts detected!\n', cfgAutoArt.bad1Num);
-
-  if cfgAutoArt.bad1Num == sum(generalDefinitions.trialNum1sec)
-    warning('All trials are marked as bad, it is recommended to recheck the channels quality!');
-  end
-
-  fprintf('<strong>Estimate artifacts in participant 2...</strong>\n');     % participant two
-  cfgAutoArt.part2 = artifact_threshold(cfg, data.part2);
-  [cfgAutoArt.part2.artfctdef.threshold, cfgAutoArt.bad2Num] = ...          % extend artifacts to subtrial definition
-                  combineArtifacts( overlap, trllength, cfgAutoArt.part2.artfctdef.threshold );
-  fprintf('%d segments with artifacts detected!\n', cfgAutoArt.bad2Num);
-
-  if cfgAutoArt.bad2Num == sum(generalDefinitions.trialNum1sec)
-    warning('All trials are marked as bad, it is recommended to recheck the channels quality!');
-  end
+if cfgAutoArt.bad1Num == sum(generalDefinitions.trialNum1sec)
+  warning('All trials are marked as bad, it is recommended to recheck the channels quality!');
 end
+
+fprintf('<strong>Estimate artifacts in participant 2...</strong>\n');       % participant two
+cfgAutoArt.part2 = artifact_detect(cfg, data.part2);
+cfgAutoArt.part2 = keepfields(cfgAutoArt.part2, {'artfctdef', 'showcallinfo'});
+[cfgAutoArt.part2.artfctdef.threshold, cfgAutoArt.bad2Num] = ...            % extend artifacts to subtrial definition
+                combineArtifacts( overlap, trllength, cfgAutoArt.part2.artfctdef.threshold );
+fprintf('%d segments with artifacts detected!\n', cfgAutoArt.bad2Num);
+
+if cfgAutoArt.bad2Num == sum(generalDefinitions.trialNum1sec)
+  warning('All trials are marked as bad, it is recommended to recheck the channels quality!');
+end
+
+ft_info on;
 
 end
 
 % -------------------------------------------------------------------------
-% SUBFUNCTION which extends and combines artifacts according to the
-% subtrial definition
+% SUBFUNCTION which selects the appropriate artifact detection method based
+% on the selected config options
 % -------------------------------------------------------------------------
-function [ threshold, bNum ] = combineArtifacts( overl, trll, threshold )
+function [ autoart ] = artifact_detect(cfgT, data_in)
 
-if isempty(threshold.artifact)                                              % do nothing, if nothing was detected
-  bNum = 0;
-  return;
-end
+method  = cfgT.method;
+sliding = cfgT.sliding;
+cfgT    = removefields(cfgT, {'method', 'sliding'});
 
-trlMask   = zeros(size(threshold.trl,1), 1);
-
-for i = 1:size(threshold.trl,1)
-  if overl == 0                                                             % if no overlapping was selected
-    if any(~(threshold.artifact(:,2) < threshold.trl(i,1)) & ...            % mark artifacts which final points are not less than the trials zero point
-            ~(threshold.artifact(:,1) > threshold.trl(i,2)))                % mark artifacts which zero points are not greater than the trials final point
-      trlMask(i) = 1;                                                       % mark trial as bad, if both previous conditions are true at least for one artifact
-    end
-  else                                                                      % if overlapping of 50% was selected
-    if any(~(threshold.artifact(:,2) < (threshold.trl(i,1) + trll/2)) & ... % mark artifacts which final points are not less than the trials zero point - trllength/2
-            ~(threshold.artifact(:,1) > (threshold.trl(i,2) - trll/2)))     % mark artifacts which zero points are not greater than the trials final point + trllength/2
-      trlMask(i) = 1;                                                       % mark trial as bad, if both previous conditions are true at least for one artifact
-    end
-  end
-end
-
-bNum = sum(trlMask);                                                        % calc number of bad segments
-threshold.artifact = threshold.trl(logical(trlMask),1:2);                   % if trial contains artifacts, mark whole trial as artifact
-
-if isfield(threshold, 'artfctmap')
-  map = [];
-
-  for i=1:1:size(threshold.artfctmap, 2)
-    for j = 1:trll:(size(threshold.artfctmap{i},2) - trll + 1)
-      map = [map sum(threshold.artfctmap{i}(:,j:j+trll-1) == 1, 2) > 0];    %#ok<AGROW>
-    end
-    threshold.artfctmap{i} = map;
-    map = [];
-  end
-
+if strcmp(sliding, 'yes')                                                   % sliding window --> use own artifacts_threshold function
+  autoart = artifact_sliding_threshold(cfgT, data_in);
+elseif strcmp(method, 'minmax')                                             % method minmax --> use own special_minmax_threshold function
+  autoart = special_minmax_threshold(cfgT, data_in);
+else                                                                        % no sliding window, no minmax method --> use ft_artifacts_threshold function
+  autoart = ft_artifact_threshold(cfgT, data_in);
 end
 
 end
@@ -252,7 +207,7 @@ end
 % -------------------------------------------------------------------------
 % SUBFUNCTION which detects artifacts by using a sliding window
 % -------------------------------------------------------------------------
-function [ autoart ] = artifact_threshold(cfgT, data_in)
+function [ autoart ] = artifact_sliding_threshold(cfgT, data_in)
 
   numOfTrl  = length(data_in.trialinfo);                                    % get number of trials in the data
   winsize   = cfgT.artfctdef.threshold.winsize * data_in.fsample / 1000;    % convert window size from milliseconds to number of samples
@@ -367,5 +322,91 @@ function [ autoart ] = artifact_threshold(cfgT, data_in)
   autoart.artfctdef.threshold.artifact  = artifact;
   autoart.artfctdef.threshold.artfctmap = artfctmap;
   autoart.artfctdef.threshold.sliding   = 'yes';
+
+end
+
+% -------------------------------------------------------------------------
+% SUBFUNCTION which detects threshold artifacts by using a minmax threshold
+% - it is a replacement of ft_artifact threshold which provides an
+% additional artifact map
+% -------------------------------------------------------------------------
+function [ autoart ] = special_minmax_threshold(cfgT, data_in)
+
+  numOfTrl  = length(data_in.trialinfo);                                    % get number of trials in the data
+  artifact  = zeros(0,2);                                                   % initialize artifact variable
+  artfctmap{1,numOfTrl} = [];
+
+  channel = ft_channelselection(cfgT.artfctdef.threshold.channel, ...
+              data_in.label);
+
+  for i = 1:1:numOfTrl
+    data_in.trial{i} = data_in.trial{i}(ismember(data_in.label, ...         % prune the available data to the channels of interest
+                        channel) ,:);
+  end
+
+  if isfield(cfgT.artfctdef.threshold, 'max')                               % check for range violations
+    for i=1:1:numOfTrl
+      artfctmap{i} = data_in.trial{i} < cfgT.artfctdef.threshold.min;       % find all min violations
+      artfctmap{i} = artfctmap{i} | data_in.trial{i} > ...                  % add all max violations
+                      cfgT.artfctdef.threshold.max;
+      artval = any(artfctmap{i}, 1);
+      begsample = find(diff([false artval])>0) + ...                        % estimates artifact snippets
+                    data_in.sampleinfo(i,1) - 1;
+      endsample = find(diff([artval false])<0) + ...
+                    data_in.sampleinfo(i,1) - 1;
+      artifact  = cat(1, artifact, [begsample(:) endsample(:)]);            % add results to the artifacts matrix
+    end
+  end
+
+  autoart.artfctdef     = cfgT.artfctdef;                                   % generate output data structure
+  autoart.showcallinfo  = cfgT.showcallinfo;
+  autoart.artfctdef.threshold.artifact  = artifact;
+  autoart.artfctdef.threshold.trl = cfgT.trl;
+  autoart.artfctdef.threshold.artfctmap = artfctmap;
+end
+
+
+% -------------------------------------------------------------------------
+% SUBFUNCTION which extends and combines artifacts according to the
+% subtrial definition
+% -------------------------------------------------------------------------
+function [ threshold, bNum ] = combineArtifacts( overl, trll, threshold )
+
+if isempty(threshold.artifact)                                              % do nothing, if nothing was detected
+  bNum = 0;
+  return;
+end
+
+trlMask   = zeros(size(threshold.trl,1), 1);
+
+for i = 1:size(threshold.trl,1)
+  if overl == 0                                                             % if no overlapping was selected
+    if any(~(threshold.artifact(:,2) < threshold.trl(i,1)) & ...            % mark artifacts which final points are not less than the trials zero point
+            ~(threshold.artifact(:,1) > threshold.trl(i,2)))                % mark artifacts which zero points are not greater than the trials final point
+      trlMask(i) = 1;                                                       % mark trial as bad, if both previous conditions are true at least for one artifact
+    end
+  else                                                                      % if overlapping of 50% was selected
+    if any(~(threshold.artifact(:,2) < (threshold.trl(i,1) + trll/2)) & ... % mark artifacts which final points are not less than the trials zero point - trllength/2
+            ~(threshold.artifact(:,1) > (threshold.trl(i,2) - trll/2)))     % mark artifacts which zero points are not greater than the trials final point + trllength/2
+      trlMask(i) = 1;                                                       % mark trial as bad, if both previous conditions are true at least for one artifact
+    end
+  end
+end
+
+bNum = sum(trlMask);                                                        % calc number of bad segments
+threshold.artifact = threshold.trl(logical(trlMask),1:2);                   % if trial contains artifacts, mark whole trial as artifact
+
+if isfield(threshold, 'artfctmap')
+  map = [];
+
+  for i=1:1:size(threshold.artfctmap, 2)
+    for j = 1:trll:(size(threshold.artfctmap{i},2) - trll + 1)
+      map = [map sum(threshold.artfctmap{i}(:,j:j+trll-1) == 1, 2) > 0];    %#ok<AGROW>
+    end
+    threshold.artfctmap{i} = map;
+    map = [];
+  end
+
+end
 
 end
