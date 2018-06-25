@@ -169,6 +169,12 @@ if cfgAutoArt.bad1Num == sum(generalDefinitions.trialNum1sec)
   warning('All trials are marked as bad, it is recommended to recheck the channels quality!');
 end
 
+if isfield(cfgAutoArt.part1.artfctdef.threshold, 'artfctmap')
+  artfctmap = cfgAutoArt.part1.artfctdef.threshold.artfctmap;
+  artfctmap = cellfun(@(x) sum(x, 2), artfctmap, 'UniformOutput', false);
+  cfgAutoArt.bad1NumChan = sum(cat(2,artfctmap{:}),2);
+end
+
 fprintf('<strong>Estimate artifacts in participant 2...</strong>\n');       % participant two
 cfgAutoArt.part2 = artifact_detect(cfg, data.part2);
 cfgAutoArt.part2 = keepfields(cfgAutoArt.part2, {'artfctdef', 'showcallinfo'});
@@ -178,6 +184,16 @@ fprintf('%d segments with artifacts detected!\n', cfgAutoArt.bad2Num);
 
 if cfgAutoArt.bad2Num == sum(generalDefinitions.trialNum1sec)
   warning('All trials are marked as bad, it is recommended to recheck the channels quality!');
+end
+
+if isfield(cfgAutoArt.part2.artfctdef.threshold, 'artfctmap')
+  artfctmap = cfgAutoArt.part2.artfctdef.threshold.artfctmap;
+  artfctmap = cellfun(@(x) sum(x, 2), artfctmap, 'UniformOutput', false);
+  cfgAutoArt.bad2NumChan = sum(cat(2,artfctmap{:}),2);
+
+  cfgAutoArt.label = ft_channelselection(...
+              cfgAutoArt.part2.artfctdef.threshold.channel, ...
+              data.part2.label);
 end
 
 ft_info on;

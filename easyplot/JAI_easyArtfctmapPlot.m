@@ -28,9 +28,13 @@ function JAI_easyArtfctmapPlot(cfg, cfg_autoart)
 % -------------------------------------------------------------------------
 part = ft_getopt(cfg, 'part', 1);                                           % get number of participant
 
+label = cfg_autoart.label;                                                  % get labels which were used for artifact detection
+
 if part == 1
+  badNumChan  = cfg_autoart.bad1NumChan;
   cfg_autoart = cfg_autoart.part1;
 elseif part == 2
+  badNumChan  = cfg_autoart.bad2NumChan;
   cfg_autoart = cfg_autoart.part2;
 else                                                                        % check validity of cfg.part
   error('Input structure seems to be no cfg_autoart element including participants fields');
@@ -61,11 +65,18 @@ else
   columns = rows;
 end
 
-h = figure();                                                               % create main figure
-colormap(h, cmap);                                                          % change colormap for this new figure
+data(:,1) = label;
+data(:,2) = num2cell(badNumChan);
+
+f = figure;
+pt = uipanel('Parent', f, 'Title', 'Electrodes', 'Fontsize', 12, 'Position', [0.02,0.02,0.09,0.96]);
+pg = uipanel('Parent', f, 'Title', 'Artifact maps', 'Fontsize', 12, 'Position', [0.12,0.02,0.86,0.96]);
+uitable(pt, 'Data', data, 'ColumnWidth', {50 50}, 'ColumnName', {'Chans', 'Artfcts'}, 'Units', 'normalized', 'Position', [0.01, 0.01, 0.98, 0.98]);
+
+colormap(f, cmap);                                                          % change colormap for this new figure
 
 for i=1:1:conditions
-  subplot(rows,columns,i);
+  subplot(rows,columns,i,'parent', pg);
   imagesc(artfctmap{i},[0 1]);                                              % plot subelements
   xlabel('time in sec');
   ylabel('channels');
