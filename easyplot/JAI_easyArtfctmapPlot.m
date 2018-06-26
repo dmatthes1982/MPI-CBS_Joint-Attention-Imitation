@@ -82,8 +82,8 @@ for i=1:1:conditions
   ylabel('channels');
 end
 
-axes('Units','Normal');                                                     % set main title for the whole figure
-h = title('Artifact Map');
+axes(pg, 'Units','Normal');                                                 % set main title for the whole figure
+h = title('Artifact maps for all existing trials');
 set(gca,'visible','off')
 set(h,'visible','on')
 

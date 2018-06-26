@@ -42,14 +42,22 @@ fprintf('\n<strong>Search for artifacts with participant 1...</strong>\n');
 cfg.part = 1;
 cfg.artifact = artifact.part1.artfctdef.threshold.artifact;
 ft_warning off;
-cfgAllArt.part1 = JAI_databrowser(cfg, data);
+JAI_easyArtfctmapPlot(cfg, artifact);                                       % plot artifact map
+fig = gcf;                                                                  % default position is [560 528 560 420]
+fig.Position = [0 528 560 420];                                             % --> first figure will be placed on the left side of figure 2
+cfgAllArt.part1 = JAI_databrowser(cfg, data);                               % show databrowser view in figure 2
+close all;                                                                  % figure 1 will be closed with figure 2
 cfgAllArt.part1 = keepfields(cfgAllArt.part1, {'artfctdef', 'showcallinfo'});
   
 fprintf('\n<strong>Search for artifacts with participant 2...</strong>\n');
 cfg.part = 2;
 cfg.artifact = artifact.part2.artfctdef.threshold.artifact;
 ft_warning off;
-cfgAllArt.part2 = JAI_databrowser(cfg, data);
+JAI_easyArtfctmapPlot(cfg, artifact);                                       % plot artifact map
+fig = gcf;                                                                  % default position is [560 528 560 420]
+fig.Position = [0 528 560 420];                                             % --> first figure will be placed on the left side of figure 2
+cfgAllArt.part2 = JAI_databrowser(cfg, data);                               % show databrowser view in figure 2
+close all;                                                                  % figure 1 will be closed with figure 2
 cfgAllArt.part2 = keepfields(cfgAllArt.part2, {'artfctdef', 'showcallinfo'});
   
 ft_warning on;
