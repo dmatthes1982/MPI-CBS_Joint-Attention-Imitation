@@ -66,7 +66,7 @@ end
 trialinfo = data.trialinfo;                                                 % get trialinfo
 label     = data.label;                                                     % get labels                                             
 
-cond    = JAI_checkCondition( cond );                                       % check cfg.condition definition    
+cond    = JAI_checkCondition( cond, 'flag', 'itpc' );                       % check cfg.condition definition
 if isempty(find(trialinfo == cond, 1))
   error('The selected dataset contains no condition %d.', cond);
 else

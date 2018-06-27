@@ -75,7 +75,7 @@ end
 
 trialinfo = dataPlot.trialinfo;                                             % get trialinfo
 
-cfg.cond = JAI_checkCondition( cfg.cond );                                  % check cfg.condition definition    
+cfg.cond = JAI_checkCondition( cfg.cond, 'flag', 'itpc' );                  % check cfg.condition definition
 if isempty(find(trialinfo == cfg.cond, 1))
   error('The selected dataset contains no condition %d.', cfg.cond);
 else
