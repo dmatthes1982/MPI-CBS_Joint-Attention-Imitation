@@ -40,10 +40,12 @@ fprintf('\n');
 
 %% import data from brain vision eeg files %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 for i = numOfPart
-  cfg       = [];
-  cfg.path  = srcPath;
-  cfg.dyad  = i;
-  cfg.continuous  = 'no';
+  cfg               = [];
+  cfg.path          = srcPath;
+  cfg.dyad          = i;
+  cfg.continuous    = 'no';
+  cfg.prestim       = 0;
+  cfg.rejectoverlap = 'yes';
   
   fprintf('<strong>Import data of dyad %d</strong> from: %s ...\n', i, cfg.path);
   ft_info off;

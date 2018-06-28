@@ -6,9 +6,11 @@ function [ data ] = JAI_importDataset(cfg)
 %   [ data ] = JAI_importDataset(cfg)
 %
 % The configuration options are
-%   cfg.path        = source path' (i.e. '/data/pt_01826/eegData/DualEEG_JAI_rawData/')
-%   cfg.dyad        = number of dyad
-%   cfg.continuous  = 'yes' or 'no' (default: 'no')
+%   cfg.path          = source path' (i.e. '/data/pt_01826/eegData/DualEEG_JAI_rawData/')
+%   cfg.dyad          = number of dyad
+%   cfg.continuous    = 'yes' or 'no' (default: 'no')
+%   cfg.prestim       = define pre-Stimulus offset in seconds (default: 0)
+%   cfg.rejectoverlap = reject first of two overlapping trials, 'yes' or 'no' (default: 'yes')
 %
 % You can use relativ path specifications (i.e. '../../MATLAB/data/') or 
 % absolute path specifications like in the example. Please be aware that 
@@ -24,9 +26,11 @@ function [ data ] = JAI_importDataset(cfg)
 % -------------------------------------------------------------------------
 % Get and check config options
 % -------------------------------------------------------------------------
-path = ft_getopt(cfg, 'path', []);
-dyad = ft_getopt(cfg, 'dyad', []);
-continuous  = ft_getopt(cfg, 'continuous', 'no');
+path          = ft_getopt(cfg, 'path', []);
+dyad          = ft_getopt(cfg, 'dyad', []);
+continuous    = ft_getopt(cfg, 'continuous', 'no');
+prestim       = ft_getopt(cfg, 'prestim', 0);
+rejectoverlap = ft_getopt(cfg, 'rejectoverlap', 'yes');
 
 if isempty(path)
   error('No source path is specified!');
@@ -52,7 +56,7 @@ if strcmp(continuous, 'no')
   eventvalues = [ generalDefinitions.condMark(1,:) ...
                 generalDefinitions.condMark(2,:) ];
   samplingRate = 500;
-  dur = generalDefinitions.duration * samplingRate;
+  dur = (generalDefinitions.duration + prestim) * samplingRate;
               
   % -----------------------------------------------------------------------
   % Generate trial definition
@@ -62,15 +66,17 @@ if strcmp(continuous, 'no')
   cfg.dataset             = headerfile;
   cfg.trialfun            = 'ft_trialfun_general';
   cfg.trialdef.eventtype  = 'Stimulus';
-  cfg.trialdef.prestim    = 0;
+  cfg.trialdef.prestim    = prestim;
   cfg.showcallinfo        = 'no';
   cfg.feedback            = 'error';
   cfg.trialdef.eventvalue = eventvalues;
 
   cfg = ft_definetrial(cfg);                                                % generate config for segmentation
-  cfg = rmfield(cfg, {'notification'});                                     % workarround for mergeconfig bug                       
+  if isfield(cfg, 'notification')
+    cfg = rmfield(cfg, {'notification'});                                   % workarround for mergeconfig bug
+  end
 
-  for i = 1:1:size(cfg.trl, 1)                                              % correct false stimulus numbers
+  for i = 1:1:size(cfg.trl, 1)                                              % correct false stimulus numbers (128 bug)
     if any(generalDefinitions.condNum128Bug == cfg.trl(i,4))
       element = generalDefinitions.condNum128Bug == cfg.trl(i,4);
       cfg.trl(i,4) = generalDefinitions.condNum(element);
@@ -88,16 +94,18 @@ if strcmp(continuous, 'no')
     end
   end
   
-  overlapping = find(cfg.trl(1:end-1,2) > cfg.trl(2:end, 1));               % in case of overlapping trials, remove the first of theses trials
-  if ~isempty(overlapping)
-    for i = 1:1:length(overlapping)
-      warning off backtrace;
-      warning(['trial %d with marker ''S%3d''  will be removed due to '...
+  if strcmp(rejectoverlap, 'yes')                                           % if overlapping trials should be rejected
+    overlapping = find(cfg.trl(1:end-1,2) > cfg.trl(2:end, 1));             % in case of overlapping trials, remove the first of theses trials
+    if ~isempty(overlapping)
+      for i = 1:1:length(overlapping)
+        warning off backtrace;
+        warning(['trial %d with marker ''S%3d''  will be removed due to '...
                'overlapping data with its successor.'], ...
                overlapping(i), cfg.trl(overlapping(i), 4));
-      warning on backtrace;
+        warning on backtrace;
+      end
+      cfg.trl(overlapping, :) = [];
     end
-    cfg.trl(overlapping, :) = []; 
   end
 else
   cfg                     = [];
