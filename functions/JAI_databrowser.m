@@ -17,7 +17,7 @@ function [ cfgArtifacts ] = JAI_databrowser( cfg, data )
 %   cfg.blocksize   = duration in seconds for cutting the data up (default: [])
 %   cfg.plotevents  = 'yes' or 'no' (default: 'yes'), if it is no raw data
 %                     you have to specify cfg.dyad otherwise the events
-%                     will be not found and therfore not plotted
+%                     will be not found and therefore not plotted
 %
 % This function requires the fieldtrip toolbox
 %
