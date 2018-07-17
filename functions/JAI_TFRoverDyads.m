@@ -120,7 +120,8 @@ end
 function [dataTmp, NoT] = fixTrialOrder( dataTmp, trInf, trInfOrg, ...
                                         dyadNum, part )
 
-emptyMatrix = zeros(35, 49, 345);                                           % empty matrix
+emptyMatrix = zeros(size(dataTmp{1}, 1), size(dataTmp{1}, 2), ...           % empty matrix
+                    size(dataTmp{1}, 3));
 fixed = false;
 NoT = ones(1, length(trInfOrg));
 

@@ -68,7 +68,7 @@ switch type
     writetable(T, filepath);
   case 'plv'
     A(1) = {1};
-    A(2:26) = {0};
+    A(2:length(generalDefinitions.condNum)+1) = {0};
     T = cell2table(A);
     B = num2cell(generalDefinitions.condNum);
     C = cellfun(@(x) sprintf('S%d', x), B, 'UniformOutput', 0);                            
@@ -78,7 +78,7 @@ switch type
     writetable(T, filepath); 
   case 'itpc'
     A(1) = {1};
-    A(2:33) = {0};
+    A(2:(2*length(generalDefinitions.condNumITPC)+1)) = {0};
     T = cell2table(A); 
     B = num2cell(generalDefinitions.condNumITPC);
     C = cellfun(@(x) sprintf('S%d_01', x), B, 'UniformOutput', 0);
