@@ -89,12 +89,14 @@ for i=1:1:numOfDyads
   tfr1 = num2cell(tfr1, [2,3,4])';
   tfr1 = cellfun(@(x) squeeze(x), tfr1, 'UniformOutput', false);
   [tfr1,trialSpec1] = fixTrialOrder( tfr1, trialinfo_tmp, ...
-                                      generalDefinitions.condNum, i, 1);
+                                      generalDefinitions.condNum, ...
+                                      listOfDyads(i), 1);
   
   tfr2 = num2cell(tfr2, [2,3,4])';
   tfr2 = cellfun(@(x) squeeze(x), tfr2, 'UniformOutput', false);
   [tfr2, trialSpec2] = fixTrialOrder( tfr2, trialinfo_tmp, ...
-                                      generalDefinitions.condNum, i, 2);
+                                      generalDefinitions.condNum, ...
+                                      listOfDyads(i), 2);
   
   tfr = cellfun(@(x,y,z) x+y+z, tfr, tfr1, tfr2, 'UniformOutput', false);
   numOfTrials = numOfTrials + trialSpec1 + trialSpec2;
