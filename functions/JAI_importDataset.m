@@ -6,7 +6,7 @@ function [ data ] = JAI_importDataset(cfg)
 %   [ data ] = JAI_importDataset(cfg)
 %
 % The configuration options are
-%   cfg.path          = source path' (i.e. '/data/pt_01826/eegData/DualEEG_JAI_rawData/')
+%   cfg.path          = source path (i.e. '/data/pt_01826/eegData/DualEEG_JAI_rawData/')
 %   cfg.dyad          = number of dyad
 %   cfg.continuous    = 'yes' or 'no' (default: 'no')
 %   cfg.prestim       = define pre-Stimulus offset in seconds (default: 0)
@@ -37,7 +37,7 @@ if isempty(path)
 end
 
 if isempty(dyad)
-  error('No specific participant is defined!');
+  error('No specific dyad is defined!');
 end
 
 headerfile = sprintf('%sDualEEG_JAI_%02d.vhdr', path, dyad);

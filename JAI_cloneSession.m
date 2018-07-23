@@ -90,7 +90,7 @@ selection = false;
 while selection == false
   fprintf('\nThe following sessions are available: %s\n', y);
   fprintf('The session owners are:\n');
-  for i=1:1:length(userList)
+  for i = sessionNum
     fprintf('%d - %s\n', i, userList{i});
   end
   fprintf('\n');

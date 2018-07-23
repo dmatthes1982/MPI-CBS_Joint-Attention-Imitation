@@ -10,7 +10,7 @@ if ~exist('desPath', 'var')
   desPath = '/data/pt_01826/eegData/DualEEG_JAI_processedData/';            % destination path for processed data  
 end
 
-if ~exist('numOfPart', 'var')                                               % estimate number of participants in segmented data folder
+if ~exist('numOfPart', 'var')                                               % estimate number of participants in repaired data folder
   sourceList    = dir([strcat(desPath, '01c_repaired/'), ...
                        strcat('*_', sessionStr, '.mat')]);
   sourceList    = struct2cell(sourceList);
