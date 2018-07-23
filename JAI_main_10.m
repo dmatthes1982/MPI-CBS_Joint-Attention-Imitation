@@ -174,7 +174,7 @@ fprintf('\n');
 
 if avgOverDyads == true
   cfg             = [];
-  cfg.path        = strcat(desPath, '08_itpc/');
+  cfg.path        = strcat(desPath, '08a_itpc/');
   cfg.session     = str2double(sessionStr);
   
   data_itpcod     = JAI_ITPCoverDyads( cfg );

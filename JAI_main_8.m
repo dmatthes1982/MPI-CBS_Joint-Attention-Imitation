@@ -145,14 +145,34 @@ for i = numOfPart
   
   % export the itpc data into a *.mat file
   cfg             = [];
-  cfg.desFolder   = strcat(desPath, '08_itpc/');
-  cfg.filename    = sprintf('JAI_d%02d_08_itpc', i);
+  cfg.desFolder   = strcat(desPath, '08a_itpc/');
+  cfg.filename    = sprintf('JAI_d%02d_08a_itpc', i);
   cfg.sessionStr  = sessionStr;
 
   file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
                      '.mat');
                    
   fprintf('The ITPC data of dyad %d will be saved in:\n', i); 
+  fprintf('%s ...\n', file_path);
+  JAI_saveData(cfg, 'data_itpc', data_itpc);
+  fprintf('Data stored!\n\n');
+
+  % average itpc values over time for certain frequencies
+  cfg     = [];
+  cfg.foi = [2,10,20];
+
+  data_itpc = JAI_ITPCavgOverTime(cfg, data_itpc);
+
+  % export the averaged itpc data into a *.mat file
+  cfg             = [];
+  cfg.desFolder   = strcat(desPath, '08b_itpcAvg/');
+  cfg.filename    = sprintf('JAI_d%02d_08b_itpcAvg', i);
+  cfg.sessionStr  = sessionStr;
+
+  file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
+                     '.mat');
+
+  fprintf('The over time averaged ITPC data (for 2,10 and 20 Hz) of dyad %d will be saved in:\n', i);
   fprintf('%s ...\n', file_path);
   JAI_saveData(cfg, 'data_itpc', data_itpc);
   fprintf('Data stored!\n\n');
