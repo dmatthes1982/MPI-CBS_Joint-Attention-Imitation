@@ -4,11 +4,11 @@
 clc;
 JAI_init;
 
-cprintf([0,0.6,0], '<strong>------------------------------------------------</strong>\n');
+cprintf([0,0.6,0], '<strong>-------------------------------------------------------</strong>\n');
 cprintf([0,0.6,0], '<strong>Joint attention imitation project</strong>\n');
 cprintf([0,0.6,0], '<strong>Export of phase locking value results of imitation part</strong>\n');
 cprintf([0,0.6,0], 'Copyright (C) 2017-2018, Daniel Matthes, MPI CBS\n');
-cprintf([0,0.6,0], '<strong>------------------------------------------------</strong>\n');
+cprintf([0,0.6,0], '<strong>-------------------------------------------------------</strong>\n');
 
 % -------------------------------------------------------------------------
 % Path settings
@@ -199,8 +199,8 @@ xls(13).condition = 'SameMotionE';
 xls(13).condNum   = 6;
 
 % -------------------------------------------------------------------------
-% generate files (existing files will always be overwritten to avoid data
-% with conflicts!)
+% generate files (existing files will always be overwritten to avoid
+% results with conflicts!)
 % -------------------------------------------------------------------------
 template_file = [path 'DualEEG_JAI_templates/' 'PLV_export_template.xls'];
 
@@ -236,7 +236,6 @@ clear data label numOfChan
 fprintf('\nExport of PLV tables into xls files...\n');
 f = waitbar(0,'Please wait...');                                            % visualize progress
 for dyad=1:1:numOfFiles
-  
   load([srcPath fileList{dyad}]);
   eval(['data = ' sprintf('data_mplv_%s', data_postfix) ';']);
   eval(['clear ' sprintf('data_mplv_%s', data_postfix) ';']);
@@ -244,7 +243,7 @@ for dyad=1:1:numOfFiles
   dyadNum = sscanf(fileList{dyad}, 'JAI_d%d');                              % estimate dyad original number
   numOfTrials = length([xls(:).condNum]);
   
-  for trl=1:1:numOfTrials
+  for trl = 1:1:numOfTrials
     waitbar(((dyad-1)*numOfTrials + trl)/(numOfFiles * numOfTrials), ...
                f, 'Please wait...');
     loc = ismember(data.dyad.trialinfo(:), [xls(trl).condNum]);

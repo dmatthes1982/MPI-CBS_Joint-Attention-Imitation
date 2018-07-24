@@ -165,8 +165,8 @@ for i = numOfPart
 
   % export the averaged itpc data into a *.mat file
   cfg             = [];
-  cfg.desFolder   = strcat(desPath, '08b_itpcAvg/');
-  cfg.filename    = sprintf('JAI_d%02d_08b_itpcAvg', i);
+  cfg.desFolder   = strcat(desPath, '08b_itpcavg/');
+  cfg.filename    = sprintf('JAI_d%02d_08b_itpcavg', i);
   cfg.sessionStr  = sessionStr;
 
   file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...

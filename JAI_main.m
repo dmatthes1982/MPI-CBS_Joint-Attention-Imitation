@@ -97,8 +97,8 @@ end
 if ~exist(strcat(desPath, '08a_itpc'), 'dir')
   mkdir(strcat(desPath, '08a_itpc'));
 end
-if ~exist(strcat(desPath, '08b_itpcAvg'), 'dir')
-  mkdir(strcat(desPath, '08b_itpcAvg'));
+if ~exist(strcat(desPath, '08b_itpcavg'), 'dir')
+  mkdir(strcat(desPath, '08b_itpcavg'));
 end
 if ~exist(strcat(desPath, '09a_tfr'), 'dir')
   mkdir(strcat(desPath, '09a_tfr'));
@@ -342,8 +342,8 @@ switch part
   case 8
     tmpPath = strcat(desPath, '04b_eyecor/');
     fileNamePre = strcat(tmpPath, 'JAI_d*_04b_eyecor_', sessionStr, '.mat');
-    tmpPath = strcat(desPath, '08b_itpcAvg/');
-    fileNamePost = strcat(tmpPath, 'JAI_d*_08b_itpcAvg_', sessionStr, '.mat');
+    tmpPath = strcat(desPath, '08b_itpcavg/');
+    fileNamePost = strcat(tmpPath, 'JAI_d*_08b_itpcavg_', sessionStr, '.mat');
   case 9
     tmpPath = strcat(desPath, '04b_eyecor/');
     fileNamePre = strcat(tmpPath, 'JAI_d*_04b_eyecor_', sessionStr, '.mat');
