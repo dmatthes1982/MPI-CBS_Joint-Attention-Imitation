@@ -238,8 +238,8 @@ function  CheckboxValueChanged(Elec, warningLabel, btn)
               Elec.FT8.Value; Elec.FC4.Value; Elec.FC2.Value; ...
               Elec.F4.Value; Elec.F8.Value; Elec.F10.Value];
   NumOfBad = sum(double(badLabel));
-  if NumOfBad > 3
-    warningLabel.Text = 'Too many channels selected! It''s only allowed to repair maximum 3 channels.';
+  if NumOfBad > 2
+    warningLabel.Text = 'Too many channels selected! It''s only allowed to repair maximum 2 channels.';
     btn.Enable = 'off';
   else
     warningLabel.Text = '';

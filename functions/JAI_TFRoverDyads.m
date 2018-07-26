@@ -101,6 +101,7 @@ for i=1:1:numOfDyads
   tfr = cellfun(@(x,y,z) x+y+z, tfr, tfr1, tfr2, 'UniformOutput', false);
   numOfTrials = numOfTrials + trialSpec1 + trialSpec2;
 end
+fprintf('\n');
 
 numOfTrials = num2cell(numOfTrials);
 

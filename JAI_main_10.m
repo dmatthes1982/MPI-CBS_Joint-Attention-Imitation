@@ -230,7 +230,7 @@ if avgOverDyads == true
   file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
                      '.mat');
                    
-  fprintf('Saving PSD values over dyads in:\n'); 
+  fprintf('Saving TFR values over dyads in:\n');
   fprintf('%s ...\n', file_path);
   JAI_saveData(cfg, 'data_tfrod', data_tfrod);
   fprintf('Data stored!\n\n');

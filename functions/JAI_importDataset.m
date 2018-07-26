@@ -117,18 +117,22 @@ end
 % -------------------------------------------------------------------------
 % Data import
 % -------------------------------------------------------------------------
+cfg.channel = {'all', '-T7_1', '-T7_2', '-T8_1', '-T8_2', ...               % exclude all general bad channels
+               '-PO9_1', '-PO9_2', '-PO10_1','-PO10_2', ...
+               '-P7_1', '-P7_2', '-P8_1', '-P8_2', ...
+               '-TP10_1', '-TP10_2'};
 dataTmp = ft_preprocessing(cfg);                                            % import data
 
 data.part1 = dataTmp;                                                       % split dataset into two datasets, one for each participant
-data.part1.label = strrep(dataTmp.label(1:32), '_1', '');
+data.part1.label = strrep(dataTmp.label(1:25), '_1', '');
 for i=1:1:length(dataTmp.trial)
-  data.part1.trial{i} = dataTmp.trial{i}(1:32,:);
+  data.part1.trial{i} = dataTmp.trial{i}(1:25,:);
 end
 
 data.part2 = dataTmp;
-data.part2.label = strrep(dataTmp.label(33:64), '_2', '');
+data.part2.label = strrep(dataTmp.label(26:50), '_2', '');
 for i=1:1:length(dataTmp.trial)
-  data.part2.trial{i} = dataTmp.trial{i}(33:64,:);
+  data.part2.trial{i} = dataTmp.trial{i}(26:50,:);
 end
 
 end

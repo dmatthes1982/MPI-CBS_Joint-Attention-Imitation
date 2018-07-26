@@ -6,7 +6,7 @@ function [ data_itpc ] = JAI_ITPCoverDyads( cfg )
 %   [ data_itpc ] = JAI_ITPCoverDyads( cfg )
 %
 % The configuration options are
-%   cfg.path      = source path' (i.e. '/data/pt_01826/eegData/DualEEG_JAI_processedData/08_itpc/')
+%   cfg.path      = source path' (i.e. '/data/pt_01826/eegData/DualEEG_JAI_processedData/08a_itpc/')
 %   cfg.session   = session number (default: 1)
 %
 % This function requires the fieldtrip toolbox
@@ -19,7 +19,7 @@ function [ data_itpc ] = JAI_ITPCoverDyads( cfg )
 % Get and check config options
 % -------------------------------------------------------------------------
 path      = ft_getopt(cfg, 'path', ...
-              '/data/pt_01826/eegData/DualEEG_JAI_processedData/08_itpc/');
+              '/data/pt_01826/eegData/DualEEG_JAI_processedData/08a_itpc/');
 session   = ft_getopt(cfg, 'session', 1);
 
 % -------------------------------------------------------------------------
@@ -34,13 +34,13 @@ load(sprintf('%s/../general/JAI_generalDefinitions.mat', filepath), ...
 % -------------------------------------------------------------------------    
 fprintf('<strong>Averaging ITPC values over dyads...</strong>\n');
 
-dyadsList   = dir([path, sprintf('JAI_d*_08_itpc_%03d.mat', session)]);
+dyadsList   = dir([path, sprintf('JAI_d*_08a_itpc_%03d.mat', session)]);
 dyadsList   = struct2cell(dyadsList);
 dyadsList   = dyadsList(1,:);
 numOfDyads  = length(dyadsList);
 
 for i=1:1:numOfDyads
-  listOfDyads(i) = sscanf(dyadsList{i}, ['JAI_d%d_08b'...
+  listOfDyads(i) = sscanf(dyadsList{i}, ['JAI_d%d_08a'...
                                    sprintf('%03d.mat', session)]);          %#ok<AGROW>
 end
 
@@ -68,7 +68,7 @@ data{1, 2 * numOfDyads} = [];
 trialinfo{1, 2 * numOfDyads} = []; 
 
 for i=1:1:numOfDyads
-  filename = sprintf('JAI_d%02d_08_itpc_%03d.mat', listOfDyads(i), ...
+  filename = sprintf('JAI_d%02d_08a_itpc_%03d.mat', listOfDyads(i), ...
                      session);
   file = strcat(path, filename);
   fprintf('Load %s ...\n', filename);
@@ -114,7 +114,8 @@ end
 %--------------------------------------------------------------------------
 function dataTmp = fixTrialOrder( dataTmp, trInf, trInfOrg, dyadNum )
 
-emptyMatrix = NaN * ones(35,95,50);                                         % empty matrix with NaNs
+emptyMatrix = NaN * ones(size(dataTmp{1}{1}, 1), size(dataTmp{1}{1}, 2),... % empty matrix with NaNs
+                          size(dataTmp{1}{1}, 3));
 fixed = false;
 part = [ones(1,length(dyadNum)/2) 2*ones(1,length(dyadNum)/2)];
 

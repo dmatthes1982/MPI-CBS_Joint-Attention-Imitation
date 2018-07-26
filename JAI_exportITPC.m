@@ -126,11 +126,13 @@ numOfPart = 2 * numOfFiles;                                                 % ea
 
 load([srcPath fileList{1}]);                                                % load data of first dyad
 
-label       = data_itpc.part1.label(1:30);                                  % extract channel names
+label       = data_itpc.part1.label;                                        % extract channel names
+loc         = ~ismember(label, {'V1', 'V2', 'EOGH', 'EOGV', 'REF'});        % remove channels which are not of interest.
+label       = label(loc);
 label_No    = cellfun(@(x) [x '_0M'], label, 'UniformOutput', false);       % generate column titles for each kind of entrainment
 label_2Hz   = cellfun(@(x) [x '_2M'], label, 'UniformOutput', false);
-label_10Hz   = cellfun(@(x) [x '_10M'], label, 'UniformOutput', false);
-label_20Hz   = cellfun(@(x) [x '_20M'], label, 'UniformOutput', false);
+label_10Hz  = cellfun(@(x) [x '_10M'], label, 'UniformOutput', false);
+label_20Hz  = cellfun(@(x) [x '_20M'], label, 'UniformOutput', false);
 
 numOfChan = 4 * length(label);
 col{1}    = 2:length(label)+1;                                              % estimate column identifier for each kind of entrainment
@@ -148,7 +150,7 @@ T_NB10  = T;
 T_NB20  = T;
 
 clear T label_No label_2Hz label_10Hz label_20Hz numOfPart numOfChan ...
-      label cell_array sessionStr
+      cell_array sessionStr loc
 
 % -------------------------------------------------------------------------
 % import itpc values into tables
@@ -177,36 +179,36 @@ for dyad=1:1:numOfFiles
     % 2Hz narrow band
     loc_freq = ismember(data_itpc.part1.freq, 2);
     T_NB2(2*dyad - 1, col{trl}) = ... 
-                  num2cell(data_itpc.part1.itpc{loc_trl}(1:30, loc_freq))';
+      num2cell(data_itpc.part1.itpc{loc_trl}(1:length(label), loc_freq))';
     % 10Hz narrow band
     loc_freq = ismember(data_itpc.part1.freq, 10);
     T_NB10(2*dyad - 1, col{trl}) = ... 
-                  num2cell(data_itpc.part1.itpc{loc_trl}(1:30, loc_freq))';
+      num2cell(data_itpc.part1.itpc{loc_trl}(1:length(label), loc_freq))';
     % 20Hz narrow band
     loc_freq = ismember(data_itpc.part1.freq, 20);
     T_NB20(2*dyad - 1, col{trl}) = ... 
-                  num2cell(data_itpc.part1.itpc{loc_trl}(1:30, loc_freq))';
+      num2cell(data_itpc.part1.itpc{loc_trl}(1:length(label), loc_freq))';
 
     % participant 2 -------------------------------------------------------
     loc_trl = ismember(data_itpc.part2.trialinfo(:), condition(trl));
     % 2Hz narrow band
     loc_freq = ismember(data_itpc.part2.freq, 2);
     T_NB2(2*dyad, col{trl}) = ...
-                  num2cell(data_itpc.part2.itpc{loc_trl}(1:30, loc_freq))';
+      num2cell(data_itpc.part2.itpc{loc_trl}(1:length(label), loc_freq))';
     % 10Hz narrow band
     loc_freq = ismember(data_itpc.part2.freq, 10);
     T_NB10(2*dyad, col{trl}) = ...
-                  num2cell(data_itpc.part2.itpc{loc_trl}(1:30, loc_freq))';
+      num2cell(data_itpc.part2.itpc{loc_trl}(1:length(label), loc_freq))';
     % 20Hz narrow band
     loc_freq = ismember(data_itpc.part2.freq, 20);
     T_NB20(2*dyad, col{trl}) = ...
-                  num2cell(data_itpc.part2.itpc{loc_trl}(1:30, loc_freq))';
+      num2cell(data_itpc.part2.itpc{loc_trl}(1:length(label), loc_freq))';
   end
 end
 
 close(f);
 clear dyadNum condition loc_trl loc_freq col f dyad trl numOfFiles ...
-      fileList srcPath data_itpc numOfTrials
+      fileList srcPath data_itpc numOfTrials label
 
 % -------------------------------------------------------------------------
 % export itpc table into spreadsheet

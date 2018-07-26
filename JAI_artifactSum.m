@@ -101,15 +101,6 @@ clear sessionNum fileListCopy y userList match filePath cmdout attrib
 % Extract and export number of artifacts
 % -------------------------------------------------------------------------
 tmpPath = strcat(path, '05a_autoart/');
-label = {'Fz','F3','F7','F9','FT7','FC3','FC1','Cz','C3','T7','CP3', ...
-          'Pz','P3','P7','PO9','O1','O2','PO10','P8','P4','CP4','TP10',...
-          'T8','C4','FT8','FC4','FC2','F4','F8','F10'};
-label_1 = cellfun(@(x) strcat(x, '_1'), label, 'UniformOutput', false);
-label_2 = cellfun(@(x) strcat(x, '_2'), label, 'UniformOutput', false);
-
-T = cell2table(num2cell(zeros(1,63)));
-T.Properties.VariableNames = [{'dyad', 'ArtifactsPart1', ...
-                                'ArtifactsPart2'} label_1 label_2];         % create empty table with variable names
 
 fileList     = dir([tmpPath, ['JAI_d*_05a_autoart_' sessionStr '.mat']]);
 fileList     = struct2cell(fileList);
@@ -120,6 +111,17 @@ for i = 1:1:numOfFiles
   numOfPart(i) = sscanf(fileList{i}, strcat('JAI_d%d*', sessionStr, '.mat'));
 end
 
+file_path = strcat(tmpPath, fileList{i});
+load(file_path, 'cfg_autoart');
+
+label = cfg_autoart.label;
+label_1 = cellfun(@(x) strcat(x, '_1'), label, 'UniformOutput', false)';
+label_2 = cellfun(@(x) strcat(x, '_2'), label, 'UniformOutput', false)';
+
+T = cell2table(num2cell(zeros(1, length(label) * 2 + 3 )));
+T.Properties.VariableNames = [{'dyad', 'ArtifactsPart1', ...
+                                'ArtifactsPart2'} label_1 label_2];         % create empty table with variable names
+
 for i = 1:1:length(fileList)
   file_path = strcat(tmpPath, fileList{i});
   load(file_path, 'cfg_autoart');
@@ -127,11 +129,11 @@ for i = 1:1:length(fileList)
   chan = ismember(label, cfg_autoart.label);                                % determine all channels which were used for artifact detection
   pos = find(ismember(cfg_autoart.label, label));                           % determine the order of the channels
 
-  tmpArt1 = zeros(1,30);
+  tmpArt1 = zeros(1, length(label));
   tmpArt1(chan) = cfg_autoart.bad1NumChan(pos);                             % extract number of artifacts per channel for participant 1
   tmpArt1 = num2cell(tmpArt1);
 
-  tmpArt2 = zeros(1,30);
+  tmpArt2 = zeros(1, length(label));
   tmpArt2(chan) = cfg_autoart.bad2NumChan(pos);                             % extract number of artifacts per channel for participant 2
   tmpArt2 = num2cell(tmpArt2);
   
@@ -139,8 +141,8 @@ for i = 1:1:length(fileList)
   T.dyad(i) = numOfPart(i);
   T.ArtifactsPart1(i) = cfg_autoart.bad1Num;
   T.ArtifactsPart2(i) = cfg_autoart.bad2Num;
-  T(i,4:33)   = tmpArt1;
-  T(i,34:63)  = tmpArt2;
+  T(i,4:length(label) + 3)                            = tmpArt1;
+  T(i, (length(label) + 4):(2 * length(label) + 3))   = tmpArt2;
   warning on;
 end
 

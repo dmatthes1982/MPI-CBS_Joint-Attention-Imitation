@@ -58,16 +58,16 @@ fprintf('\n');
 selection = false;
 while selection == false
   cprintf([0,0.6,0], 'Please select favoured reference:\n');
-  fprintf('[1] - Linked mastoid (''TP9'', ''TP10'')\n');
-  fprintf('[2] - Common average reference\n');
+% fprintf('[1] - Linked mastoid (''TP9'', ''TP10'')\n');
+  fprintf('[1] - Common average reference\n');
   x = input('Option: ');
 
   switch x
+%   case 1
+%     selection = true;
+%     refchannel = 'TP10';
+%     reference = {'LM'};
     case 1
-      selection = true;
-      refchannel = 'TP10';
-      reference = {'LM'};
-    case 2
       selection = true;
       refchannel = {'all', '-V1', '-V2'};
       reference = {'CAR'};
