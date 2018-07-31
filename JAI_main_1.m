@@ -38,13 +38,69 @@ end
 cprintf([0,0.6,0], '<strong>[1] - Data import and repairing of bad channels</strong>\n');
 fprintf('\n');
 
+selection = false;
+while selection == false
+  cprintf([0,0.6,0], 'Do you want to import the data without a pre-stimulus offset? (DEFAULT)\n');
+  x = input('Select [y/n]: ','s');
+  if strcmp('y', x)
+    selection = true;
+    prestim = 0;
+  elseif strcmp('n', x)
+    selection = true;
+    prestim = [];
+  else
+    selection = false;
+  end
+end
+fprintf('\n');
+
+if isempty(prestim)
+  selection = false;                                                        % specify a pre-stimulus offset
+  while selection == false
+    cprintf([0,0.6,0], 'Specify a pre-stimulus offset between 0 and 30 seconds!\n', i);
+    x = input('Value: ');
+    if isnumeric(x)
+      if (x < 0 || x > 30)
+        cprintf([1,0.5,0], 'Wrong input!\n');
+        selection = false;
+      else
+        prestim = x;
+        selection = true;
+      end
+    else
+      cprintf([1,0.5,0], 'Wrong input!\n');
+      selection = false;
+    end
+  end
+fprintf('\n');
+end
+
+% Create settings file if not existing
+settings_file = [desPath '00_settings/' ...
+                  sprintf('settings_%s', sessionStr) '.xls'];
+if ~(exist(settings_file, 'file') == 2)                                     % check if settings file already exist
+  cfg = [];
+  cfg.desFolder   = [desPath '00_settings/'];
+  cfg.type        = 'settings';
+  cfg.sessionStr  = sessionStr;
+
+  JAI_createTbl(cfg);                                                       % create settings file
+end
+
+% Load settings file
+T = readtable(settings_file);
+warning off;
+T.dyad(numOfPart)     = numOfPart;
+T.prestim(numOfPart)  = prestim;
+warning on;
+
 %% import data from brain vision eeg files %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 for i = numOfPart
   cfg               = [];
   cfg.path          = srcPath;
   cfg.dyad          = i;
   cfg.continuous    = 'no';
-  cfg.prestim       = 0;
+  cfg.prestim       = prestim;
   cfg.rejectoverlap = 'yes';
   
   fprintf('<strong>Import data of dyad %d</strong> from: %s ...\n', i, cfg.path);
@@ -68,24 +124,6 @@ for i = numOfPart
 end
 
 fprintf('<strong>Repairing of corrupted channels</strong>\n\n');
-
-% Create settings file if not existing
-settings_file = [desPath '00_settings/' ...
-                  sprintf('settings_%s', sessionStr) '.xls'];
-if ~(exist(settings_file, 'file') == 2)                                     % check if settings file already exist
-  cfg = [];
-  cfg.desFolder   = [desPath '00_settings/'];
-  cfg.type        = 'settings';
-  cfg.sessionStr  = sessionStr;
-  
-  JAI_createTbl(cfg);                                                       % create settings file
-end
-
-% Load settings file
-T = readtable(settings_file);
-warning off;
-T.dyad(numOfPart) = numOfPart;
-warning on;
 
 %% repairing of corrupted channels %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 for i = numOfPart
