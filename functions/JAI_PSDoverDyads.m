@@ -117,7 +117,7 @@ end
 %--------------------------------------------------------------------------
 function dataTmp = fixTrialOrder( dataTmp, trInf, trInfOrg, dyadNum )
 
-emptyMatrix = NaN * ones(35,50);                                            % empty matrix with NaNs
+emptyMatrix = NaN * ones(size(dataTmp{1}{1}, 1), size(dataTmp{1}{1}, 2));   % empty matrix with NaNs
 fixed = false;
 part = [ones(1,length(dyadNum)/2) 2*ones(1,length(dyadNum)/2)];
 
