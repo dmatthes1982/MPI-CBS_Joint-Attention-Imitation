@@ -56,4 +56,44 @@ dataTmp.itpc = cellfun(@(x) squeeze(x), dataTmp.itpc, 'UniformOutput', false);
 
 dataTmp = removefields(dataTmp, {'time'});
 
+% Load general definitions
+filepath = fileparts(mfilename('fullpath'));
+load(sprintf('%s/../general/JAI_generalDefinitions.mat', filepath), ...
+     'generalDefinitions');
+
+dataTmp.itpc = fixTrialOrder( dataTmp.itpc, dataTmp.trialinfo, ...
+                      generalDefinitions.condNumITPC);
+dataTmp.trialinfo = generalDefinitions.condNumITPC';
+
+end
+
+%--------------------------------------------------------------------------
+% SUBFUNCTION which fixes trial order and creates empty matrices for
+% missing conditions.
+%--------------------------------------------------------------------------
+function dataTmp = fixTrialOrder( dataTmp, trInf, trInfOrg )
+
+emptyMatrix = NaN * ones(size(dataTmp{1}, 1), size(dataTmp{1}, 2));    % empty matrix with NaNs
+
+
+if ~isequal(trInf, trInfOrg')
+  missingPhases = ~ismember(trInfOrg, trInf);
+  missingPhases = trInfOrg(missingPhases);
+  missingPhases = vec2str(missingPhases, [], [], 0);
+  cprintf([0,0.6,0], ...
+          sprintf('Phase(s) %s missing. Empty matrix(matrices) with NaNs created.\n', ...
+          missingPhases));
+  [~, loc] = ismember(trInfOrg, trInf);
+  tmpBuffer = [];
+  tmpBuffer{length(trInfOrg)} = [];
+  for i = 1:1:length(trInfOrg)
+    if loc(i) == 0
+      tmpBuffer{i} = emptyMatrix;
+    else
+      tmpBuffer(i) = dataTmp(loc(i));
+    end
+  end
+  dataTmp = tmpBuffer;
+end
+
 end

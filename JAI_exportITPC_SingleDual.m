@@ -188,17 +188,17 @@ for dyad=1:1:numOfFiles
     loc_trl = ismember(data_itpc.part1.trialinfo, condition{trl});
     % 2Hz narrow band
     loc_freq = ismember(data_itpc.part1.freq, 2);
-    data = mean(cat(3,data_itpc.part1.itpc{loc_trl}),3);
+    data = nanmean(cat(3,data_itpc.part1.itpc{loc_trl}),3);
     T_NB2(2*dyad - 1, col{trl}) = ... 
       num2cell(data(1:length(label), loc_freq))';
     % 10Hz narrow band
     loc_freq = ismember(data_itpc.part1.freq, 10);
-    data = mean(cat(3,data_itpc.part1.itpc{loc_trl}),3);
+    data = nanmean(cat(3,data_itpc.part1.itpc{loc_trl}),3);
     T_NB10(2*dyad - 1, col{trl}) = ... 
       num2cell(data(1:length(label), loc_freq))';
     % 20Hz narrow band
     loc_freq = ismember(data_itpc.part1.freq, 20);
-    data = mean(cat(3,data_itpc.part1.itpc{loc_trl}),3);
+    data = nanmean(cat(3,data_itpc.part1.itpc{loc_trl}),3);
     T_NB20(2*dyad - 1, col{trl}) = ... 
       num2cell(data(1:length(label), loc_freq))';
 
@@ -206,17 +206,17 @@ for dyad=1:1:numOfFiles
     loc_trl = ismember(data_itpc.part2.trialinfo(:), condition{trl});
     % 2Hz narrow band
     loc_freq = ismember(data_itpc.part2.freq, 2);
-    data = mean(cat(3,data_itpc.part2.itpc{loc_trl}),3);
+    data = nanmean(cat(3,data_itpc.part2.itpc{loc_trl}),3);
     T_NB2(2*dyad, col{trl}) = ...
       num2cell(data(1:length(label), loc_freq))';
     % 10Hz narrow band
     loc_freq = ismember(data_itpc.part2.freq, 10);
-    data = mean(cat(3,data_itpc.part2.itpc{loc_trl}),3);
+    data = nanmean(cat(3,data_itpc.part2.itpc{loc_trl}),3);
     T_NB10(2*dyad, col{trl}) = ...
       num2cell(data(1:length(label), loc_freq))';
     % 20Hz narrow band
     loc_freq = ismember(data_itpc.part2.freq, 20);
-    data = mean(cat(3,data_itpc.part2.itpc{loc_trl}),3);
+    data = nanmean(cat(3,data_itpc.part2.itpc{loc_trl}),3);
     T_NB20(2*dyad, col{trl}) = ...
       num2cell(data(1:length(label), loc_freq))';
   end

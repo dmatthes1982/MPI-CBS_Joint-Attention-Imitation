@@ -110,7 +110,7 @@ end
 
 %--------------------------------------------------------------------------
 % SUBFUNCTION which fixes trial order and creates empty matrices for 
-% missing phases.
+% missing conditions.
 %--------------------------------------------------------------------------
 function dataTmp = fixTrialOrder( dataTmp, trInf, trInfOrg, dyadNum )
 
