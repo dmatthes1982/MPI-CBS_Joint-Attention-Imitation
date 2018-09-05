@@ -103,6 +103,7 @@ cfg.trials = find(val);
 if ~isempty(cfg.trials)
   trialinfo = [trialinfo; 201];
   data_metaNo = ft_selectdata(cfg, data_freq);
+  data_metaNo = removefields(data_metaNo, {'cumtapcnt'});                   % to avoid a fieldtrip bug, which occurs if this meta dataset has only one good trial
   data_metaNo.trialinfo(:) = 201;
 else
   data_metaNo = [];
@@ -115,6 +116,7 @@ cfg.trials = find(val);
 if ~isempty(cfg.trials)
   trialinfo = [trialinfo; 202];
   data_meta2Hz = ft_selectdata(cfg, data_freq);
+  data_meta2Hz = removefields(data_meta2Hz, {'cumtapcnt'});                 % to avoid a fieldtrip bug, which occurs if this meta dataset has only one good trial
   data_meta2Hz.trialinfo(:) = 202;
 else
   data_meta2Hz = [];
@@ -127,6 +129,7 @@ cfg.trials = find(val);
 if ~isempty(cfg.trials)
   trialinfo = [trialinfo; 203];
   data_meta10Hz = ft_selectdata(cfg, data_freq);
+  data_meta10Hz = removefields(data_meta10Hz, {'cumtapcnt'});               % to avoid a fieldtrip bug, which occurs if this meta dataset has only one good trial
   data_meta10Hz.trialinfo(:) = 203;
 else
   data_meta10Hz = [];
@@ -139,6 +142,7 @@ cfg.trials = find(val);
 if ~isempty(cfg.trials)
   trialinfo = [trialinfo; 204];
   data_meta20Hz = ft_selectdata(cfg, data_freq);
+  data_meta20Hz = removefields(data_meta20Hz, {'cumtapcnt'});               % to avoid a fieldtrip bug, which occurs if this meta dataset has only one good trial
   data_meta20Hz.trialinfo(:) = 204;
 else
   data_meta20Hz = [];
