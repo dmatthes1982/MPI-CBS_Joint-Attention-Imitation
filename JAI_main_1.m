@@ -15,7 +15,7 @@ if ~exist('srcPath', 'var')
 end
 
 if ~exist('desPath', 'var')
-  desPath = '/data/pt_01826/eegData/DualEEG_JAI_processedData/';            % destination path for processed data  
+  desPath = '/data/pt_01826/eegData/DualEEG_JAI_processedDataCCA/';         % destination path for processed data  
 end
 
 if ~exist('numOfPart', 'var')                                               % estimate number of participants in raw data folder
