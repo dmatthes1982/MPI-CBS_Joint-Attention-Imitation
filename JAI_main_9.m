@@ -25,202 +25,160 @@ if ~exist('numOfPart', 'var')                                               % es
 end
 
 %% part 9
-% Calculate TFRs of the EOG-artifact corrected data
 
-cprintf([0,0.6,0], '<strong>[9] - Power analysis (TFR, pWelch)</strong>\n');
+cprintf([0,0.6,0], '<strong>[9] - Estimation of Inter Trial Phase Coherences (ITPC)</strong>\n');
 fprintf('\n');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Calculation of time-frequency response (TFR)
+%% general adjustment
 choise = false;
 while choise == false
-  cprintf([0,0.6,0], 'Should the time-frequency response calculated?\n');
+  cprintf([0,0.6,0], 'Should rejection of detected artifacts be applied before ITPC estimation?\n');
   x = input('Select [y/n]: ','s');
   if strcmp('y', x)
     choise = true;
-    tfr = true;
+    artifactRejection = true;
   elseif strcmp('n', x)
     choise = true;
-    tfr = false;
+    artifactRejection = false;
   else
     choise = false;
   end
 end
 fprintf('\n');
 
-if tfr == true
-  for i = numOfPart
-    fprintf('<strong>Dyad %d</strong>\n', i);
+% Write selected settings to settings file
+file_path = [desPath '00_settings/' sprintf('settings_%s', sessionStr) '.xls'];
+if ~(exist(file_path, 'file') == 2)                                         % check if settings file already exist
+  cfg = [];
+  cfg.desFolder   = [desPath '00_settings/'];
+  cfg.type        = 'settings';
+  cfg.sessionStr  = sessionStr;
+  
+  JAI_createTbl(cfg);                                                       % create settings file
+end
 
-    cfg             = [];                                                     % load EOG-artifact corrected data
-    cfg.srcFolder   = strcat(desPath, '04b_eyecor/');
-    cfg.sessionStr  = sessionStr;
-    cfg.filename    = sprintf('JAI_d%02d_04b_eyecor', i);
+T = readtable(file_path);                                                   % update settings table
+warning off;
+T.artRejectITPC(numOfPart) = { x };
+warning on;
+delete(file_path);
+writetable(T, file_path);
 
-    fprintf('Load eye-artifact corrected data...\n\n');
-    JAI_loadData( cfg );
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Segmentation, Artifact rejection and ITPC estimation
 
-    cfg         = [];
-    cfg.foi     = 2:1:50;                                                     % frequency of interest
-    cfg.toi     = 4:0.5:176;                                                  % time of interest
+for i = numOfPart
+  fprintf('<strong>Dyad %d</strong>\n', i);
 
-    data_tfr = JAI_timeFreqanalysis( cfg, data_eyecor );
+  cfg             = [];                                                     % load preprocessed data
+  cfg.srcFolder   = strcat(desPath, '04b_eyecor/');
+  cfg.sessionStr  = sessionStr;
+  cfg.filename    = sprintf('JAI_d%02d_04b_eyecor', i);
+  
+  fprintf('Load eye-artifact corrected data...\n\n');
+  JAI_loadData( cfg );
+  
+  % Keep only necessary conditions in the dataset
+  cfg         = [];
+  cfg.channel = 'all';
+  cfg.trials  = [7,8,9,10,11,12,20,21,22,100,101,102];
+  
+  data_eyecor = JAI_selectdata( cfg, data_eyecor );
+  
+  % Segmentation of the preprocessed trials for ITPC estimation %%%%%%%%%%%
+  % split the data of every condition into subtrials with a length of 10
+  % seconds
+  cfg           = [];
+  cfg.length    = 10;
+  cfg.overlap   = 0;
 
-    % export TFR data into a *.mat file
+  data_eyecor  = JAI_segmentation( cfg, data_eyecor );
+  
+  % artifact rejection
+  if artifactRejection == true                                              % load artifact definitions
     cfg             = [];
-    cfg.desFolder   = strcat(desPath, '09a_tfr/');
-    cfg.filename    = sprintf('JAI_d%02d_09a_tfr', i);
+    cfg.srcFolder   = strcat(desPath, '05b_allart/');
+    cfg.filename    = sprintf('JAI_d%02d_05b_allart', i);
     cfg.sessionStr  = sessionStr;
 
-    file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
+    file_path = strcat(cfg.srcFolder, cfg.filename, '_', cfg.sessionStr, ...
                        '.mat');
-
-    fprintf('Time-frequency response data of dyad %d will be saved in:\n', i); 
-    fprintf('%s ...\n', file_path);
-    JAI_saveData(cfg, 'data_tfr', data_tfr);
-    fprintf('Data stored!\n\n');
-    clear data_tfr data_eyecor
-  end
-end
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Calculation of power spectral density using Welch's method (pWelch)
-choise = false;
-while choise == false
-  cprintf([0,0.6,0], 'Should the power spectral density by using Welch''s method be calculated?\n');
-  x = input('Select [y/n]: ','s');
-  if strcmp('y', x)
-    choise = true;
-    pwelch = true;
-  elseif strcmp('n', x)
-    choise = true;
-    pwelch = false;
-  else
-    choise = false;
-  end
-end
-fprintf('\n');
-
-if pwelch == true
-  choise = false;
-  while choise == false
-    cprintf([0,0.6,0], 'Should rejection of detected artifacts be applied before PSD estimation?\n');
-    x = input('Select [y/n]: ','s');
-    if strcmp('y', x)
-      choise = true;
-      artifactRejection = true;
-    elseif strcmp('n', x)
-      choise = true;
-      artifactRejection = false;
+                     
+    if ~isempty(dir(file_path))
+      fprintf('Loading %s ...\n', file_path);
+      JAI_loadData( cfg );                                                    
     else
-      choise = false;
+      fprintf('File %s is not existent,\n', file_path);
+      fprintf('Artifact rejection is not possible!\n');
+      artifactRejection = false;
     end
   end
-  fprintf('\n');
   
-  % Write selected settings to settings file
-  file_path = [desPath '00_settings/' sprintf('settings_%s', sessionStr) '.xls'];
-  if ~(exist(file_path, 'file') == 2)                                       % check if settings file already exist
-    cfg = [];
-    cfg.desFolder   = [desPath '00_settings/'];
-    cfg.type        = 'settings';
-    cfg.sessionStr  = sessionStr;
+  if artifactRejection == true                                              % reject artifacts
+    cfg           = [];
+    cfg.artifact  = cfg_allart;
+    cfg.reject    = 'complete';
+    cfg.target    = 'single';
   
-    JAI_createTbl(cfg);                                                     % create settings file
-  end
-
-  T = readtable(file_path);                                                 % update settings table
-  warning off;
-  T.artRejectPSD(numOfPart) = { x };
-  warning on;
-  delete(file_path);
-  writetable(T, file_path);
-  
-  for i = numOfPart
-    fprintf('<strong>Dyad %d</strong>\n', i);
-    
-    % Load eye-artifact corrected data
-    cfg             = [];
-    cfg.srcFolder   = strcat(desPath, '04b_eyecor/');
-    cfg.filename    = sprintf('JAI_d%02d_04b_eyecor', i);
-    cfg.sessionStr  = sessionStr;
-
-    fprintf('Load eye-artifact corrected data...\n\n');
-    JAI_loadData( cfg );
-    
-    % Segmentation of conditions in segments of one second with 75 percent
-    % overlapping
-    cfg          = [];
-    cfg.length   = 1;                                                       % window length: 1 sec       
-    cfg.overlap  = 0.75;                                                    % 75 percent overlap
-    
-    fprintf('<strong>Segmentation of eye-artifact corrected data.</strong>\n');
-    data_eyecor = JAI_segmentation( cfg, data_eyecor );
-
+    data_eyecor = JAI_rejectArtifacts(cfg, data_eyecor);
     fprintf('\n');
     
-    % Load artifact definitions 
-    if artifactRejection == true
-      cfg             = [];
-      cfg.srcFolder   = strcat(desPath, '05b_allart/');
-      cfg.filename    = sprintf('JAI_d%02d_05b_allart', i);
-      cfg.sessionStr  = sessionStr;
-
-      file_path = strcat(cfg.srcFolder, cfg.filename, '_', cfg.sessionStr, ...
-                       '.mat');
-      if ~isempty(dir(file_path))
-        fprintf('Loading %s ...\n', file_path);
-        JAI_loadData( cfg );                                                  
-        artifactAvailable = true;     
-      else
-        fprintf('File %s is not existent,\n', file_path);
-        fprintf('Artifact rejection is not possible!\n');
-        artifactAvailable = false;
-      end
-    fprintf('\n');  
-    end
-    
-    % Artifact rejection
-    if artifactRejection == true
-      if artifactAvailable == true
-        cfg           = [];
-        cfg.artifact  = cfg_allart;
-        cfg.reject    = 'complete';
-        cfg.target    = 'single';
-
-        fprintf('<strong>Artifact Rejection with eye-artifact corrected data.</strong>\n');
-        data_eyecor = JAI_rejectArtifacts(cfg, data_eyecor);
-        fprintf('\n');
-      end
-      
-      clear cfg_allart
-    end
-    
-    % Estimation of power spectral density
-    cfg         = [];
-    cfg.foi     = 1:1:50;                                                   % frequency of interest
-      
-    data_eyecor = JAI_pWelch( cfg, data_eyecor );                           % calculate power spectral density using Welch's method
-    data_pwelch = data_eyecor;                                              % to save need of RAM
-    clear data_eyecor
-    
-    % export PSD data into a *.mat file
-    cfg             = [];
-    cfg.desFolder   = strcat(desPath, '09b_pwelch/');
-    cfg.filename    = sprintf('JAI_d%02d_09b_pwelch', i);
-    cfg.sessionStr  = sessionStr;
-
-    file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
-                       '.mat');
-
-    fprintf('Power spectral density data of dyad %d will be saved in:\n', i); 
-    fprintf('%s ...\n', file_path);
-    JAI_saveData(cfg, 'data_pwelch', data_pwelch);
-    fprintf('Data stored!\n\n');
-    clear data_pwelch
+    clear cfg_allart
   end
+
+  % estimation of the inter-trial phase coherence (ITPC)
+  cfg           = [];
+  cfg.toi       = 0:0.2:9.8;
+  cfg.foi       = 1:0.5:48;
+
+  data_itpc = JAI_interTrialPhaseCoh(cfg, data_eyecor);
+  clear data_eyecor
+  
+  % export number of good trials into a spreadsheet
+  cfg           = [];
+  cfg.desFolder = [desPath '00_settings/'];
+  cfg.dyad = i;
+  cfg.type = 'itpc';
+  cfg.sessionStr = sessionStr;
+  JAI_writeTbl(cfg, data_itpc);
+  
+  % export the itpc data into a *.mat file
+  cfg             = [];
+  cfg.desFolder   = strcat(desPath, '09a_itpc/');
+  cfg.filename    = sprintf('JAI_d%02d_09a_itpc', i);
+  cfg.sessionStr  = sessionStr;
+
+  file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
+                     '.mat');
+                   
+  fprintf('The ITPC data of dyad %d will be saved in:\n', i); 
+  fprintf('%s ...\n', file_path);
+  JAI_saveData(cfg, 'data_itpc', data_itpc);
+  fprintf('Data stored!\n\n');
+
+  % average itpc values over time for certain frequencies
+  cfg     = [];
+  cfg.foi = [2,10,20];
+
+  data_itpc = JAI_ITPCavgOverTime(cfg, data_itpc);
+
+  % export the averaged itpc data into a *.mat file
+  cfg             = [];
+  cfg.desFolder   = strcat(desPath, '09b_itpcavg/');
+  cfg.filename    = sprintf('JAI_d%02d_09b_itpcavg', i);
+  cfg.sessionStr  = sessionStr;
+
+  file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
+                     '.mat');
+
+  fprintf('The over time averaged ITPC data (for 2,10 and 20 Hz) of dyad %d will be saved in:\n', i);
+  fprintf('%s ...\n', file_path);
+  JAI_saveData(cfg, 'data_itpc', data_itpc);
+  fprintf('Data stored!\n\n');
+  clear data_itpc
 end
 
 %% clear workspace
-clear file_path cfg sourceList numOfSources i choise tfr pwelch T ...
-      artifactRejection artifactAvailable
+clear file_path file_num cfg dyads dyadsNew i cfg_allArt artifactRejection ...
+      x choise T

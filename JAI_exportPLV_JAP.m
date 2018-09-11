@@ -43,9 +43,9 @@ clear newPaths
 % Session selection
 % -------------------------------------------------------------------------
 srcPath = [path 'DualEEG_JAI_processedDataCCA/'];
-srcPath = [srcPath  '07b_mplv/'];
+srcPath = [srcPath  '08b_mplv/'];
 
-fileList     = dir([srcPath, 'JAI_d*_07b_mplvGamma_*.mat']);
+fileList     = dir([srcPath, 'JAI_d*_08b_mplvGamma_*.mat']);
 fileList     = struct2cell(fileList);
 fileList     = fileList(1,:);
 numOfFiles   = length(fileList);
@@ -54,7 +54,7 @@ sessionNum   = zeros(1, numOfFiles);
 fileListCopy = fileList;
 
 for dyad=1:1:numOfFiles
-  fileListCopy{dyad} = strsplit(fileList{dyad}, '07b_mplvGamma_');
+  fileListCopy{dyad} = strsplit(fileList{dyad}, '08b_mplvGamma_');
   fileListCopy{dyad} = fileListCopy{dyad}{end};
   sessionNum(dyad) = sscanf(fileListCopy{dyad}, '%d.mat');
 end
@@ -231,7 +231,7 @@ end
 % -------------------------------------------------------------------------
 % generate table template
 % -------------------------------------------------------------------------
-fileList     = dir([srcPath 'JAI_d*_07b_mplv' file_postfix '_' ...
+fileList     = dir([srcPath 'JAI_d*_08b_mplv' file_postfix '_' ...
                     sessionStr '.mat']);
 fileList     = struct2cell(fileList);
 fileList     = fileList(1,:);                                               % generate list with filenames of all existing dyads

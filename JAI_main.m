@@ -88,35 +88,38 @@ end
 if ~exist(strcat(desPath, '06b_hilbert'), 'dir')
   mkdir(strcat(desPath, '06b_hilbert'));
 end
-if ~exist(strcat(desPath, '07a_plv'), 'dir')
-  mkdir(strcat(desPath, '07a_plv'));
+if ~exist(strcat(desPath, '07_cca'), 'dir')
+  mkdir(strcat(desPath, '07_cca'));
 end
-if ~exist(strcat(desPath, '07b_mplv'), 'dir')
-  mkdir(strcat(desPath, '07b_mplv'));
+if ~exist(strcat(desPath, '08a_plv'), 'dir')
+  mkdir(strcat(desPath, '08a_plv'));
 end
-if ~exist(strcat(desPath, '08a_itpc'), 'dir')
-  mkdir(strcat(desPath, '08a_itpc'));
+if ~exist(strcat(desPath, '08b_mplv'), 'dir')
+  mkdir(strcat(desPath, '08b_mplv'));
 end
-if ~exist(strcat(desPath, '08b_itpcavg'), 'dir')
-  mkdir(strcat(desPath, '08b_itpcavg'));
+if ~exist(strcat(desPath, '09a_itpc'), 'dir')
+  mkdir(strcat(desPath, '09a_itpc'));
 end
-if ~exist(strcat(desPath, '09a_tfr'), 'dir')
-  mkdir(strcat(desPath, '09a_tfr'));
+if ~exist(strcat(desPath, '09b_itpcavg'), 'dir')
+  mkdir(strcat(desPath, '09b_itpcavg'));
 end
-if ~exist(strcat(desPath, '09b_pwelch'), 'dir')
-  mkdir(strcat(desPath, '09b_pwelch'));
+if ~exist(strcat(desPath, '10a_tfr'), 'dir')
+  mkdir(strcat(desPath, '10a_tfr'));
 end
-if ~exist(strcat(desPath, '10a_mplvod'), 'dir')
-  mkdir(strcat(desPath, '10a_mplvod'));
+if ~exist(strcat(desPath, '10b_pwelch'), 'dir')
+  mkdir(strcat(desPath, '10b_pwelch'));
 end
-if ~exist(strcat(desPath, '10b_itpcod'), 'dir')
-  mkdir(strcat(desPath, '10b_itpcod'));
+if ~exist(strcat(desPath, '11a_mplvod'), 'dir')
+  mkdir(strcat(desPath, '11a_mplvod'));
 end
-if ~exist(strcat(desPath, '10c_tfrod'), 'dir')
-  mkdir(strcat(desPath, '10c_tfrod'));
+if ~exist(strcat(desPath, '11b_itpcod'), 'dir')
+  mkdir(strcat(desPath, '11b_itpcod'));
 end
-if ~exist(strcat(desPath, '10d_pwelchod'), 'dir')
-  mkdir(strcat(desPath, '10d_pwelchod'));
+if ~exist(strcat(desPath, '11c_tfrod'), 'dir')
+  mkdir(strcat(desPath, '11c_tfrod'));
+end
+if ~exist(strcat(desPath, '11d_pwelchod'), 'dir')
+  mkdir(strcat(desPath, '11d_pwelchod'));
 end
 
 clear sessionStr numOfPart part newPaths
@@ -240,12 +243,13 @@ else
     fprintf('[3]  - ICA decomposition\n');
     fprintf('[4]  - Estimation and correction of eye artifacts\n');
     fprintf('[5]  - Automatic and manual artifact detection\n');
-    fprintf('[6]  - Narrow band filtering and Hilbert transform\n'); 
-    fprintf('[7]  - Estimation of Phase Locking Values (PLV)\n');
-    fprintf('[8]  - Estimation of Inter Trial Phase Coherences (ITPC)\n');
-    fprintf('[9]  - Power analysis (TFR, pWelch)\n');
-    fprintf('[10] - Averaging over dyads\n');
-    fprintf('[11] - Quit data processing\n\n');
+    fprintf('[6]  - Narrow band filtering and Hilbert transform\n');
+    fprintf('[7]  - Canonical correlation analysis (CCA)\n');
+    fprintf('[8]  - Estimation of Phase Locking Values (PLV)\n');
+    fprintf('[9]  - Estimation of Inter Trial Phase Coherences (ITPC)\n');
+    fprintf('[10] - Power analysis (TFR, pWelch)\n');
+    fprintf('[11] - Averaging over dyads\n');
+    fprintf('[12] - Quit data processing\n\n');
     x = input('Option: ');
   
     switch x
@@ -280,6 +284,9 @@ else
         part = 10;
         selection = true;
       case 11
+        part = 11;
+        selection = true;
+      case 12
         fprintf('\nData processing aborted.\n');
         clear selection i x y srcPath desPath session sessionList ...
             sessionNum numOfSessions dyadsSpec sessionStr
@@ -335,21 +342,26 @@ switch part
     tmpPath = strcat(desPath, '06b_hilbert/');
     fileNamePost = strcat(tmpPath, 'JAI_d*_06b_hilbertGamma_', sessionStr, '.mat');
   case 7
+    tmpPath = strcat(desPath, '06a_bpfilt/');
+    fileNamePre = strcat(tmpPath, 'JAI_d*_06a_bpfiltGamma_', sessionStr, '.mat');
+    tmpPath = strcat(desPath, '07_cca/');
+    fileNamePost = strcat(tmpPath, 'JAI_d*_07_ccaGamma_', sessionStr, '.mat');
+  case 8
     tmpPath = strcat(desPath, '06b_hilbert/');
     fileNamePre = strcat(tmpPath, 'JAI_d*_06b_hilbertGamma_', sessionStr, '.mat');
-    tmpPath = strcat(desPath, '07b_mplv/');
-    fileNamePost = strcat(tmpPath, 'JAI_d*_07b_mplvGamma_', sessionStr, '.mat');
-  case 8
-    tmpPath = strcat(desPath, '04b_eyecor/');
-    fileNamePre = strcat(tmpPath, 'JAI_d*_04b_eyecor_', sessionStr, '.mat');
-    tmpPath = strcat(desPath, '08b_itpcavg/');
-    fileNamePost = strcat(tmpPath, 'JAI_d*_08b_itpcavg_', sessionStr, '.mat');
+    tmpPath = strcat(desPath, '08b_mplv/');
+    fileNamePost = strcat(tmpPath, 'JAI_d*_08b_mplvGamma_', sessionStr, '.mat');
   case 9
     tmpPath = strcat(desPath, '04b_eyecor/');
     fileNamePre = strcat(tmpPath, 'JAI_d*_04b_eyecor_', sessionStr, '.mat');
-    tmpPath = strcat(desPath, '09b_pwelch/');
-    fileNamePost = strcat(tmpPath, 'JAI_d*_09b_pwelch_', sessionStr, '.mat');
+    tmpPath = strcat(desPath, '09b_itpcavg/');
+    fileNamePost = strcat(tmpPath, 'JAI_d*_09b_itpcavg_', sessionStr, '.mat');
   case 10
+    tmpPath = strcat(desPath, '04b_eyecor/');
+    fileNamePre = strcat(tmpPath, 'JAI_d*_04b_eyecor_', sessionStr, '.mat');
+    tmpPath = strcat(desPath, '10b_pwelch/');
+    fileNamePost = strcat(tmpPath, 'JAI_d*_10b_pwelch_', sessionStr, '.mat');
+  case 11
     fileNamePre = 0;
   otherwise
     error('Something unexpected happend. part = %d is not defined' ...
@@ -535,24 +547,24 @@ while sessionStatus == true
       while selection == false
         fprintf('<strong>Continue data processing with:</strong>\n');
         fprintf('<strong>[6]  - Narrow band filtering and Hilbert transform?</strong>\n');
-        fprintf('<strong>[8]  - Estimation of Inter Trial Phase Coherences (ITPC)?</strong>\n');
-        fprintf('<strong>[9]  - Power analysis (TFR, pWelch)?</strong>\n');
-        fprintf('<strong>[11] - Quit data processing?</strong>\n');
+        fprintf('<strong>[9]  - Estimation of Inter Trial Phase Coherences (ITPC)?</strong>\n');
+        fprintf('<strong>[10] - Power analysis (TFR, pWelch)?</strong>\n');
+        fprintf('<strong>[12] - Quit data processing?</strong>\n');
         x = input('\nSelect one of these options: ');
         switch x
           case 6
             selection = true;
             sessionStatus = true;
             sessionPart = 6;
-          case 8
-            selection = true;
-            sessionStatus = true;
-            sessionPart = 8;
           case 9
             selection = true;
             sessionStatus = true;
             sessionPart = 9;
-          case 11
+          case 10
+            selection = true;
+            sessionStatus = true;
+            sessionPart = 10;
+          case 12
             selection = true;
             sessionStatus = false;
           otherwise
@@ -565,28 +577,46 @@ while sessionStatus == true
       selection = false;
       while selection == false
         fprintf('<strong>Continue data processing with:</strong>\n');
-        fprintf('<strong>[7] - Estimation of Phase Locking Values (PLV)?</strong>\n');
-        x = input('\nSelect [y/n]: ','s');
-        if strcmp('y', x)
-          selection = true;
-          sessionStatus = true;
-          sessionPart = 7;
-        elseif strcmp('n', x)
-          selection = true;
-          sessionStatus = false;
-        else
-          selection = false;
+        fprintf('<strong>[7]  - Canonical correlation analysis (CCA)?</strong>\n');
+        fprintf('<strong>[8]  - Estimation of Phase Locking Values (PLV)?</strong>\n');
+        fprintf('<strong>[9]  - Estimation of Inter Trial Phase Coherences (ITPC)?</strong>\n');
+        fprintf('<strong>[10] - Power analysis (TFR, pWelch)?</strong>\n');
+        fprintf('<strong>[12] - Quit data processing?</strong>\n');
+        x = input('\nSelect one of these options: ');
+        switch x
+          case 7
+            selection = true;
+            sessionStatus = true;
+            sessionPart = 7;
+          case 8
+            selection = true;
+            sessionStatus = true;
+            sessionPart = 8;
+          case 9
+            selection = true;
+            sessionStatus = true;
+            sessionPart = 9;
+          case 10
+            selection = true;
+            sessionStatus = true;
+            sessionPart = 10;
+          case 12
+            selection = true;
+            sessionStatus = false;
+          otherwise
+            selection = false;
+            cprintf([1,0.5,0], 'Wrong input!\n');
         end
-      end  
+      end
     case 7
       JAI_main_7;
       selection = false;
       while selection == false
         fprintf('<strong>Continue data processing with:</strong>\n');
-        fprintf('<strong>[8]  - Estimation of Inter Trial Phase Coherences (ITPC)?</strong>\n');
-        fprintf('<strong>[9]  - Power analysis (TFR, pWelch)?</strong>\n');
-        fprintf('<strong>[10] - Averaging over dyads?</strong>\n');
-        fprintf('<strong>[11] - Quit data processing?</strong>\n');
+        fprintf('<strong>[8]  - Estimation of Phase Locking Values (PLV)?</strong>\n');
+        fprintf('<strong>[9]  - Estimation of Inter Trial Phase Coherences (ITPC)?</strong>\n');
+        fprintf('<strong>[10] - Power analysis (TFR, pWelch)?</strong>\n');
+        fprintf('<strong>[12] - Quit data processing?</strong>\n');
         x = input('\nSelect one of these options: ');
         switch x
           case 8
@@ -601,7 +631,7 @@ while sessionStatus == true
             selection = true;
             sessionStatus = true;
             sessionPart = 10;
-          case 11
+          case 12
             selection = true;
             sessionStatus = false;
           otherwise
@@ -614,9 +644,10 @@ while sessionStatus == true
       selection = false;
       while selection == false
         fprintf('<strong>Continue data processing with:</strong>\n');
-        fprintf('<strong>[9]  - Power analysis (TFR, pWelch)?</strong>\n');
-        fprintf('<strong>[10] - Averaging over dyads?</strong>\n');
-        fprintf('<strong>[11] - Quit data processing?</strong>\n');
+        fprintf('<strong>[9]  - Estimation of Inter Trial Phase Coherences (ITPC)?</strong>\n');
+        fprintf('<strong>[10] - Power analysis (TFR, pWelch)?</strong>\n');
+        fprintf('<strong>[11] - Averaging over dyads?</strong>\n');
+        fprintf('<strong>[12] - Quit data processing?</strong>\n');
         x = input('\nSelect one of these options: ');
         switch x
           case 9
@@ -629,6 +660,10 @@ while sessionStatus == true
             sessionPart = 10;
           case 11
             selection = true;
+            sessionStatus = true;
+            sessionPart = 11;
+          case 12
+            selection = true;
             sessionStatus = false;
           otherwise
             selection = false;
@@ -640,12 +675,38 @@ while sessionStatus == true
       selection = false;
       while selection == false
         fprintf('<strong>Continue data processing with:</strong>\n');
-        fprintf('<strong>[10] - Averaging over dyads?</strong>\n');
+        fprintf('<strong>[10]  - Power analysis (TFR, pWelch)?</strong>\n');
+        fprintf('<strong>[11] - Averaging over dyads?</strong>\n');
+        fprintf('<strong>[12] - Quit data processing?</strong>\n');
+        x = input('\nSelect one of these options: ');
+        switch x
+          case 10
+            selection = true;
+            sessionStatus = true;
+            sessionPart = 10;
+          case 11
+            selection = true;
+            sessionStatus = true;
+            sessionPart = 11;
+          case 12
+            selection = true;
+            sessionStatus = false;
+          otherwise
+            selection = false;
+            cprintf([1,0.5,0], 'Wrong input!\n');
+        end
+      end
+    case 10
+      JAI_main_10;
+      selection = false;
+      while selection == false
+        fprintf('<strong>Continue data processing with:</strong>\n');
+        fprintf('<strong>[11] - Averaging over dyads?</strong>\n');
         x = input('\nSelect [y/n]: ','s');
         if strcmp('y', x)
           selection = true;
           sessionStatus = true;
-          sessionPart = 10;
+          sessionPart = 11;
         elseif strcmp('n', x)
           selection = true;
           sessionStatus = false;
@@ -653,8 +714,8 @@ while sessionStatus == true
           selection = false;
         end
       end
-    case 10
-      JAI_main_10;
+    case 11
+      JAI_main_11;
       sessionStatus = false;
     otherwise
       sessionStatus = false;
