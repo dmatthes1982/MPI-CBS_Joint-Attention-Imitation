@@ -6,7 +6,7 @@ function [ data_itpc ] = JAI_ITPCoverDyads( cfg )
 %   [ data_itpc ] = JAI_ITPCoverDyads( cfg )
 %
 % The configuration options are
-%   cfg.path      = source path' (i.e. '/data/pt_01826/eegData/DualEEG_JAI_processedData/08a_itpc/')
+%   cfg.path      = source path' (i.e. '/data/pt_01826/eegData/DualEEG_JAI_processedDataCCA/08a_itpc/')
 %   cfg.session   = session number (default: 1)
 %
 % This function requires the fieldtrip toolbox
@@ -19,7 +19,7 @@ function [ data_itpc ] = JAI_ITPCoverDyads( cfg )
 % Get and check config options
 % -------------------------------------------------------------------------
 path      = ft_getopt(cfg, 'path', ...
-              '/data/pt_01826/eegData/DualEEG_JAI_processedData/08a_itpc/');
+              '/data/pt_01826/eegData/DualEEG_JAI_processedDataCCA/08a_itpc/');
 session   = ft_getopt(cfg, 'session', 1);
 
 % -------------------------------------------------------------------------
