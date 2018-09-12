@@ -6,11 +6,11 @@ function JAI_easyMultiTFRplot(cfg, data)
 % Use as
 %   JAI_easyTFRPlot(cfg, data)
 %
-% where the input data is a results from JAI_TIMEFREQANALYSIS.
+% where the input data have to be a result of JAI_TIMEFREQANALYSIS.
 %
 % The configuration options are 
 %   cfg.part        = number of participant (1 or 2) (default: 1)
-%   cfg.condition   = condition (default: 101 or 'SameObjectB', see JAI_DATASTRUCTURE)
+%   cfg.condition   = condition (default: 111 or 'SameObjectB', see JAI_DATASTRUCTURE)
 %   cfg.trial       = number of trial (default: 1)
 %   cfg.freqlimits  = [begin end] (default: [2 30])
 %   cfg.timelimits  = [begin end] (default: [4 116])
@@ -60,7 +60,6 @@ trialinfo = data.trialinfo;                                                 % ge
 
 filepath = fileparts(mfilename('fullpath'));
 addpath(sprintf('%s/../utilities', filepath));
-
 
 cond    = JAI_checkCondition( cond );                                       % check cfg.condition definition    
 trials  = find(trialinfo == cond);
