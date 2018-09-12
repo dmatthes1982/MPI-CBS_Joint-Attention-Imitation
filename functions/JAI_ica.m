@@ -4,7 +4,7 @@ function [ data ] = JAI_ica( cfg, data )
 % Use as
 %   [ data ] = JAI_ica( cfg, data )
 %
-% where the input data have to be the result from JAI_CONCATDATA
+% where the input data have to be the result of JAI_CONCATDATA
 %
 % The configuration options are
 %   cfg.channel       = cell-array with channel selection (default = {'all', '-EOGV', '-EOGH', '-REF'})
