@@ -33,7 +33,7 @@ fprintf('\n');
 %% canonical correlation analysis
 
 for i = numOfPart
-  fprintf('<strong>Dyad %d</strong>\n', i);
+  fprintf('<strong>Dyad %d</strong>\n\n', i);
   
   %% 2 Hz branch %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   % load bandpass filtered data at 2 Hz
@@ -59,7 +59,7 @@ for i = numOfPart
   fprintf('Saving CCA results at 2 Hz in:\n'); 
   fprintf('%s ...\n', file_path);
   JAI_saveData(cfg, 'data_cca_2Hz', data_cca_2Hz);
-  fprintf('Data stored!\n');
+  fprintf('Data stored!\n\n');
   clear data_bpfilt_2Hz data_cca_2Hz
   
   %% theta branch %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -86,7 +86,7 @@ for i = numOfPart
   fprintf('Saving CCA results at theta in:\n'); 
   fprintf('%s ...\n', file_path);
   JAI_saveData(cfg, 'data_cca_theta', data_cca_theta);
-  fprintf('Data stored!\n');
+  fprintf('Data stored!\n\n');
   clear data_bpfilt_theta data_cca_theta
   
   %% alpha branch %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -113,7 +113,7 @@ for i = numOfPart
   fprintf('Saving CCA results at alpha in:\n'); 
   fprintf('%s ...\n', file_path);
   JAI_saveData(cfg, 'data_cca_alpha', data_cca_alpha);
-  fprintf('Data stored!\n');
+  fprintf('Data stored!\n\n');
   clear data_bpfilt_alpha data_cca_alpha
   
   %% beta branch %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -140,7 +140,7 @@ for i = numOfPart
   fprintf('Saving CCA results at beta in:\n'); 
   fprintf('%s ...\n', file_path);
   JAI_saveData(cfg, 'data_cca_beta', data_cca_beta);
-  fprintf('Data stored!\n');
+  fprintf('Data stored!\n\n');
   clear data_bpfilt_beta data_cca_beta
   
    %% 20 Hz branch %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -167,7 +167,7 @@ for i = numOfPart
   fprintf('Saving CCA results at 20 Hz in:\n'); 
   fprintf('%s ...\n', file_path);
   JAI_saveData(cfg, 'data_cca_20Hz', data_cca_20Hz);
-  fprintf('Data stored!\n');
+  fprintf('Data stored!\n\n');
   clear data_bpfilt_20Hz data_cca_20Hz
   
   %% gamma branch %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -194,7 +194,7 @@ for i = numOfPart
   fprintf('Saving CCA results at gamma in:\n'); 
   fprintf('%s ...\n', file_path);
   JAI_saveData(cfg, 'data_cca_gamma', data_cca_gamma);
-  fprintf('Data stored!\n');
+  fprintf('Data stored!\n\n');
   clear data_bpfilt_gamma data_cca_gamma
   
 end
