@@ -62,6 +62,11 @@ data_cca.sampleinfo = data_cca.sampleinfo(trl,:);
 data_cca.trial      = data_cca.trial(trl);
 data_cca.topo       = data_cca.topo{trl};
 data_cca.unmixing   = data_cca.unmixing{trl};
+data_cca            = removefields(data_cca, {'W'});
+
+numOfChan           = size(data_cca.trial{1}, 1);
+data_cca.label      = data_cca.label(1:numOfChan);
+comp                = comp(comp <= numOfChan);
 
 % -------------------------------------------------------------------------
 % Plot topoplot
@@ -83,4 +88,3 @@ ft_topoplotIC(cfg, data_cca);
 ft_info on;
 
 end
-
