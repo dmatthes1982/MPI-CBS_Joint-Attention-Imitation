@@ -42,10 +42,10 @@ clear newPaths
 % -------------------------------------------------------------------------
 % Session selection
 % -------------------------------------------------------------------------
-srcPath = [path 'DualEEG_JAI_processedData/'];
-srcPath = [srcPath  '09b_pwelch/'];
+srcPath = [path 'DualEEG_JAI_processedDataCCA/'];
+srcPath = [srcPath  '10b_pwelch/'];
 
-fileList     = dir([srcPath, 'JAI_d*_09b_pwelch_*.mat']);
+fileList     = dir([srcPath, 'JAI_d*_10b_pwelch_*.mat']);
 fileList     = struct2cell(fileList);
 fileList     = fileList(1,:);
 numOfFiles   = length(fileList);
@@ -54,7 +54,7 @@ sessionNum   = zeros(1, numOfFiles);
 fileListCopy = fileList;
 
 for dyad=1:1:numOfFiles
-  fileListCopy{dyad} = strsplit(fileList{dyad}, '09b_pwelch_');
+  fileListCopy{dyad} = strsplit(fileList{dyad}, '10b_pwelch_');
   fileListCopy{dyad} = fileListCopy{dyad}{end};
   sessionNum(dyad) = sscanf(fileListCopy{dyad}, '%d.mat');
 end
@@ -117,7 +117,7 @@ clear desPath template_file path
 % -------------------------------------------------------------------------
 % generate table templates
 % -------------------------------------------------------------------------
-fileList    = dir([srcPath 'JAI_d*_09b_pwelch_' sessionStr '.mat']);
+fileList    = dir([srcPath 'JAI_d*_10b_pwelch_' sessionStr '.mat']);
 fileList    = struct2cell(fileList);
 fileList    = fileList(1,:);                                                % generate list with filenames of all existing dyads
 numOfFiles  = length(fileList);
