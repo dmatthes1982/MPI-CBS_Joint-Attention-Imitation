@@ -2,7 +2,7 @@
 % Add directory and subfolders to path
 % -------------------------------------------------------------------------
 clc;
-JAI_init;
+run('../JAI_init.m');
 
 cprintf([0,0.6,0], '<strong>-------------------------------------------------------------</strong>\n');
 cprintf([0,0.6,0], '<strong>Joint attention imitation project</strong>\n');
