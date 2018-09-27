@@ -4,11 +4,11 @@
 clc;
 run('../JAI_init.m');
 
-cprintf([0,0.6,0], '<strong>------------------------------------------------</strong>\n');
+cprintf([0,0.6,0], '<strong>--------------------------------------------------------------------------</strong>\n');
 cprintf([0,0.6,0], '<strong>Joint attention imitation project</strong>\n');
-cprintf([0,0.6,0], '<strong>Export of PSD results (only first baseline conditions)</strong>\n');
+cprintf([0,0.6,0], '<strong>Export of PSD results of single and dual conditions with 10 Hz entrainment</strong>\n');
 cprintf([0,0.6,0], 'Copyright (C) 2017-2018, Daniel Matthes, MPI CBS\n');
-cprintf([0,0.6,0], '<strong>------------------------------------------------</strong>\n');
+cprintf([0,0.6,0], '<strong>--------------------------------------------------------------------------</strong>\n');
 
 % -------------------------------------------------------------------------
 % Path settings
@@ -106,9 +106,11 @@ clear sessionNum fileListCopy y userList match filePath cmdout attrib ...
 % results with conflicts!)
 % -------------------------------------------------------------------------
 desPath = [path 'DualEEG_JAI_results/' 'PSD_export/'];                      % destination path
-xlsFile = [desPath 'PSD_begBaseline_conditions_export_' sessionStr '.xls']; % build file name
+xlsFile = [desPath 'PSD_10Hz_singledual_conditions_export_' ...             % build file name
+            sessionStr '.xls'];
 
-template_file = [path 'DualEEG_JAI_templates/' 'PSD_export_template.xls'];  % template file
+template_file = [path 'DualEEG_JAI_templates/' ...                          % template file
+                  'PSD_10Hz_export_template.xls'];
 
 [~] = copyfile(template_file, xlsFile);                                     % copy template to destination
 
@@ -117,87 +119,83 @@ clear desPath template_file path
 % -------------------------------------------------------------------------
 % generate table templates
 % -------------------------------------------------------------------------
-fileList    = dir([srcPath 'JAI_d*_09b_pwelch_' sessionStr '.mat']);
-fileList    = struct2cell(fileList);
-fileList    = fileList(1,:);                                                % generate list with filenames of all existing dyads
-numOfFiles  = length(fileList);
-numOfPart   = 2 * numOfFiles;                                               % each file has data of two participants
+fileList     = dir([srcPath 'JAI_d*_09b_pwelch_' sessionStr '.mat']);
+fileList     = struct2cell(fileList);
+fileList     = fileList(1,:);                                               % generate list with filenames of all existing dyads
+numOfFiles   = length(fileList);
 
-freq        = {8,9,10,11,12,13};                                            % frequencies of interest
-label_111   = cellfun(@(x) sprintf('C111_%dHz', x), freq, ...               % generate column titles for each condition
-                      'UniformOutput', false);
-label_2     = cellfun(@(x) sprintf('C2_%dHz', x), freq, ...
-                      'UniformOutput', false);
-label_3     = cellfun(@(x) sprintf('C3_%dHz', x), freq, ...
-                      'UniformOutput', false);
+numOfPart = 2 * numOfFiles;                                                 % each file has data of two participants
 
-numOfChan   = 3 * length(freq);
-col{1}      = 2:length(freq)+1;                                             % estimate column identifier for each condition
-col{2}      = col{1} + length(freq);
-col{3}      = col{2} + length(freq);
+load([srcPath fileList{1}]);                                                % load data of first dyad
+
+label     = data_pwelch.part1.label;                                        % extract channel names
+loc_label = ~ismember(label, {'V1', 'V2', 'EOGH', 'EOGV', 'REF'});          % remove channels which are not of interest.
+label     = label(loc_label);
+numOfChan = length(label);
+
+freq = data_pwelch.part1.freq;                                              % extract frequencies
+loc_freq  = ismember(freq, 10);                                             % estimate column for 10 Hz
 
 cell_array      = num2cell(NaN(numOfPart, numOfChan + 1));
 cell_array(:,1) = {'unknown'};
 T               = cell2table(cell_array);                                   % create template table
-T.Properties.VariableNames = ['participant' label_111 label_2 label_3];
+T.Properties.VariableNames = ['participant' label'];
+T_single  = T;                                                              % create one table for the single 10 Hz condition and one for the dual 10 Hz condition
+T_dual    = T;
 
-clear label_111 label_2 label_3 numOfPart numOfChan cell_array ...
-      sessionStr loc freq
+clear T numOfPart numOfChan cell_array sessionStr freq label
 
 % -------------------------------------------------------------------------
-% import psd values into tables
+% import itpc values into tables
 % -------------------------------------------------------------------------
-condition   = [111,2,3];                                                     % conditions: SameObjectB, ViewMotionB, SameMotionB
-numOfTrials = length(condition);
-label       = {'C3','Cz','C4'};
-freq        = 8:13;
+condition  = {10, [11,12]};                                                 % conditions
 
 fprintf('Import of PSD values...\n');
-f = waitbar(0,'Please wait...');
+f = waitbar(0,'Please wait...');  
 for dyad=1:1:numOfFiles
   load([srcPath fileList{dyad}]);
   dyadNum     = sscanf(fileList{dyad}, 'JAI_d%d');                          % estimate dyad original number
-  
-  T.participant(2*dyad - 1) = {sprintf('%d_1', dyadNum)};                   % set participants identifier
-  T.participant(2*dyad)     = {sprintf('%d_2', dyadNum)};
-  
-  for trl = 1:1:numOfTrials                                                 % copy the psd results into the tables
-    waitbar(((dyad-1)*numOfTrials + trl)/(numOfFiles * numOfTrials), ...
-               f, 'Please wait...');
-    % participant 1 -------------------------------------------------------
-    loc_trl   = ismember(data_pwelch.part1.trialinfo, condition(trl));
-    loc_freq  = ismember(data_pwelch.part1.freq, freq);
-    loc_label = ismember(data_pwelch.part1.label, label);
-    
-    psd = squeeze(data_pwelch.part1.powspctrm(loc_trl,loc_label, ...        % extract values of desired channels and frequencies
-                  loc_freq));
-    psd = mean(psd, 1);                                                     % average over channels
-    T(2*dyad - 1, col{trl}) = num2cell(psd);
-    
-    % participant 2 -------------------------------------------------------
-    loc_trl   = ismember(data_pwelch.part2.trialinfo, condition(trl));
-    loc_freq  = ismember(data_pwelch.part2.freq, freq);
-    loc_label = ismember(data_pwelch.part2.label, label);
-    
-    psd = squeeze(data_pwelch.part2.powspctrm(loc_trl,loc_label, ...        % extract values of desired channels and frequencies
-                  loc_freq));
-    psd = mean(psd, 1);                                                     % average over channels
-    T(2*dyad, col{trl}) = num2cell(psd);
-  end
+
+  T_single.participant(2*dyad - 1)   = {sprintf('%d_1', dyadNum)};          % set participants identifier in all tables
+  T_single.participant(2*dyad)       = {sprintf('%d_2', dyadNum)};
+  T_dual.participant(2*dyad - 1)  = {sprintf('%d_1', dyadNum)};
+  T_dual.participant(2*dyad)      = {sprintf('%d_2', dyadNum)};
+
+  waitbar(dyad/numOfFiles, f, 'Please wait...');                            % spread the psd results into the three different tables
+  % participant 1 -------------------------------------------------------
+  % condition 10
+  loc_trl = ismember(data_pwelch.part1.trialinfo, condition{1});
+  data    = data_pwelch.part1.powspctrm(loc_trl, loc_label, loc_freq);
+  T_single(2*dyad - 1, 2:end) = num2cell(data);
+  % condition [11, 12]
+  loc_trl = ismember(data_pwelch.part1.trialinfo, condition{2});
+  data    = data_pwelch.part1.powspctrm(loc_trl, loc_label, loc_freq);
+  T_dual(2*dyad - 1, 2:end) = num2cell(nanmean(data, 1));
+
+  % participant 2 -------------------------------------------------------
+  % condition 10
+  loc_trl = ismember(data_pwelch.part2.trialinfo, condition{1});
+  data    = data_pwelch.part2.powspctrm(loc_trl, loc_label, loc_freq);
+  T_single(2*dyad, 2:end) = num2cell(data);
+  % condition [11, 12]
+  loc_trl = ismember(data_pwelch.part2.trialinfo, condition{2});
+  data    = data_pwelch.part2.powspctrm(loc_trl, loc_label, loc_freq);
+  T_dual(2*dyad, 2:end) = num2cell(nanmean(data, 1));
 end
 
 close(f);
-clear dyadNum condition loc_trl loc_freq loc_label col f dyad trl ...
-      numOfFiles fileList srcPath data_pwelch numOfTrials label freq psd
+clear dyadNum condition loc_trl loc_freq f dyad numOfFiles fileList ...
+      srcPath data_pwelch data loc_label
 
 % -------------------------------------------------------------------------
 % export itpc table into spreadsheet
 % -------------------------------------------------------------------------
-fprintf('Export of PSD table into a xls spreadsheet...\n');
+fprintf('Export of PSD tables into a xls spreadsheet...\n');
 
-writetable(T, xlsFile, 'Sheet', 'C3-Cz-C4');
+writetable(T_single, xlsFile, 'Sheet', 'Single');
+writetable(T_dual, xlsFile, 'Sheet', 'Dual');
 
 % -------------------------------------------------------------------------
 % clear workspace
 % -------------------------------------------------------------------------
-clear xlsFile T
+clear xlsFile T_single T_dual
