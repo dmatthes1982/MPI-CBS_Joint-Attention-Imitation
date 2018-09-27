@@ -127,7 +127,8 @@ numOfFiles   = length(fileList);
 listOfPart = zeros(numOfFiles, 1);
 
 for i = 1:1:numOfFiles
-  listOfPart(i) = sscanf(fileList{i}, 'JAI_d%d_08a_itpc_010.mat');          % generate a list of all available numbers of dyads
+  listOfPart(i) = sscanf(fileList{i}, ['JAI_d%d_08a_itpc_' sessionStr ...   % generate a list of all available numbers of dyads
+                                        '.mat']);
 end
 
 listOfPartStr = cell(numOfFiles, 2);                                        % prepare a cell array with all possible options for the following list dialog
