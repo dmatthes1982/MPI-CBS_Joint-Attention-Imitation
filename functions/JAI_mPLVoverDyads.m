@@ -69,7 +69,8 @@ while selection == false
     cprintf([1,0.5,0], 'Wrong input!\n');
   else
     selection = true;
-    listOfDyads = x;
+    listOfDyads = unique(x);
+    numOfDyads  = length(listOfDyads);
   end
 end
 fprintf('\n');
@@ -79,10 +80,10 @@ fprintf('\n');
 % -------------------------------------------------------------------------
 data_mplv.avgData.trialinfo = generalDefinitions.condNum;
 
-data{1, length(listOfDyads)} = [];
-trialinfo{1, length(listOfDyads)} = []; 
+data{1, numOfDyads} = [];
+trialinfo{1, numOfDyads} = [];
 
-for i=1:1:length(listOfDyads)
+for i=1:1:numOfDyads
   filename = sprintf('JAI_d%02d_07b_mplv%s_%03d.mat', listOfDyads(i), ...
                     fileSuffix, session);
   file = strcat(path, filename);
@@ -104,17 +105,17 @@ fprintf('\n');
 data = fixTrialOrder( data, trialinfo, generalDefinitions.condNum, ...
                       listOfDyads );
 
-for j=1:1:length(listOfDyads)
+for j=1:1:numOfDyads
   data{j} = cat(3, data{j}{:});
 end
-if length(listOfDyads) > 1
+if numOfDyads > 1
   data = cat(4, data{:});
 end
 
 % -------------------------------------------------------------------------
 % Estimate averaged phase locking value (over dyads)
 % ------------------------------------------------------------------------- 
-if length(listOfDyads) > 1
+if numOfDyads > 1
   data = nanmean(data, 4);
 else
   data = data{1};

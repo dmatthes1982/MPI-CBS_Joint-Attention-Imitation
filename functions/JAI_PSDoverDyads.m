@@ -54,7 +54,8 @@ while selection == false
     cprintf([1,0.5,0], 'Wrong input!\n');
   else
     selection = true;
-    listOfDyads = x;
+    listOfDyads = unique(x);
+    numOfDyads  = length(listOfDyads);
   end
 end
 fprintf('\n');
