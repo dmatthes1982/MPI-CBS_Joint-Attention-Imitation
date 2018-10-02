@@ -139,7 +139,6 @@ listOfPartStr(:,2) = cellfun(@(x) sprintf('%d_2', x), ...
 
 part = listdlg('ListString', listOfPartStr);                                % open the dialog window --> the user can select the participants of interest
 
-
 listOfPartBool(:,1) = ismember(1:1:numOfFiles, part);                       % transform the user's choise into a binary representation for further use
 listOfPartBool(:,2) = ismember((1:1:numOfFiles) + numOfFiles, part);
 
