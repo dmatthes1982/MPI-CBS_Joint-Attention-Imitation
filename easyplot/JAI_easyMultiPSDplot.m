@@ -146,12 +146,13 @@ hold off;                                                                   % re
 % linked to this axis
 ident                 = ['axh' num2str(round(sum(clock.*1e6)))];            % unique identifier for this axis
 set(gca,'tag',ident);
-info                  = guidata(gcf);
-info.(ident).x        = lay.pos(:, 1);
-info.(ident).y        = lay.pos(:, 2);
-info.(ident).label    = lay.label;
-info.(ident).cfg      = cfg;
-info.(ident).data     = data;
+info                      = guidata(gcf);
+info.(ident).x            = lay.pos(:, 1);
+info.(ident).y            = lay.pos(:, 2);
+info.(ident).label        = lay.label;
+info.(ident).cfg          = cfg;
+info.(ident).cfg.avgelec  = 'no';
+info.(ident).data         = data;
 guidata(gcf, info);
 set(gcf, 'WindowButtonUpFcn', {@ft_select_channel, 'multiple', ...
     true, 'callback', {@select_easyPSDplot}, ...
