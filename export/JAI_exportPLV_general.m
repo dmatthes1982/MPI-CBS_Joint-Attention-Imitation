@@ -153,7 +153,7 @@ dyads       = listOfPart(listOfPartBool);                                   % ge
 fileList    = fileList(listOfPartBool);
 numOfFiles  = length(fileList);
 
-clear sessionStr listOfPart listOfPartStr listOfPartBool i
+clear listOfPart listOfPartStr listOfPartBool i
 
 % -------------------------------------------------------------------------
 % Conditions selection
@@ -176,7 +176,7 @@ fprintf('You have selected the following conditions:\n');
 cellfun(@(x) fprintf('%s, ', x), condMark, 'UniformOutput', false);         % show the identifiers of the selected conditions in the command window
 fprintf('\b\b.\n\n');
 
-clear generalDefinitions condMark part filepath
+clear generalDefinitions part filepath
 
 % -------------------------------------------------------------------------
 % Cluster specification
@@ -212,8 +212,125 @@ fprintf('You have selected the following connections:\n');
 cellfun(@(x) fprintf('%s, ', x), connections, 'UniformOutput', false);      % show the identifiers of the selected connections in the command window
 fprintf('\b\b.\n\n');
               
-clear data_mplv label numOfChan connMatrix row col part
+clear data_mplv numOfChan connMatrix row col part i label_x label_y
 
 % -------------------------------------------------------------------------
-% Identifier selection
+% Identifier specification
+% Generate xls file
 % -------------------------------------------------------------------------
+fprintf('<strong>Identifier specification...</strong>\n');
+desPath = [path 'DualEEG_JAI_results/PLV_export/general/' sessionStr '/'];  % destination path
+
+if ~exist(desPath, 'dir')                                                   % generate session dir, if not exist
+  mkdir(desPath);
+end
+
+template_file = [path 'DualEEG_JAI_templates/' ...                          % template file
+                  'PLV_export_general_template.xls'];
+
+selection = false;
+while selection == false
+  identifier = inputdlg(['Specify file identifier (use only letters '...
+                         'and/or numbers):'], 'Identifier specification');
+  if ~all(isstrprop(identifier{1}, 'alphanum'))                             % check if identifier is valid
+    cprintf([1,0.5,0], ['Use only letters and or numbers for the file '...
+                        'identifier\n']);
+  else
+    xlsFile = [desPath 'PLV_general_export_' identifier{1} '_' ...          % build filename
+              sessionStr '.xls'];
+    if exist(xlsFile, 'file')                                               % check if file already exists
+      cprintf([1,0.5,0], 'A file with this identifier exists!');
+      selection2 = false;
+      while selection2 == false
+        fprintf('\nDo you want to overwrite this existing file?\n');        % ask if existing file should be overwritten
+        x = input('Select [y/n]: ','s');
+        if strcmp('y', x)
+          selection2 = true;
+          selection = true;
+          [~] = copyfile(template_file, xlsFile);                           % copy template to destination
+          fprintf('\n');
+        elseif strcmp('n', x)
+          selection2 = true;
+          fprintf('\n');
+        else
+          cprintf([1,0.5,0], 'Wrong input!\n');
+          selection2 = false;
+        end
+      end
+    else
+      selection = true;
+      [~] = copyfile(template_file, xlsFile);                               % copy template to destination
+    end
+  end
+end
+
+fprintf('Your destination file is:\n');
+fprintf('%s\n\n', xlsFile);
+
+clear desPath template_file path identifier selection selection2 x ...
+      sessionStr
+
+% -------------------------------------------------------------------------
+% Generate table templates
+% -------------------------------------------------------------------------
+numOfTrials = length(condNum);
+clusterSize = length(connections);
+condMark = cellfun(@(x) erase(x, ' '), condMark, 'UniformOutput', false);
+
+cell_array      = num2cell(NaN(numOfFiles, numOfTrials + 1));
+cell_array(:,1) = num2cell(dyads);
+Tdata           = cell2table(cell_array);                                   % create data table
+Tdata.Properties.VariableNames = ['participant' condMark];
+
+cell_array      = cell(clusterSize, 2);
+cell_array(:,1) = connections;
+cell_array{1,2} = passband;
+Tclusterinfo    = cell2table(cell_array);                                   % create cluster_info table
+Tclusterinfo.Properties.VariableNames = {'cluster', 'passband'};
+
+clear clusterSize cell_array passband condMark connections
+
+% -------------------------------------------------------------------------
+% Import plv values into tables
+% -------------------------------------------------------------------------
+fprintf('<strong>Import of PLV values...</strong>\n\n');
+f = waitbar(0,'Please wait...');
+
+for dyad = 1:1:numOfFiles
+  load([srcPath fileList{dyad}]);                                           % load data
+  eval(['data_mplv=' sprintf('data_mplv_%s', suffix) ';']);                 % transfrom passband specific variable name into the common term data_mplv
+  eval(['clear ' sprintf('data_mplv_%s', suffix)]);
+
+  if any(~strcmp(data_mplv.dyad.label, label))
+    error(['Error with dyad %d. The channels are not in the correct ' ...
+            'order!\n'], dyads(dyad));
+  end
+
+  for trl=1:1:numOfTrials
+    waitbar(((dyad-1)*numOfTrials + trl)/(numOfFiles * numOfTrials), ...
+                  f, 'Please wait...');
+    loc_trl = ismember(data_mplv.dyad.trialinfo, condNum(trl));
+    if any(loc_trl)
+      Tdata(dyad, trl + 1) = {mean(data_mplv.dyad.mPLV{trl}(connMatrixBool))};
+    end
+  end
+
+  clear data_mplv
+end
+
+close(f);
+clear f dyad numOfFiles srcPath fileList suffix label dyads trl ...
+      numOfTrials loc_trl condNum connMatrixBool data_mplv
+
+% -------------------------------------------------------------------------
+% Export itpc table into spreadsheet
+% -------------------------------------------------------------------------
+fprintf('<strong>Export of PLV table into a xls spreadsheet...</strong>\n');
+
+writetable(Tdata, xlsFile, 'Sheet', 'data');
+writetable(Tclusterinfo, xlsFile, 'Sheet', 'cluster_info');
+
+% -------------------------------------------------------------------------
+% Clear workspace
+% -------------------------------------------------------------------------
+clear xlsFile Tdata Tclusterinfo
