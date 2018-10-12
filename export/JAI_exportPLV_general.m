@@ -112,7 +112,8 @@ suffix    = {'2Hz', 'theta', 'alpha', '20Hz', 'beta', 'gamma'};
 
 part = listdlg('PromptString',' Select passband...', ...                    % open the dialog window --> the user can select the passband of interest
                 'SelectionMode', 'single', ...
-                'ListString', passband);
+                'ListString', passband, ...
+                'ListSize', [220, 300] );
               
 passband  = passband{part};
 suffix    = suffix{part};
@@ -139,7 +140,8 @@ listOfPartStr = cellfun(@(x) sprintf('%d', x), ...                          % pr
                         num2cell(listOfPart), 'UniformOutput', false);
 
 part = listdlg('PromptString',' Select dyads...', ...                       % open the dialog window --> the user can select the participants of interest
-                'ListString', listOfPartStr);
+                'ListString', listOfPartStr, ...
+                'ListSize', [220, 300] );
 
 listOfPartBool = ismember(1:1:numOfFiles, part);                            % transform the user's choise into a binary representation for further use
 
@@ -167,7 +169,8 @@ condMark  = generalDefinitions.condMark(1, :);                              % ex
 condNum     = generalDefinitions.condNum;
 
 part = listdlg('PromptString',' Select conditions...', ...                  % open the dialog window --> the user can select the conditions of interest
-                'ListString', condMark);
+                'ListString', condMark, ...
+                'ListSize', [220, 300] );
 
 condMark  = condMark(part);
 condNum   = condNum(part);
@@ -182,6 +185,25 @@ clear generalDefinitions part filepath
 % Cluster specification
 % -------------------------------------------------------------------------
 fprintf('<strong>Cluster specification...</strong>\n');
+selection = false;
+while selection == false
+  fprintf('Available options:\n');
+  fprintf('[1] - Export the cluster average\n')
+  fprintf('[2] - Export the values of single connections\n'),
+  x = input('Option: ');
+  switch x
+    case 1
+      selection = true;
+      mode = 'cluster';
+    case 2
+      selection = true;
+      mode = 'single';
+    otherwise
+      selection = false;
+      cprintf([1,0.5,0], 'Wrong input!\n');
+  end
+end
+
 load([srcPath fileList{1}]);                                                % load data of first dyad
 
 eval(['data_mplv=' sprintf('data_mplv_%s', suffix) ';']);                   % transfrom passband specific variable name into the common term data_mplv
@@ -195,8 +217,15 @@ label_y = repmat(label', numOfChan, 1);
 connMatrix = cellfun(@(x,y) [x '_' y], label_x, label_y, ...
                 'UniformOutput', false);
 
-part = listdlg('PromptString',' Select connections...', ...                 % open the dialog window --> the user can select the connections of interest
-                'ListString', connMatrix);
+if strcmp(mode, 'cluster')
+  prompt_string = 'Select cluster members...';
+elseif strcmp(mode, 'single')
+  prompt_string = 'Select connections of interest...';
+end
+
+part = listdlg('PromptString', prompt_string, ...                           % open the dialog window --> the user can select the connections of interest
+                'ListString', connMatrix, ...
+                'ListSize', [220, 300] );
 
 row = mod(part, numOfChan);
 col = ceil(part/numOfChan);
@@ -208,11 +237,12 @@ end
 
 connections = connMatrix(connMatrixBool);
 
-fprintf('You have selected the following connections:\n');
+fprintf('\nYou have selected the following connections:\n');
 cellfun(@(x) fprintf('%s, ', x), connections, 'UniformOutput', false);      % show the identifiers of the selected connections in the command window
 fprintf('\b\b.\n\n');
               
-clear data_mplv numOfChan connMatrix row col part i label_x label_y
+clear data_mplv numOfChan connMatrix row col part i label_x label_y ...
+      selection x prompt_string
 
 % -------------------------------------------------------------------------
 % Identifier specification
@@ -275,20 +305,39 @@ clear desPath template_file path identifier selection selection2 x ...
 % -------------------------------------------------------------------------
 numOfTrials = length(condNum);
 clusterSize = length(connections);
-condMark = cellfun(@(x) erase(x, ' '), condMark, 'UniformOutput', false);
+condMark    = cellfun(@(x) erase(x, ' '), condMark, 'UniformOutput', false);
+numOfCond   = length(condMark);
 
-cell_array      = num2cell(NaN(numOfFiles, numOfTrials + 1));
-cell_array(:,1) = num2cell(dyads);
-Tdata           = cell2table(cell_array);                                   % create data table
-Tdata.Properties.VariableNames = ['participant' condMark];
-
-cell_array      = cell(clusterSize, 2);
+cell_array      = cell(clusterSize, 3);
 cell_array(:,1) = connections;
 cell_array{1,2} = passband;
-Tclusterinfo    = cell2table(cell_array);                                   % create cluster_info table
-Tclusterinfo.Properties.VariableNames = {'cluster', 'passband'};
+cell_array{1,3} = mode;
+Tinfo    = cell2table(cell_array);                                          % create cluster_info table
+if strcmp(mode, 'cluster')
+  Tinfo.Properties.VariableNames = {'cluster', 'passband', 'mode'};
+elseif strcmp(mode, 'single')
+  Tinfo.Properties.VariableNames = {'connections', 'passband', 'mode'};
+end
 
-clear clusterSize cell_array passband condMark connections
+if strcmp(mode, 'cluster')
+  cell_array      = num2cell(NaN(numOfFiles, numOfTrials + 1));
+  cell_array(:,1) = num2cell(dyads);
+  Tdata           = cell2table(cell_array);                                 % create data table
+  Tdata.Properties.VariableNames = ['dyad' condMark];
+elseif strcmp(mode, 'single')
+  cell_array      = num2cell(NaN(numOfFiles, numOfTrials * clusterSize + 1));
+  cell_array(:,1) = num2cell(dyads);
+  Tdata           = cell2table(cell_array);                                 % create data table
+  condMark        = repmat(condMark, clusterSize, 1);
+  condMark        = reshape(condMark,1,[]);
+  connections     = repmat(connections, 1, numOfCond);
+  connections     = reshape(connections,1,[]);
+  headline        = cellfun(@(x,y) [x '_' y], condMark, connections, ...
+                            'UniformOutput', false);
+  Tdata.Properties.VariableNames = ['dyad' headline];
+end
+
+clear cell_array passband condMark connections headline numOfCond
 
 % -------------------------------------------------------------------------
 % Import plv values into tables
@@ -311,7 +360,15 @@ for dyad = 1:1:numOfFiles
                   f, 'Please wait...');
     loc_trl = ismember(data_mplv.dyad.trialinfo, condNum(trl));
     if any(loc_trl)
-      Tdata(dyad, trl + 1) = {mean(data_mplv.dyad.mPLV{trl}(connMatrixBool))};
+      if strcmp(mode, 'cluster')
+        Tdata(dyad, trl + 1) = ...
+                          {mean(data_mplv.dyad.mPLV{trl}(connMatrixBool))};
+      elseif strcmp(mode, 'single')
+        start = (trl - 1) * clusterSize + 2;
+        stop  = start + clusterSize - 1;
+        Tdata(dyad, start:stop) = ...
+                       num2cell(data_mplv.dyad.mPLV{trl}(connMatrixBool))';
+      end
     end
   end
 
@@ -320,17 +377,18 @@ end
 
 close(f);
 clear f dyad numOfFiles srcPath fileList suffix label dyads trl ...
-      numOfTrials loc_trl condNum connMatrixBool data_mplv
+      numOfTrials loc_trl condNum connMatrixBool data_mplv clusterSize ...
+      start stop mode
 
 % -------------------------------------------------------------------------
 % Export itpc table into spreadsheet
 % -------------------------------------------------------------------------
 fprintf('<strong>Export of PLV table into a xls spreadsheet...</strong>\n');
 
+writetable(Tinfo, xlsFile, 'Sheet', 'info');
 writetable(Tdata, xlsFile, 'Sheet', 'data');
-writetable(Tclusterinfo, xlsFile, 'Sheet', 'cluster_info');
 
 % -------------------------------------------------------------------------
 % Clear workspace
 % -------------------------------------------------------------------------
-clear xlsFile Tdata Tclusterinfo
+clear xlsFile Tdata Tinfo
