@@ -256,7 +256,7 @@ if ~exist(desPath, 'dir')                                                   % ge
 end
 
 template_file = [path 'DualEEG_JAI_templates/' ...                          % template file
-                  'PLV_export_general_template.xls'];
+                  'general/Export_template.xls'];
 
 selection = false;
 while selection == false
