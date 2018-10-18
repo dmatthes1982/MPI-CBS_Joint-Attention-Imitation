@@ -166,7 +166,7 @@ load(sprintf('%s/../general/JAI_generalDefinitions.mat', filepath), ...     % lo
      'generalDefinitions');
 
 condMark  = generalDefinitions.condMark(1, :);                              % extract condition identifiers
-condNum     = generalDefinitions.condNum;
+condNum   = generalDefinitions.condNum;
 
 part = listdlg('PromptString',' Select conditions...', ...                  % open the dialog window --> the user can select the conditions of interest
                 'ListString', condMark, ...
