@@ -362,12 +362,12 @@ for dyad = 1:1:numOfFiles
     if any(loc_trl)
       if strcmp(mode, 'cluster')
         Tdata(dyad, trl + 1) = ...
-                          {mean(data_mplv.dyad.mPLV{trl}(connMatrixBool))};
+                   {mean(data_mplv.dyad.mPLV{loc_trl}(connMatrixBool))};
       elseif strcmp(mode, 'single')
         start = (trl - 1) * clusterSize + 2;
         stop  = start + clusterSize - 1;
         Tdata(dyad, start:stop) = ...
-                       num2cell(data_mplv.dyad.mPLV{trl}(connMatrixBool))';
+                   num2cell(data_mplv.dyad.mPLV{loc_trl}(connMatrixBool))';
       end
     end
   end
