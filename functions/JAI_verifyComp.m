@@ -29,25 +29,25 @@ function [ dataEOGComp ] = corrComp( dataEOGComp, dataICAcomp )
 
 numOfElements = 1:length(dataEOGComp.elements);
 
-cfg               = [];
-cfg.layout        = 'mpi_customized_acticap32.mat';
-cfg.viewmode      = 'component';
-cfg.zlim          = 'maxabs';
-cfg.channel       = find(ismember(dataICAcomp.label, dataEOGComp.elements))';
-cfg.blocksize     = 30;
-cfg.showcallinfo  = 'no';
-
-ft_info off;
-ft_databrowser(cfg, dataICAcomp);
-set(gcf, 'Position', [0, 0, 1000, 500]);
-movegui(gcf, 'center');
-colormap jet;
-ft_info on;
-
-commandwindow;
-selection = false;
-
 if ~isempty(numOfElements)
+  cfg               = [];
+  cfg.layout        = 'mpi_customized_acticap32.mat';
+  cfg.viewmode      = 'component';
+  cfg.zlim          = 'maxabs';
+  cfg.channel       = find(ismember(dataICAcomp.label, dataEOGComp.elements))';
+  cfg.blocksize     = 30;
+  cfg.showcallinfo  = 'no';
+
+  ft_info off;
+  ft_databrowser(cfg, dataICAcomp);
+  set(gcf, 'Position', [0, 0, 1000, 500]);
+  movegui(gcf, 'center');
+  colormap jet;
+  ft_info on;
+
+  commandwindow;
+  selection = false;
+
   while selection == false
     fprintf('Do you want to deselect some of theses components?\n')
     for i = numOfElements
