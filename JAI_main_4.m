@@ -75,8 +75,9 @@ fprintf('\n');
 end
 
 % Write selected settings to settings file
-file_path = [desPath '00_settings/' sprintf('settings_%s', sessionStr) '.xls'];
-if ~(exist(file_path, 'file') == 2)                                         % check if settings file already exist
+settings_file = [desPath '00_settings/' ...
+                          sprintf('settings_%s', sessionStr) '.xls'];
+if ~(exist(settings_file, 'file') == 2)                                     % check if settings file already exist
   cfg = [];
   cfg.desFolder   = [desPath '00_settings/'];
   cfg.type        = 'settings';
@@ -85,13 +86,11 @@ if ~(exist(file_path, 'file') == 2)                                         % ch
   JAI_createTbl(cfg);                                                       % create settings file
 end
 
-T = readtable(file_path);                                                   % update settings table
+T = readtable(settings_file);                                               % update settings table
 warning off;
 T.ICAcorrVal1(numOfPart) = threshold(1);
 T.ICAcorrVal2(numOfPart) = threshold(2);
 warning on;
-delete(file_path);
-writetable(T, file_path);
 
 for i = numOfPart
   cfg             = [];
@@ -139,7 +138,24 @@ for i = numOfPart
   fprintf('%s ...\n', file_path);
   JAI_saveData(cfg, 'data_eogcomp', data_eogcomp);
   fprintf('Data stored!\n\n');
-    
+
+  % add eye-artifact related components to the settings file
+  if isempty(data_eogcomp.part1.elements)
+    EOGcompPart1 = {'---'};
+  else
+    EOGcompPart1 = {strjoin(data_eogcomp.part1.elements,',')};
+  end
+  if isempty(data_eogcomp.part2.elements)
+    EOGcompPart2 = {'---'};
+  else
+    EOGcompPart2 = {strjoin(data_eogcomp.part2.elements,',')};
+  end
+  warning off;
+  T.EOGcompPart1(i) = EOGcompPart1;
+  T.EOGcompPart2(i) = EOGcompPart2;
+  warning on;
+
+  % load preprocessed data
   cfg             = [];
   cfg.srcFolder   = strcat(desPath, '02_preproc/');
   cfg.filename    = sprintf('JAI_d%02d_02_preproc', i);
@@ -148,7 +164,7 @@ for i = numOfPart
   fprintf('Load preprocessed data...\n');
   JAI_loadData( cfg );
   
-  % Remove eye artifacts
+  % remove eye artifacts
   data_eyecor = JAI_removeEOGArt(data_eogcomp, data_preproc);
   
   clear data_eogcomp data_preproc
@@ -170,5 +186,10 @@ for i = numOfPart
   clear data_eyecor
 end
 
+% store settings table
+delete(settings_file);
+writetable(T, settings_file);
+
 %% clear workspace
-clear file_path cfg sourceList numOfSources i threshold selection x T
+clear file_path cfg sourceList numOfSources i threshold selection x T ...
+      settings_file EOGcompPart1 EOGcompPart2

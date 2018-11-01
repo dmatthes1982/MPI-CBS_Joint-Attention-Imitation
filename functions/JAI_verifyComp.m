@@ -46,32 +46,37 @@ ft_info on;
 
 commandwindow;
 selection = false;
-    
-while selection == false
-  fprintf('Do you want to deselect some of theses components?\n')
-  for i = numOfElements
-    fprintf('[%d] - %s\n', i, dataEOGComp.elements{i});
-  end
-  fprintf('Comma-seperate your selection and put it in squared brackets!\n');
-  fprintf('Press simply enter if you do not want to deselect any component!\n');
-  x = input('\nPlease make your choice! (i.e. [1,2,3]): ');
 
-  if ~isempty(x)
-    if ~all(ismember(x, numOfElements))
-      selection = false;
-      fprintf('At least one of the selected components does not exist.\n');
+if ~isempty(numOfElements)
+  while selection == false
+    fprintf('Do you want to deselect some of theses components?\n')
+    for i = numOfElements
+      fprintf('[%d] - %s\n', i, dataEOGComp.elements{i});
+    end
+    fprintf('Comma-seperate your selection and put it in squared brackets!\n');
+    fprintf('Press simply enter if you do not want to deselect any component!\n');
+    x = input('\nPlease make your choice! (i.e. [1,2,3]): ');
+
+    if ~isempty(x)
+      if ~all(ismember(x, numOfElements))
+        selection = false;
+        fprintf('At least one of the selected components does not exist.\n');
+      else
+        selection = true;
+        fprintf('Component(s) %d will not used for eye artifact correction\n', x);
+
+        dataEOGComp.elements = dataEOGComp.elements(~ismember(numOfElements,x));
+      end
     else
       selection = true;
-      fprintf('Component(s) %d will not used for eye artifact correction\n', x);
-      
-      dataEOGComp.elements = dataEOGComp.elements(~ismember(numOfElements,x));
+      fprintf('No Component will be rejected.\n');
     end
-  else
-    selection = true;
-    fprintf('No Component will be rejected.\n');
   end
-end
 
-close(gcf);
+  close(gcf);
+else
+  cprintf([1,0.5,0],'No component has passed the selected correlation threshold. Nothing to verify!\n');
+  cprintf([1,0.5,0],'IMPORTANT: The following cleaning operation will keep the data as it is!\n');
+end
 
 end
