@@ -137,13 +137,19 @@ for i = numOfPart
   fprintf('Load raw data...\n');
   JAI_loadData( cfg );
   
-  % Concatenated raw trials to a continuous stream
+  % concatenated raw trials to a continuous stream
   data_continuous = JAI_concatData( data_raw );
 
   fprintf('\n');
 
+  % detect noisy channels automatically
+  data_noisy = JAI_estNoisyChan( data_continuous );
+
+  fprintf('\n');
+
   % select corrupted channels
-  data_badchan = JAI_selectBadChan( data_continuous );
+  data_badchan = JAI_selectBadChan( data_continuous, data_noisy );
+  clear data_noisy
   
   % export the bad channels in a *.mat file
   cfg             = [];
@@ -201,4 +207,4 @@ writetable(T, settings_file);
 
 %% clear workspace
 clear file_path cfg sourceList numOfSources i T badChanPart1 ...
-      badChanPart2 settings_file
+      badChanPart2 settings_file prestim

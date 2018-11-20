@@ -5,9 +5,9 @@ function [ data ] = JAI_phaseLockVal( cfg, data )
 % Use as
 %   [ data ] = JAI_phaseLockVal( cfg, data )
 %
-% where the input data have to be the result from JAI_HILBERTPHASE
+% where the input data has to be the result of JAI_HILBERTPHASE
 %
-% The configuration options are
+% The configuration option is
 %   cfg.winlen    = length of window over which the PLV will be calculated. (default: 1 sec)
 %                   minimum = 1 sec
 % 
@@ -29,7 +29,7 @@ function [ data ] = JAI_phaseLockVal( cfg, data )
 %
 % See also JAI_DATASTRUCTURE, JAI_HILBERTPHASE
 
-% Copyright (C) 2017, Daniel Matthes, MPI CBS 
+% Copyright (C) 2017-2018, Daniel Matthes, MPI CBS
 
 % -------------------------------------------------------------------------
 % Get config option

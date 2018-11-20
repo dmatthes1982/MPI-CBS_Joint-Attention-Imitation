@@ -62,7 +62,7 @@ else                                                                        % el
   end
 end
 
-if part < 1 || part > 2                                                     % check cfg.participant definition
+if ~ismember(part, [1, 2])                                                  % check cfg.participant definition
   error('cfg.part has to be 1 or 2');
 end
 

@@ -1,20 +1,32 @@
-function [ data_badchan ] = JAI_selectBadChan( data_raw )
+function [ data_badchan ] = JAI_selectBadChan( data_raw, data_noisy )
 % JAI_SELECTBADCHAN can be used for selecting bad channels visually. The
-% data will be presented in the fieldtrip databrowser view and the bad
-% channels will be marked in the JAI_CHANNELCHECKBOX gui. The function
-% returns a fieldtrip-like datastructure which includes only a cell array 
-% for each participant with the selected bad channels.
+% data will be presented in two different ways. The first fieldtrip
+% databrowser view shows the time course of each channel. The second view
+% shows the total power of each channel and is highlighting outliers. The
+% bad channels can be marked within the JAI_CHANNELCHECKBOX gui.
 %
 % Use as
-%   [ data_badchan ] = JAI_selectBadChan( data_raw )
+%   [ data_badchan ] = JAI_selectBadChan( data_raw, data_noisy )
 %
-% where the input has to be raw data
+% where the first input has to be concatenated raw data and second one has
+% to be the rsult of JAI_ESTNOISYCHAN.
 %
 % The function requires the fieldtrip toolbox
 %
-% SEE also JAI_DATABROWSER and JAI_CHANNELCHECKBOX
+% SEE also JAI_DATABROWSER, JAI_ESTNOISYCHAN and JAI_CHANNELCHECKBOX
 
 % Copyright (C) 2018, Daniel Matthes, MPI CBS
+
+% -------------------------------------------------------------------------
+% Check data
+% -------------------------------------------------------------------------
+if numel(data_raw.part1.trialinfo) ~= 1 || numel(data_raw.part1.trialinfo) ~= 1
+  error('First dataset has more than one trial. Data has to be concatenated!');
+end
+
+if ~isfield(data_noisy.part1, 'totalpow')
+  error('Second dataset has to be the result of JAI_ESTNOISYCHAN!');
+end
 
 % -------------------------------------------------------------------------
 % Databrowser settings
@@ -29,9 +41,13 @@ cfg.plotevents  = 'no';
 % Selection of bad channels
 % -------------------------------------------------------------------------
 fprintf('<strong>Select bad channels of participant %d...</strong>\n', cfg.part);
+JAI_easyTotalPowerBarPlot( cfg, data_noisy );
+fig = gcf;                                                                  % default position is [560 528 560 420]
+fig.Position = [0 528 560 420];                                             % --> first figure will be placed on the left side of figure 2
 JAI_databrowser( cfg, data_raw );
 badLabel = JAI_channelCheckbox();
 close(gcf);                                                                 % close also databrowser view when the channelCheckbox will be closed
+close(gcf);                                                                 % close also total power diagram when the channelCheckbox will be closed
 if any(strcmp(badLabel, 'TP10'))
   warning backtrace off;
   warning(['You have repaired ''TP10'', accordingly selecting linked ' ...
@@ -49,7 +65,9 @@ if length(badLabel) >= 2
   warning backtrace on;
 end
 fprintf('\n');
-  
+
+data_badchan.part1 = data_noisy.part1;
+
 if ~isempty(badLabel)
   data_badchan.part1.badChan = data_raw.part1.label(ismember(...
                                           data_raw.part1.label, badLabel));
@@ -60,9 +78,13 @@ end
 cfg.part      = 2;
   
 fprintf('<strong>Select bad channels of participant %d...</strong>\n', cfg.part);
+JAI_easyTotalPowerBarPlot( cfg, data_noisy );
+fig = gcf;                                                                  % default position is [560 528 560 420]
+fig.Position = [0 528 560 420];                                             % --> first figure will be placed on the left side of figure 2
 JAI_databrowser( cfg, data_raw );
 badLabel = JAI_channelCheckbox();
 close(gcf);                                                                 % close also databrowser view when the channelCheckbox will be closed
+close(gcf);                                                                 % close also total power diagram when the channelCheckbox will be closed
 if any(strcmp(badLabel, 'TP10'))
   warning backtrace off;
   warning(['You have repaired ''TP10'', accordingly selecting linked ' ...
@@ -80,7 +102,9 @@ if length(badLabel) >= 2
   warning backtrace on;
 end
 fprintf('\n');
-  
+
+data_badchan.part2 = data_noisy.part2;
+
 if ~isempty(badLabel)
   data_badchan.part2.badChan = data_raw.part2.label(ismember(...
                                           data_raw.part2.label, badLabel));

@@ -4,7 +4,7 @@ function [ data ] = JAI_preprocessing( cfg, data )
 % Use as
 %   [ data ] = JAI_preprocessing(cfg, data)
 %
-% where the input data have to be the result from JAI_IMPORTATASET
+% where the input data has to be the result of JAI_IMPORTATASET
 %
 % The configuration options are
 %   cfg.bpfreq            = passband range [begin end] (default: [0.1 48])
@@ -42,7 +42,7 @@ end
 cfgBP                   = [];
 cfgBP.bpfilter          = 'yes';                                            % use bandpass filter
 cfgBP.bpfreq            = bpfreq;                                           % bandpass range  
-cfgBP.bpfilttype        = bpfilttype;                                       % bandpass filter type = fir      
+cfgBP.bpfilttype        = bpfilttype;                                       % bandpass filter type
 cfgBP.bpinstabilityfix  = bpinstabilityfix;                                 % deal with filter instability
 cfgBP.channel           = 'all';                                            % use all channels
 cfgBP.trials            = 'all';                                            % use all trials
