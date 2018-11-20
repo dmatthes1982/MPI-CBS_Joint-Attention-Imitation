@@ -53,7 +53,9 @@ q3  = sprintf('Q3:          %d', data.quartile(3));
 m   = sprintf('Median:   %d', data.quartile(2));
 q1  = sprintf('Q1:          %d', data.quartile(1));
 iq  = sprintf('IQR:         %d', data.interquartile);
-str = {'Statistic:', '', q3, m, q1, iq, 'Outliers:  > 1.5 * IQR + Q3'};
-annotation('textbox',dim,'String',str,'FitBoxToText','on');
+bp  = sprintf('BP:          %d...%d Hz', data.freqrange{1});
+str = {'Info box:', '', q3, m, q1, iq, 'Outliers:  > 1.5 * IQR + Q3', bp};
+annotation('textbox',dim,'String',str,'FitBoxToText','on',...
+            'BackgroundColor','white');
 
 end

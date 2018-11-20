@@ -380,27 +380,21 @@ if ~isequal(fileNamePre, 0)
     end
   end
 
-  if strcmp(dyadsSpec, 'all')                                               % process all participants
+  if strcmp(dyadsSpec, 'all')                                               % process all dyads
     numOfPart = numOfPrePart;
-  elseif strcmp(dyadsSpec, 'specific')                                      % process specific participants
-    y = sprintf('%d ', numOfPrePart);
+  elseif strcmp(dyadsSpec, 'specific')                                      % process specific dyads
+    listOfPartStr = cellfun(@(x) sprintf('%d', x), ...                      % prepare a cell array with all possible options for the following list dialog
+                        num2cell(numOfPrePart), 'UniformOutput', false);
+
+    fprintf('\nSelection of specific dyads...\n');
     
-    selection = false;
+    sel = listdlg('PromptString',' Select dyads...', ...                    % open the dialog window --> the user can select the dyads of interest
+                'ListString', listOfPartStr, ...
+                'ListSize', [220, 300] );
     
-    while selection == false
-      fprintf('\nThe following participants are available: %s\n', y);
-      fprintf(['Comma-seperate your selection and put it in squared ' ...
-               'brackets!\n']);
-      x = input('\nPlease make your choice! (i.e. [1,2,3]): ');
-      
-      if ~all(ismember(x, numOfPrePart))
-        cprintf([1,0.5,0], 'Wrong input!\n');
-      else
-        selection = true;
-        numOfPart = x;
-      end
-    end
-  elseif strcmp(dyadsSpec, 'new')                                           % process only new participants
+    numOfPart = numOfPrePart(sel);
+    clear listOfPartStr sel
+  elseif strcmp(dyadsSpec, 'new')                                           % process only new dyads
     if session == 0
       numOfPart = numOfPrePart;
     else
@@ -432,7 +426,7 @@ if ~isequal(fileNamePre, 0)
   end
 
   y = sprintf('%d ', numOfPart);
-  fprintf(['\nThe following participants will be processed ' ... 
+  fprintf(['\nThe following dyads will be processed ' ...
          'in the selected part [%d]:\n'],  part);
   fprintf('%s\n\n', y);
 
