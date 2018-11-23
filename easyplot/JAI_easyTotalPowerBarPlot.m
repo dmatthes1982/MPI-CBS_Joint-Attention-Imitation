@@ -36,7 +36,6 @@ end
 % -------------------------------------------------------------------------
 % Create the bar plot
 % -------------------------------------------------------------------------
-
 [pow, index] = sort(data.totalpow);                                         % sort the channels in ascending order
 
 outliers  = data.outliers(index);

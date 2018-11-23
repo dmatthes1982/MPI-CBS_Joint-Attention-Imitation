@@ -9,7 +9,7 @@ function [ data_badchan ] = JAI_selectBadChan( data_raw, data_noisy )
 %   [ data_badchan ] = JAI_selectBadChan( data_raw, data_noisy )
 %
 % where the first input has to be concatenated raw data and second one has
-% to be the rsult of JAI_ESTNOISYCHAN.
+% to be the result of JAI_ESTNOISYCHAN.
 %
 % The function requires the fieldtrip toolbox
 %
