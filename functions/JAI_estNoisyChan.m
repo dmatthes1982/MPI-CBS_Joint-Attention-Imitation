@@ -22,7 +22,7 @@ function [ data_out ] = JAI_estNoisyChan( data_in )
 % -------------------------------------------------------------------------
 % Check data
 % -------------------------------------------------------------------------
-if numel(data_in.part1.trialinfo) ~= 1 || numel(data_in.part1.trialinfo) ~= 1
+if numel(data_in.part1.trialinfo) ~= 1 || numel(data_in.part2.trialinfo) ~= 1
   error('Dataset has more than one trial. Data has to be concatenated!');
 end
 

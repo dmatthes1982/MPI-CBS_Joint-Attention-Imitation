@@ -20,7 +20,7 @@ function [ data_badchan ] = JAI_selectBadChan( data_raw, data_noisy )
 % -------------------------------------------------------------------------
 % Check data
 % -------------------------------------------------------------------------
-if numel(data_raw.part1.trialinfo) ~= 1 || numel(data_raw.part1.trialinfo) ~= 1
+if numel(data_raw.part1.trialinfo) ~= 1 || numel(data_raw.part2.trialinfo) ~= 1
   error('First dataset has more than one trial. Data has to be concatenated!');
 end
 
