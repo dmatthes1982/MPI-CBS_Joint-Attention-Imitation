@@ -35,12 +35,28 @@ for i = 1:1:2
     data = data_in.part2;                                                   % extract data of participant 2
   end
   % -----------------------------------------------------------------------
+  % Re-referencing
+  % -----------------------------------------------------------------------
+  %cfg               = [];
+  %cfg.reref         = 'yes';                                                % enable re-referencing
+  %cfg.refchannel    = {'all', '-V1', '-V2', 'REF'};                         % specify new reference
+  %cfg.implicitref   = 'REF';                                                % add implicit channel 'REF' to the channels
+  %cfg.refmethod     = 'avg';                                                % average over selected electrodes
+  %cfg.channel       = {'all', '-V1', '-V2'};                                % use all channels
+  %cfg.trials        = 'all';                                                % use all trials
+  %cfg.feedback      = 'no';                                                 % feedback should not be presented
+  %cfg.showcallinfo  = 'no';                                                 % prevent printing the time and memory after each function call
+
+  %fprintf('Re-referencing to CAR...\n');
+  %data = ft_preprocessing(cfg, data);
+
+  % -----------------------------------------------------------------------
   % Estimate power spectrum
   % -----------------------------------------------------------------------
   cfg                 = [];
   cfg.method          = 'mtmfft';
   cfg.output          = 'pow';
-  cfg.channel           = {'all', '-V1', '-V2'};                            % calculate spectrum for all channels, except V1 and V2
+  cfg.channel         = {'all', '-V1', '-V2' '-REF'};                       % calculate spectrum for all channels, except V1, V2 and REF
   cfg.trials          = 'all';                                              % calculate spectrum for every trial
   cfg.keeptrials      = 'yes';                                              % do not average over trials
   cfg.pad             = 'nextpow2';                                         % do not use padding
