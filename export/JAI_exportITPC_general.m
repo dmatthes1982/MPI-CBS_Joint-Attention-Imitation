@@ -44,7 +44,7 @@ clear newPaths
 % Session selection
 % -------------------------------------------------------------------------
 fprintf('\n<strong>Session selection...</strong>\n');
-srcPath = [path 'DualEEG_JAI_processedData/'];
+srcPath = [path 'DualEEG_JAI_processedDataOld/'];
 srcPath = [srcPath  '08a_itpc/'];
 
 fileList     = dir([srcPath, 'JAI_d*_08a_itpc_*.mat']);                     % determine all avaible sessions

@@ -6,7 +6,7 @@ function [ num ] = JAI_getSessionNum( cfg )
 %   [ num ] = JAI_getSessionNum( cfg )
 %
 % The configuration options are
-%   cfg.desFolder   = destination folder (default: '/data/pt_01826/eegData/DualEEG_JAI_processedData/')
+%   cfg.desFolder   = destination folder (default: '/data/pt_01826/eegData/DualEEG_JAI_processedDataOld/')
 %   cfg.subFolder   = name of subfolder (default: '01a_raw/')
 %   cfg.filename    = filename (default: 'JAI_d01_01a_raw')
 %
@@ -17,7 +17,7 @@ function [ num ] = JAI_getSessionNum( cfg )
 % -------------------------------------------------------------------------
 % Get config options
 % -------------------------------------------------------------------------
-desFolder   = ft_getopt(cfg, 'desFolder', '/data/pt_01826/eegData/DualEEG_JAI_processedData/');
+desFolder   = ft_getopt(cfg, 'desFolder', '/data/pt_01826/eegData/DualEEG_JAI_processedDataOld/');
 subFolder   = ft_getopt(cfg, 'subFolder', '01a_raw/');
 filename    = ft_getopt(cfg, 'filename', 'JAI_d01_01a_raw');
 

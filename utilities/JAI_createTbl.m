@@ -7,7 +7,7 @@ function JAI_createTbl( cfg )
 %   JAI_createTbl( cfg )
 %
 % The configuration options are
-%   cfg.desFolder   = destination folder (default: '/data/pt_01826/eegData/DualEEG_JAI_processedData/00_settings/')
+%   cfg.desFolder   = destination folder (default: '/data/pt_01826/eegData/DualEEG_JAI_processedDataOld/00_settings/')
 %   cfg.type        = type of documentation file (options: 'settings', 'plv', 'itpc')
 %   cfg.param       = additional params for type 'plv' (options: '2Hz', 'theta', 'alpha', '20Hz', 'beta', 'gamma');
 %   cfg.sessionStr  = number of session, format: %03d, i.e.: '003' (default: '001')
@@ -25,7 +25,7 @@ function JAI_createTbl( cfg )
 % Get config options
 % -------------------------------------------------------------------------
 desFolder   = ft_getopt(cfg, 'desFolder', ...
-          '/data/pt_01826/eegData/DualEEG_JAI_processedData/00_settings/');
+          '/data/pt_01826/eegData/DualEEG_JAI_processedDataOld/00_settings/');
 type        = ft_getopt(cfg, 'type', []);
 param       = ft_getopt(cfg, 'param', []);
 sessionStr  = ft_getopt(cfg, 'sessionStr', []);

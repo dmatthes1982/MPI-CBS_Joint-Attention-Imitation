@@ -44,7 +44,7 @@ clear newPaths
 % Session selection
 % -------------------------------------------------------------------------
 fprintf('\n<strong>Session selection...</strong>\n');
-srcPath = [path 'DualEEG_JAI_processedData/'];
+srcPath = [path 'DualEEG_JAI_processedDataOld/'];
 srcPath = [srcPath  '07b_mplv/'];
 
 fileList     = dir([srcPath, 'JAI_d*_07b_mplv2Hz_*.mat']);
