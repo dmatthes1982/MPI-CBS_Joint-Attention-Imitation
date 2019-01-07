@@ -12,7 +12,7 @@ clear LASTN
 
 cprintf([0,0.6,0], '<strong>---------------------------------------------------</strong>\n');
 cprintf([0,0.6,0], '<strong>Joint attention imitation project - data processing</strong>\n');
-cprintf([0,0.6,0], '<strong>Version: 0.3</strong>\n');
+cprintf([0,0.6,0], '<strong>Version: 0.4</strong>\n');
 cprintf([0,0.6,0], 'Copyright (C) 2017-2018, Daniel Matthes, MPI CBS\n');
 cprintf([0,0.6,0], '<strong>---------------------------------------------------</strong>\n');
 
@@ -20,7 +20,7 @@ cprintf([0,0.6,0], '<strong>---------------------------------------------------<
 % Path settings
 % -------------------------------------------------------------------------
 srcPath = '/data/pt_01826/eegData/DualEEG_JAI_rawData/';
-desPath = '/data/pt_01826/eegData/DualEEG_JAI_processedDataOld/';
+desPath = '/data/pt_01826/eegData/DualEEG_JAI_processedData/';
 
 fprintf('\nThe default paths are:\n');
 fprintf('Source: %s\n',srcPath);

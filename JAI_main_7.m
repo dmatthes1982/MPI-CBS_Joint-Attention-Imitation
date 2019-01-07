@@ -7,7 +7,7 @@ if ~exist('sessionStr', 'var')
 end
 
 if ~exist('desPath', 'var')
-  desPath = '/data/pt_01826/eegData/DualEEG_JAI_processedDataOld/';         % destination path for processed data  
+  desPath = '/data/pt_01826/eegData/DualEEG_JAI_processedData/';            % destination path for processed data  
 end
 
 if ~exist('numOfPart', 'var')                                               % estimate number of participants in segmented data folder

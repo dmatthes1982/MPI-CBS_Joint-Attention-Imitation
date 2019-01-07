@@ -42,7 +42,7 @@ clear newPaths
 % -------------------------------------------------------------------------
 % Session selection
 % -------------------------------------------------------------------------
-srcPath = [path 'DualEEG_JAI_processedDataOld/'];
+srcPath = [path 'DualEEG_JAI_processedData/'];
 srcPath = [srcPath  '09b_pwelch/'];
 
 fileList     = dir([srcPath, 'JAI_d*_09b_pwelch_*.mat']);

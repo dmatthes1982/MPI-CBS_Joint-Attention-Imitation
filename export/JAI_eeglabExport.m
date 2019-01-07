@@ -14,7 +14,7 @@ cprintf([0,0.6,0], '<strong>-------------------------------------------</strong>
 % -------------------------------------------------------------------------
 % Path settings
 % -------------------------------------------------------------------------
-srcPath = '/data/pt_01826/eegData/DualEEG_JAI_processedDataOld/';
+srcPath = '/data/pt_01826/eegData/DualEEG_JAI_processedData/';
 desPath = '/data/pt_01826/eegData/DualEEG_JAI_eeglabExport/';
 
 fprintf('\nThe default paths are:\n');

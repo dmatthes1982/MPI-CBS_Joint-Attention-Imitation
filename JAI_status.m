@@ -13,7 +13,7 @@ cprintf([0,0.6,0], '<strong>------------------------------------------------</st
 % -------------------------------------------------------------------------
 % Path settings
 % -------------------------------------------------------------------------
-path = '/data/pt_01826/eegData/DualEEG_JAI_processedDataOld/';
+path = '/data/pt_01826/eegData/DualEEG_JAI_processedData/';
 
 fprintf('\nThe default path is: %s\n', path);
 
