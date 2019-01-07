@@ -1,8 +1,8 @@
 %% check if basic variables are defined
 if ~exist('sessionStr', 'var')
   cfg           = [];
-  cfg.subfolder = '04b_eyecor';
-  cfg.filename  = 'JAI_d01_04b_eyecor';
+  cfg.subfolder = '04c_preproc2';
+  cfg.filename  = 'JAI_d01_04c_preproc2';
   sessionStr    = sprintf('%03d', JAI_getSessionNum( cfg ));                % estimate current session number
 end
 
@@ -11,7 +11,7 @@ if ~exist('desPath', 'var')
 end
 
 if ~exist('numOfPart', 'var')                                               % estimate number of participants in eyecor data folder
-  sourceList    = dir([strcat(desPath, '04b_eyecor/'), ...
+  sourceList    = dir([strcat(desPath, '04c_preproc2/'), ...
                        strcat('*_', sessionStr, '.mat')]);
   sourceList    = struct2cell(sourceList);
   sourceList    = sourceList(1,:);
@@ -20,7 +20,7 @@ if ~exist('numOfPart', 'var')                                               % es
 
   for i=1:1:numOfSources
     numOfPart(i)  = sscanf(sourceList{i}, ...
-                    strcat('JAI_d%d_04b_eyecor_', sessionStr, '.mat'));
+                    strcat('JAI_d%d_04c_preproc2_', sessionStr, '.mat'));
   end
 end
 
@@ -72,11 +72,11 @@ for i = numOfPart
   fprintf('<strong>Dyad %d</strong>\n', i);
 
   cfg             = [];                                                     % load preprocessed data
-  cfg.srcFolder   = strcat(desPath, '04b_eyecor/');
+  cfg.srcFolder   = strcat(desPath, '04c_preproc2/');
   cfg.sessionStr  = sessionStr;
-  cfg.filename    = sprintf('JAI_d%02d_04b_eyecor', i);
+  cfg.filename    = sprintf('JAI_d%02d_04c_preproc2', i);
   
-  fprintf('Load eye-artifact corrected data...\n\n');
+  fprintf('Load preprocessed data...\n\n');
   JAI_loadData( cfg );
   
   % Keep only necessary conditions in the dataset
@@ -84,7 +84,7 @@ for i = numOfPart
   cfg.channel = 'all';
   cfg.trials  = [7,8,9,10,11,12,20,21,22,100,101,102];
   
-  data_eyecor = JAI_selectdata( cfg, data_eyecor );
+  data_preproc2 = JAI_selectdata( cfg, data_preproc2 );
   
   % Segmentation of the preprocessed trials for ITPC estimation %%%%%%%%%%%
   % split the data of every condition into subtrials with a length of 10
@@ -93,7 +93,7 @@ for i = numOfPart
   cfg.length    = 10;
   cfg.overlap   = 0;
 
-  data_eyecor  = JAI_segmentation( cfg, data_eyecor );
+  data_preproc2  = JAI_segmentation( cfg, data_preproc2 );
   
   % artifact rejection
   if artifactRejection == true                                              % load artifact definitions
@@ -121,7 +121,7 @@ for i = numOfPart
     cfg.reject    = 'complete';
     cfg.target    = 'single';
   
-    data_eyecor = JAI_rejectArtifacts(cfg, data_eyecor);
+    data_preproc2 = JAI_rejectArtifacts(cfg, data_preproc2);
     fprintf('\n');
     
     clear cfg_allart
@@ -132,8 +132,8 @@ for i = numOfPart
   cfg.toi       = 0:0.2:9.8;
   cfg.foi       = 1:0.5:48;
 
-  data_itpc = JAI_interTrialPhaseCoh(cfg, data_eyecor);
-  clear data_eyecor
+  data_itpc = JAI_interTrialPhaseCoh(cfg, data_preproc2);
+  clear data_preproc2
   
   % export number of good trials into a spreadsheet
   cfg           = [];

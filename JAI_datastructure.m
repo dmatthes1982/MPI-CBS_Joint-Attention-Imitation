@@ -10,8 +10,8 @@
 %    |---- part1 (1x1 fieldtrip data structure for participant 1)    
 %    |---- part2 (1x1 fieldtrip data structure for participant 2)
 %
-% In every substep of the data processing pipeline (i.e. 01a_raw, 
-% 01b_badchan, 01c_repaired, 02_preproc, 03a_icacomp ...) N single datasets
+% In every substep of the data processing pipeline (i.e. 01_raw,
+% 02a_badchan, 02b_preproc1, 03a_icacomp, 03b_eogchan...) N single datasets
 % will be created. The number N stands for the current number of dyads 
 % within the study. Every dataset for each dyad is stored in a separate 
 % *.mat file, to avoid the need of swap memory during data  processing. As 

@@ -1,14 +1,12 @@
-function [ data_repaired ] = JAI_repairBadChan( data_badchan, data_raw )
+function [ data ] = JAI_repairBadChan( data_badchan, data )
 % JAI_REPAIRBADCHAN can be used for repairing previously selected bad
 % channels. For repairing this function uses the weighted neighbour
-% approach. After the repairing operation, the result will be displayed in
-% the fieldtrip databrowser for verification purpose.
+% approach.
 %
 % Use as
-%   [ data_repaired ] = JAI_repairBadChan( data_badchan, data_raw )
+%   [ data ] = JAI_repairBadChan( data_badchan, data )
 %
-% where data_raw has to be raw data and data_badchan the result of
-% JAI_SELECTBADCHAN.
+% where data_badchan has to be the result of INFADI_SELECTBADCHAN.
 %
 % Used layout and neighbour definitions:
 %   mpi_customized_acticap32.mat
@@ -16,9 +14,9 @@ function [ data_repaired ] = JAI_repairBadChan( data_badchan, data_raw )
 %
 % The function requires the fieldtrip toolbox
 %
-% SEE also JAI_DATABROWSER and FT_CHANNELREPAIR
+% SEE also FT_CHANNELREPAIR
 
-% Copyright (C) 2018, Daniel Matthes, MPI CBS
+% Copyright (C) 2018-2019, Daniel Matthes, MPI CBS
 
 % -------------------------------------------------------------------------
 % Load layout and neighbour definitions
@@ -39,55 +37,46 @@ cfg.showcallinfo  = 'no';
 % -------------------------------------------------------------------------
 % Repairing bad channels
 % -------------------------------------------------------------------------
-cfg.badchannel    = data_badchan.part1.badChan;
+cfg.missingchannel    = data_badchan.part1.badChan;
 
 fprintf('<strong>Repairing bad channels of participant 1...</strong>\n');
-if isempty(cfg.badchannel)
+if isempty(cfg.missingchannel)
   fprintf('All channels are good, no repairing operation required!\n');
-  data_repaired.part1 = data_raw.part1;
 else
-  data_repaired.part1 = ft_channelrepair(cfg, data_raw.part1);
-  data_repaired.part1 = removefields(data_repaired.part1, {'elec'});
+  ft_warning off;
+  data.part1 = ft_channelrepair(cfg, data.part1);
+  ft_warning on;
+  data.part1 = removefields(data.part1, {'elec'});
+  fprintf('\n');
 end
+label = [lay.label; {'REF'; 'EOGV'; 'EOGH'}];
+data.part1 = correctChanOrder( data.part1, label);
 
-cfgView           = [];
-cfgView.ylim      = [-200 200];
-cfgView.blocksize = 120;
-cfgView.part      = 1;
-  
-fprintf('\n<strong>Verification view for participant %d...</strong>\n', cfgView.part);
-JAI_databrowser( cfgView, data_repaired );
-commandwindow;                                                            % set focus to commandwindow
-input('Press enter to continue!:');
-close(gcf);
-
-fprintf('\n');
-
-cfg.badchannel    = data_badchan.part2.badChan;
+cfg.missingchannel    = data_badchan.part2.badChan;
 
 fprintf('<strong>Repairing bad channels of participant 2...</strong>\n');
-if isempty(cfg.badchannel)
+if isempty(cfg.missingchannel)
   fprintf('All channels are good, no repairing operation required!\n');
-  data_repaired.part2 = data_raw.part2;
 else
-  data_repaired.part2 = ft_channelrepair(cfg, data_raw.part2);
-  data_repaired.part2 = removefields(data_repaired.part2, {'elec'});
+  ft_warning off;
+  data.part2 = ft_channelrepair(cfg, data.part2);
+  ft_warning on;
+  data.part2 = removefields(data.part2, {'elec'});
+  fprintf('\n');
+end
+data.part2 = correctChanOrder( data.part2, label);
+
 end
 
 % -------------------------------------------------------------------------
-% Visual verification
+% Local function - move corrected channel to original position
 % -------------------------------------------------------------------------
-cfgView           = [];
-cfgView.ylim      = [-200 200];
-cfgView.blocksize = 120;
-cfgView.part      = 2;
-  
-fprintf('\n<strong>Verification view for participant %d...</strong>\n', cfgView.part);
-JAI_databrowser( cfgView, data_repaired );
-commandwindow;                                                              % set focus to commandwindow
-input('Press enter to continue!:');
-close(gcf);
+function [ dataTmp ] = correctChanOrder( dataTmp, label )
 
-fprintf('\n');
+[~, pos]  = ismember(label, dataTmp.label);
+pos       = pos(~ismember(pos, 0));
+
+dataTmp.label = dataTmp.label(pos);
+dataTmp.trial = cellfun(@(x) x(pos, :), dataTmp.trial, 'UniformOutput', false);
 
 end

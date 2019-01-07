@@ -1,8 +1,8 @@
 %% check if basic variables are defined
 if ~exist('sessionStr', 'var')
   cfg           = [];
-  cfg.subFolder = '04b_eyecor/';
-  cfg.filename  = 'JAI_d01_04b_eyecor';
+  cfg.subFolder = '04c_preproc2/';
+  cfg.filename  = 'JAI_d01_04c_preproc2';
   sessionStr    = sprintf('%03d', JAI_getSessionNum( cfg ));                % estimate current session number
 end
 
@@ -11,7 +11,7 @@ if ~exist('desPath', 'var')
 end
 
 if ~exist('numOfPart', 'var')                                               % estimate number of participants in eyecor data folder
-  sourceList    = dir([strcat(desPath, '04b_eyecor/'), ...
+  sourceList    = dir([strcat(desPath, '04c_preproc2/'), ...
                        strcat('*_', sessionStr, '.mat')]);
   sourceList    = struct2cell(sourceList);
   sourceList    = sourceList(1,:);
@@ -20,7 +20,7 @@ if ~exist('numOfPart', 'var')                                               % es
 
   for i=1:1:numOfSources
     numOfPart(i)  = sscanf(sourceList{i}, ...
-                    strcat('JAI_d%d_04b_eyecor_', sessionStr, '.mat'));
+                    strcat('JAI_d%d_04c_preproc2_', sessionStr, '.mat'));
   end
 end
 
@@ -148,12 +148,12 @@ writetable(T, file_path);
 
 for i = numOfPart
   cfg             = [];
-  cfg.srcFolder   = strcat(desPath, '04b_eyecor/');
-  cfg.filename    = sprintf('JAI_d%02d_04b_eyecor', i);
+  cfg.srcFolder   = strcat(desPath, '04c_preproc2/');
+  cfg.filename    = sprintf('JAI_d%02d_04c_preproc2', i);
   cfg.sessionStr  = sessionStr;
   
   fprintf('<strong>Dyad %d</strong>\n', i);
-  fprintf('Load eye-artifact corrected data...\n');
+  fprintf('Load preprocessed data...\n');
   JAI_loadData( cfg );
   
   % automatic artifact detection
@@ -172,14 +172,14 @@ for i = numOfPart
   cfg.stddev      = threshold;                                              % stddev: threshold uV
   cfg.mad         = threshold;                                              % mad: multiples of median absolute deviation
 
-  cfg_autoart     = JAI_autoArtifact(cfg, data_eyecor);
+  cfg_autoart     = JAI_autoArtifact(cfg, data_preproc2);
   
   % verify automatic detected artifacts / manual artifact detection
   cfg           = [];
   cfg.artifact  = cfg_autoart;
   cfg.dyad      = i;
   
-  cfg_allart    = JAI_manArtifact(cfg, data_eyecor);                           
+  cfg_allart    = JAI_manArtifact(cfg, data_preproc2);
   
   % export the automatic selected artifacts into a *.mat file
   cfg             = [];
@@ -194,7 +194,7 @@ for i = numOfPart
   fprintf('%s ...\n', file_path);
   JAI_saveData(cfg, 'cfg_autoart', cfg_autoart);
   fprintf('Data stored!\n');
-  clear cfg_autoart data_eyecor trl
+  clear cfg_autoart data_preproc2 trl
   
   % export the verified and the additional artifacts into a *.mat file
   cfg             = [];

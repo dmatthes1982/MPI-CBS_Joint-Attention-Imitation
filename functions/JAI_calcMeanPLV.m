@@ -5,13 +5,13 @@ function [ data ] = JAI_calcMeanPLV( data )
 % Use as
 %   [ data ] = JAI_calcMeanPLV( data )
 %
-%  where the input data have to be the result from JAI_PHASELOCKVAL
+% where the input data has to be the result of JAI_PHASELOCKVAL
 %
 % This function requires the fieldtrip toolbox
 % 
 % See also JAI_DATASTRUCTURE, JAI_PHASELOCKVAL
 
-% Copyright (C) 2017, Daniel Matthes, MPI CBS 
+% Copyright (C) 2017-2019, Daniel Matthes, MPI CBS
 
 % -------------------------------------------------------------------------
 % Estimate mean Phase Locking Value (mPLV)

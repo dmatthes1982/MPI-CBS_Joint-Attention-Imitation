@@ -38,6 +38,7 @@ Elec.F7.Position = [205 175 80 15];
 Elec.F9 = uicheckbox(SelectBadChannels);
 Elec.F9.Text = 'F9';
 Elec.F9.Position = [285 175 80 15];
+Elec.F9.Enable = 'off';
 % Create FT7CheckBox
 Elec.FT7 = uicheckbox(SelectBadChannels);
 Elec.FT7.Text = 'FT7';
@@ -113,6 +114,7 @@ Elec.CP4.Position = [205 100 80 15];
 Elec.TP10 = uicheckbox(SelectBadChannels);
 Elec.TP10.Text = 'TP10';
 Elec.TP10.Position = [285 100 80 15];
+Elec.TP10.Enable = 'off';
 % Create T8CheckBox
 Elec.T8 = uicheckbox(SelectBadChannels);
 Elec.T8.Text = 'T8';
@@ -146,6 +148,7 @@ Elec.F8.Position = [365 75 80 15];
 Elec.F10 = uicheckbox(SelectBadChannels);
 Elec.F10.Text = 'F10';
 Elec.F10.Position = [445 75 80 15];
+Elec.F10.Enable = 'off';
 
 % Create SaveButton
 btn = uibutton(SelectBadChannels, 'push');

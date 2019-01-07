@@ -1,8 +1,8 @@
 %% check if basic variables are defined
 if ~exist('sessionStr', 'var')
   cfg           = [];
-  cfg.subFolder = '04b_eyecor/';
-  cfg.filename  = 'JAI_d01_04b_eyecor';
+  cfg.subFolder = '04c_preproc2/';
+  cfg.filename  = 'JAI_d01_04c_preproc2';
   sessionStr    = sprintf('%03d', JAI_getSessionNum( cfg ));                % estimate current session number
 end
 
@@ -11,7 +11,7 @@ if ~exist('desPath', 'var')
 end
 
 if ~exist('numOfPart', 'var')                                               % estimate number of participants in eyecor data folder
-  sourceList    = dir([strcat(desPath, '04b_eyecor/'), ...
+  sourceList    = dir([strcat(desPath, '04c_preproc2/'), ...
                        strcat('*_', sessionStr, '.mat')]);
   sourceList    = struct2cell(sourceList);
   sourceList    = sourceList(1,:);
@@ -20,7 +20,7 @@ if ~exist('numOfPart', 'var')                                               % es
 
   for i=1:1:numOfSources
     numOfPart(i)  = sscanf(sourceList{i}, ...
-                    strcat('JAI_d%d_04b_eyecor_', sessionStr, '.mat'));
+                    strcat('JAI_d%d_04c_preproc2_', sessionStr, '.mat'));
   end
 end
 
@@ -36,14 +36,14 @@ for i = numOfPart
   fprintf('<strong>Dyad %d</strong>\n', i);
   
   cfg             = [];
-  cfg.srcFolder   = strcat(desPath, '04b_eyecor/');
-  cfg.filename    = sprintf('JAI_d%02d_04b_eyecor', i);
+  cfg.srcFolder   = strcat(desPath, '04c_preproc2/');
+  cfg.filename    = sprintf('JAI_d%02d_04c_preproc2', i);
   cfg.sessionStr  = sessionStr;
   
-  fprintf('Load eye-artifact corrected data...\n\n');
+  fprintf('Load preprocessed data...\n\n');
   JAI_loadData( cfg );
   
-  filtCoeffDiv = 500 / data_eyecor.part1.fsample;                           % estimate sample frequency dependent divisor of filter length
+  filtCoeffDiv = 500 / data_preproc2.part1.fsample;                         % estimate sample frequency dependent divisor of filter length
 
   % bandpass filter data at 2Hz
   cfg           = [];
@@ -51,7 +51,7 @@ for i = numOfPart
   cfg.filtorder = fix(500 / filtCoeffDiv);
   cfg.channel   = {'all', '-REF', '-EOGV', '-EOGH', '-V1', '-V2'}; 
 
-  data_bpfilt_2Hz = JAI_bpFiltering(cfg, data_eyecor);
+  data_bpfilt_2Hz = JAI_bpFiltering(cfg, data_preproc2);
   
   % export the filtered data into a *.mat file
   cfg             = [];
@@ -74,7 +74,7 @@ for i = numOfPart
   cfg.filtorder = fix(500 / filtCoeffDiv);
   cfg.channel   = {'all', '-REF', '-EOGV', '-EOGH', '-V1', '-V2'};
   
-  data_bpfilt_theta = JAI_bpFiltering(cfg, data_eyecor);
+  data_bpfilt_theta = JAI_bpFiltering(cfg, data_preproc2);
   
   % export the filtered data into a *.mat file
   cfg             = [];
@@ -97,7 +97,7 @@ for i = numOfPart
   cfg.filtorder = fix(250 / filtCoeffDiv);
   cfg.channel   = {'all', '-REF', '-EOGV', '-EOGH', '-V1', '-V2'};
   
-  data_bpfilt_alpha = JAI_bpFiltering(cfg, data_eyecor);
+  data_bpfilt_alpha = JAI_bpFiltering(cfg, data_preproc2);
   
   % export the filtered data into a *.mat file
   cfg             = [];
@@ -120,7 +120,7 @@ for i = numOfPart
   cfg.filtorder = fix(250 / filtCoeffDiv);
   cfg.channel   = {'all', '-REF', '-EOGV', '-EOGH', '-V1', '-V2'};
   
-  data_bpfilt_20Hz = JAI_bpFiltering(cfg, data_eyecor);
+  data_bpfilt_20Hz = JAI_bpFiltering(cfg, data_preproc2);
 
   % export the filtered data into a *.mat file
   cfg             = [];
@@ -143,7 +143,7 @@ for i = numOfPart
   cfg.filtorder = fix(250 / filtCoeffDiv);
   cfg.channel   = {'all', '-REF', '-EOGV', '-EOGH', '-V1', '-V2'};
   
-  data_bpfilt_beta = JAI_bpFiltering(cfg, data_eyecor);
+  data_bpfilt_beta = JAI_bpFiltering(cfg, data_preproc2);
 
   % export the filtered data into a *.mat file
   cfg             = [];
@@ -166,7 +166,7 @@ for i = numOfPart
   cfg.filtorder = fix(250 / filtCoeffDiv);
   cfg.channel   = {'all', '-REF', '-EOGV', '-EOGH', '-V1', '-V2'};
   
-  data_bpfilt_gamma = JAI_bpFiltering(cfg, data_eyecor);
+  data_bpfilt_gamma = JAI_bpFiltering(cfg, data_preproc2);
 
   % export the filtered data into a *.mat file
   cfg             = [];
@@ -181,7 +181,7 @@ for i = numOfPart
   fprintf('%s ...\n', file_path);
   JAI_saveData(cfg, 'data_bpfilt_gamma', data_bpfilt_gamma);
   fprintf('Data stored!\n\n');
-  clear data_bpfilt_gamma data_eyecor
+  clear data_bpfilt_gamma data_preproc2
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

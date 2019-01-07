@@ -13,7 +13,7 @@ clear LASTN
 cprintf([0,0.6,0], '<strong>---------------------------------------------------</strong>\n');
 cprintf([0,0.6,0], '<strong>Joint attention imitation project - data processing</strong>\n');
 cprintf([0,0.6,0], '<strong>Version: 0.4</strong>\n');
-cprintf([0,0.6,0], 'Copyright (C) 2017-2018, Daniel Matthes, MPI CBS\n');
+cprintf([0,0.6,0], 'Copyright (C) 2017-2019, Daniel Matthes, MPI CBS\n');
 cprintf([0,0.6,0], '<strong>---------------------------------------------------</strong>\n');
 
 % -------------------------------------------------------------------------
@@ -52,17 +52,14 @@ end
 if ~exist(strcat(desPath, '00_settings'), 'dir')
   mkdir(strcat(desPath, '00_settings'));
 end
-if ~exist(strcat(desPath, '01a_raw'), 'dir')
-  mkdir(strcat(desPath, '01a_raw'));
+if ~exist(strcat(desPath, '01_raw'), 'dir')
+  mkdir(strcat(desPath, '01_raw'));
 end
-if ~exist(strcat(desPath, '01b_badchan'), 'dir')
-  mkdir(strcat(desPath, '01b_badchan'));
+if ~exist(strcat(desPath, '02a_badchan'), 'dir')
+  mkdir(strcat(desPath, '02a_badchan'));
 end
-if ~exist(strcat(desPath, '01c_repaired'), 'dir')
-  mkdir(strcat(desPath, '01c_repaired'));
-end
-if ~exist(strcat(desPath, '02_preproc'), 'dir')
-  mkdir(strcat(desPath, '02_preproc'));
+if ~exist(strcat(desPath, '02b_preproc1'), 'dir')
+  mkdir(strcat(desPath, '02b_preproc1'));
 end
 if ~exist(strcat(desPath, '03a_icacomp'), 'dir')
   mkdir(strcat(desPath, '03a_icacomp'));
@@ -75,6 +72,9 @@ if ~exist(strcat(desPath, '04a_eogcomp'), 'dir')
 end
 if ~exist(strcat(desPath, '04b_eyecor'), 'dir')
   mkdir(strcat(desPath, '04b_eyecor'));
+end
+if ~exist(strcat(desPath, '04c_preproc2'), 'dir')
+  mkdir(strcat(desPath, '04c_preproc2'));
 end
 if ~exist(strcat(desPath, '05a_autoart'), 'dir')
   mkdir(strcat(desPath, '05a_autoart'));
@@ -126,9 +126,9 @@ clear sessionStr numOfPart part newPaths
 % -------------------------------------------------------------------------
 selection = false;
 
-tmpPath = strcat(desPath, '01a_raw/');
+tmpPath = strcat(desPath, '01_raw/');
 
-sessionList     = dir([tmpPath, 'JAI_d*_01a_raw_*.mat']);
+sessionList     = dir([tmpPath, 'JAI_d*_01_raw_*.mat']);
 sessionList     = struct2cell(sessionList);
 sessionList     = sessionList(1,:);
 numOfSessions   = length(sessionList);
@@ -137,7 +137,7 @@ sessionNum      = zeros(1, numOfSessions);
 sessionListCopy = sessionList;
 
 for i=1:1:numOfSessions
-  sessionListCopy{i} = strsplit(sessionList{i}, '01a_raw_');
+  sessionListCopy{i} = strsplit(sessionList{i}, '01_raw_');
   sessionListCopy{i} = sessionListCopy{i}{end};
   sessionNum(i) = sscanf(sessionListCopy{i}, '%d.mat');
 end
@@ -235,10 +235,10 @@ if session == 0
 else
   while selection == false
     fprintf('\nPlease select what you want to do with the selected dyads:\n');
-    fprintf('[1]  - Data import and repairing of bad channels\n');
-    fprintf('[2]  - Preprocessing, filtering, re-referencing\n');
+    fprintf('[1]  - Data import\n');
+    fprintf('[2]  - Preproc I: bad channel detection, filtering\n');
     fprintf('[3]  - ICA decomposition\n');
-    fprintf('[4]  - Estimation and correction of eye artifacts\n');
+    fprintf('[4]  - Preproc II: eye artifacts correction, bad channel recovery, re-referencing\n');
     fprintf('[5]  - Automatic and manual artifact detection\n');
     fprintf('[6]  - Narrow band filtering and Hilbert transform\n'); 
     fprintf('[7]  - Estimation of Phase Locking Values (PLV)\n');
@@ -307,31 +307,31 @@ end
 switch part
   case 1
     fileNamePre = [];
-    tmpPath = strcat(desPath, '01a_raw/');
-    fileNamePost = strcat(tmpPath, 'JAI_d*_01a_raw_', sessionStr, '.mat');
+    tmpPath = strcat(desPath, '01_raw/');
+    fileNamePost = strcat(tmpPath, 'JAI_d*_01_raw_', sessionStr, '.mat');
   case 2
-    tmpPath = strcat(desPath, '01c_repaired/');
-    fileNamePre = strcat(tmpPath, 'JAI_d*_01c_repaired_', sessionStr, '.mat');
-    tmpPath = strcat(desPath, '02_preproc/');
-    fileNamePost = strcat(tmpPath, 'JAI_d*_02_preproc_', sessionStr, '.mat');
+    tmpPath = strcat(desPath, '01_raw/');
+    fileNamePre = strcat(tmpPath, 'JAI_d*_01_raw_', sessionStr, '.mat');
+    tmpPath = strcat(desPath, '02b_preproc1/');
+    fileNamePost = strcat(tmpPath, 'JAI_d*_02b_preproc1_', sessionStr, '.mat');
   case 3
-    tmpPath = strcat(desPath, '02_preproc/');
-    fileNamePre = strcat(tmpPath, 'JAI_d*_02_preproc_', sessionStr, '.mat');
+    tmpPath = strcat(desPath, '02b_preproc1/');
+    fileNamePre = strcat(tmpPath, 'JAI_d*_02b_preproc1_', sessionStr, '.mat');
     tmpPath = strcat(desPath, '03b_eogchan/');
     fileNamePost = strcat(tmpPath, 'JAI_d*_03b_eogchan_', sessionStr, '.mat');
   case 4
     tmpPath = strcat(desPath, '03b_eogchan/');
     fileNamePre = strcat(tmpPath, 'JAI_d*_03b_eogchan_', sessionStr, '.mat');
-    tmpPath = strcat(desPath, '04b_eyecor/');
-    fileNamePost = strcat(tmpPath, 'JAI_d*_04b_eyecor_', sessionStr, '.mat');
+    tmpPath = strcat(desPath, '04c_preproc2/');
+    fileNamePost = strcat(tmpPath, 'JAI_d*_04c_preproc2_', sessionStr, '.mat');
   case 5
-    tmpPath = strcat(desPath, '04b_eyecor/');
-    fileNamePre = strcat(tmpPath, 'JAI_d*_04b_eyecor_', sessionStr, '.mat');
+    tmpPath = strcat(desPath, '04c_preproc2/');
+    fileNamePre = strcat(tmpPath, 'JAI_d*_04c_preproc2_', sessionStr, '.mat');
     tmpPath = strcat(desPath, '05b_allart/');
     fileNamePost = strcat(tmpPath, 'JAI_d*_05b_allart_', sessionStr, '.mat');
   case 6
-    tmpPath = strcat(desPath, '04b_eyecor/');
-    fileNamePre = strcat(tmpPath, 'JAI_d*_04b_eyecor_', sessionStr, '.mat');
+    tmpPath = strcat(desPath, '04c_preproc2/');
+    fileNamePre = strcat(tmpPath, 'JAI_d*_04c_preproc2_', sessionStr, '.mat');
     tmpPath = strcat(desPath, '06b_hilbert/');
     fileNamePost = strcat(tmpPath, 'JAI_d*_06b_hilbertGamma_', sessionStr, '.mat');
   case 7
@@ -340,13 +340,13 @@ switch part
     tmpPath = strcat(desPath, '07b_mplv/');
     fileNamePost = strcat(tmpPath, 'JAI_d*_07b_mplvGamma_', sessionStr, '.mat');
   case 8
-    tmpPath = strcat(desPath, '04b_eyecor/');
-    fileNamePre = strcat(tmpPath, 'JAI_d*_04b_eyecor_', sessionStr, '.mat');
+    tmpPath = strcat(desPath, '04c_preproc2/');
+    fileNamePre = strcat(tmpPath, 'JAI_d*_04c_preproc2_', sessionStr, '.mat');
     tmpPath = strcat(desPath, '08b_itpcavg/');
     fileNamePost = strcat(tmpPath, 'JAI_d*_08b_itpcavg_', sessionStr, '.mat');
   case 9
-    tmpPath = strcat(desPath, '04b_eyecor/');
-    fileNamePre = strcat(tmpPath, 'JAI_d*_04b_eyecor_', sessionStr, '.mat');
+    tmpPath = strcat(desPath, '04c_preproc2/');
+    fileNamePre = strcat(tmpPath, 'JAI_d*_04c_preproc2_', sessionStr, '.mat');
     tmpPath = strcat(desPath, '09b_pwelch/');
     fileNamePost = strcat(tmpPath, 'JAI_d*_09b_pwelch_', sessionStr, '.mat');
   case 10
@@ -456,7 +456,7 @@ while sessionStatus == true
       selection = false;
       while selection == false
         fprintf('<strong>Continue data processing with:</strong>\n');
-        fprintf('<strong>[2] - Preprocessing, filtering, re-referencing?</strong>\n');
+        fprintf('<strong>[2] - Preproc I: bad channel detection, filtering?</strong>\n');
         x = input('\nSelect [y/n]: ','s');
         if strcmp('y', x)
           selection = true;
@@ -492,7 +492,7 @@ while sessionStatus == true
       selection = false;
       while selection == false
         fprintf('<strong>Continue data processing with:</strong>\n');
-        fprintf('<strong>[4] - Estimation and correction of eye artifacts?</strong>\n');
+        fprintf('<strong>[4] - Preproc II: eye artifacts correction, bad channel recovery, re-referencing?</strong>\n');
         x = input('\nSelect [y/n]: ','s');
         if strcmp('y', x)
           selection = true;
