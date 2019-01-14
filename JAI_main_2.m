@@ -33,7 +33,7 @@ fprintf('\n');
 
 % Create settings file if not existing
 settings_file = [desPath '00_settings/' ...
-+                  sprintf('settings_%s', sessionStr) '.xls'];
+                  sprintf('settings_%s', sessionStr) '.xls'];
 if ~(exist(settings_file, 'file') == 2)                                     % check if settings file already exist
   cfg = [];
   cfg.desFolder   = [desPath '00_settings/'];

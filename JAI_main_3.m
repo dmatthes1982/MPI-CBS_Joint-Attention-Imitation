@@ -55,17 +55,35 @@ for i = numOfPart
   
   % Detect and reject transient artifacts (200uV delta within 200 ms. 
   % The window is shifted with 100 ms, what means 50 % overlapping.)
+  fprintf('<strong>Search for artifacts in all electrodes except F9, F10, V1 and V2...\n</strong>');
   cfg             = [];
-  cfg.channel     = {'all', '-EOGV', '-EOGH', '-REF'};                      % use all channels for transient artifact detection expect EOGV, EOGH and REF
+  cfg.channel     = {'all', '-F9', '-F10', '-V1' '-V2', '-EOGV', ...        % use all channels for transient artifact detection expect EOGV, EOGH and REF
+                      '-EOGH', '-REF'};
   cfg.method      = 'range';
-  cfg.sliding     = 'no';
+  cfg.sliding     = 'yes';
   cfg.continuous  = 'yes';
   cfg.trllength   = 200;                                                    % minimal subtrial length: 200 msec
   cfg.overlap     = 50;                                                     % 50 % overlapping
-  cfg.range       = 200;                                                    % 200 uV
+  cfg.range       = 200;                                                    % 200 µV
    
-  cfg_autoart     = JAI_autoArtifact(cfg, data_continuous);
+  cfg_autoart1    = JAI_autoArtifact(cfg, data_continuous);
+
+  fprintf('\n<strong>Search for artifacts in F9, F10, V1 and V2...\n</strong>');
+  cfg             = [];
+  cfg.channel     = {'V1', 'V2', 'F9', 'F10'};                              % use only F9, F10, V1 and V2
+  cfg.method      = 'range';
+  cfg.sliding     = 'yes';
+  cfg.continuous  = 'yes';
+  cfg.trllength   = 200;                                                    % minimal subtrial length: 200 msec
+  cfg.overlap     = 50;                                                     % 50 % overlapping
+  cfg.range       = 400;                                                    % 400 µV
    
+  cfg_autoart2    = JAI_autoArtifact(cfg, data_continuous);
+
+  fprintf('\n<strong>Merge estimated artifacts...\n</strong>');
+  cfg_autoart     = JAI_mergeThArtResults(cfg_autoart1, cfg_autoart2);
+  clear cfg_autoart1 cfg_autoart2
+
   cfg           = [];
   cfg.artifact  = cfg_autoart;
   cfg.reject    = 'partial';                                                % partial rejection

@@ -15,26 +15,28 @@ function [ data_eogcomp ] = JAI_verifyComp( data_eogcomp, data_icacomp )
 % Copyright (C) 2017, Daniel Matthes, MPI CBS
 
 fprintf('<strong>Verify EOG-correlating components at participant 1...</strong>\n');
-data_eogcomp.part1 = corrComp(data_eogcomp.part1, data_icacomp.part1);
+data_eogcomp.part1 = verifyComp(data_eogcomp.part1, data_icacomp.part1);
 fprintf('\n');
 fprintf('<strong>Verify EOG-correlating components at participant 2...</strong>\n');
-data_eogcomp.part2 = corrComp(data_eogcomp.part2, data_icacomp.part2);
+data_eogcomp.part2 = verifyComp(data_eogcomp.part2, data_icacomp.part2);
 
 end
 
 %--------------------------------------------------------------------------
 % SUBFUNCTION which does the verification of the EOG-correlating components
 %--------------------------------------------------------------------------
-function [ dataEOGComp ] = corrComp( dataEOGComp, dataICAcomp )
+function [ dataEOGComp ] = verifyComp( dataEOGComp, dataICAcomp )
 
 numOfElements = 1:length(dataEOGComp.elements);
 
 if ~isempty(numOfElements)
+  idx = find(ismember(dataICAcomp.label, dataEOGComp.elements))';
+
   cfg               = [];
   cfg.layout        = 'mpi_customized_acticap32.mat';
   cfg.viewmode      = 'component';
   cfg.zlim          = 'maxabs';
-  cfg.channel       = find(ismember(dataICAcomp.label, dataEOGComp.elements))';
+  cfg.channel       = idx;
   cfg.blocksize     = 30;
   cfg.showcallinfo  = 'no';
 
@@ -51,7 +53,10 @@ if ~isempty(numOfElements)
   while selection == false
     fprintf('Do you want to deselect some of theses components?\n')
     for i = numOfElements
-      fprintf('[%d] - %s\n', i, dataEOGComp.elements{i});
+      corrVal = max(abs([dataEOGComp.eoghCorr(idx(i)) ...
+                      dataEOGComp.eogvCorr(idx(i))]))*100;
+      fprintf('[%d] - %s - %2.1f %% correlation \n', i, ...
+                      dataEOGComp.elements{i}, corrVal);
     end
     fprintf('Comma-seperate your selection and put it in squared brackets!\n');
     fprintf('Press simply enter if you do not want to deselect any component!\n');

@@ -59,11 +59,11 @@ cfg.trials            = 'all';                                              % us
 cfg.feedback          = 'no';                                               % feedback should not be presented
 cfg.showcallinfo      = 'no';                                               % prevent printing the time and memory after each function call
 
-printf('Filter data of participant 1 (basic bandpass)...\n');
+fprintf('Filter data of participant 1 (basic bandpass)...\n');
 cfg.channel = part1Chan;
 data.part1  = ft_preprocessing(cfg, data.part1);
 
-printf('Filter data of participant 2 (basic bandpass)...\n');
+fprintf('Filter data of participant 2 (basic bandpass)...\n');
 cfg.channel = part2Chan;
 data.part2  = ft_preprocessing(cfg, data.part2);
 
