@@ -53,8 +53,13 @@ if ~isempty(numOfElements)
   while selection == false
     fprintf('Do you want to deselect some of theses components?\n')
     for i = numOfElements
-      corrVal = max(abs([dataEOGComp.eoghCorr(idx(i)) ...
-                      dataEOGComp.eogvCorr(idx(i))]))*100;
+      [~, pos] = max(abs([dataEOGComp.eoghCorr(idx(i)) ...
+                      dataEOGComp.eogvCorr(idx(i))]));
+      if pos == 1
+        corrVal = dataEOGComp.eoghCorr(idx(i)) * 100;
+      else
+        corrVal = dataEOGComp.eogvCorr(idx(i)) * 100;
+      end
       fprintf('[%d] - %s - %2.1f %% correlation \n', i, ...
                       dataEOGComp.elements{i}, corrVal);
     end
