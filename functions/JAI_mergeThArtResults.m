@@ -73,17 +73,25 @@ artPart1 = [ cfg_artifact1.part1.artfctdef.threshold.artifact; ...          % co
 artPart2 = [ cfg_artifact1.part2.artfctdef.threshold.artifact; ...
   cfg_artifact2.part2.artfctdef.threshold.artifact ];
 
-[~,idx] = sort(artPart1(:,1));                                              % sort values in a ascending order
-artPart1 = artPart1(idx, :);
+if ~isempty(artPart1)                                                       % sort values in a ascending order and remove duplicates
+  [~,idx] = sort(artPart1(:,1));
+  artPart1 = artPart1(idx, :);
 
-[~,idx] = sort(artPart2(:,1));
-artPart2 = artPart2(idx, :);
+  if size(artPart1, 1) > 1
+    idx       = [true; sum(diff(artPart1),2) ~= 0];
+    artPart1  = artPart1(idx,:);
+  end
+end
 
-idx       = [true; sum(diff(artPart1),2) ~= 0];                             % remove duplicates
-artPart1  = artPart1(idx,:);
+if ~isempty(artPart2)
+  [~,idx] = sort(artPart2(:,1));
+  artPart2 = artPart2(idx, :);
 
-idx       = [true; sum(diff(artPart2),2) ~= 0];
-artPart2  = artPart2(idx,:);
+  if size(artPart2, 1) > 1
+    idx       = [true; sum(diff(artPart2),2) ~= 0];
+    artPart2  = artPart2(idx,:);
+  end
+end
 
 cfg_artifact.part1.artfctdef.threshold.artifact = artPart1;
 cfg_artifact.part2.artfctdef.threshold.artifact = artPart2;
