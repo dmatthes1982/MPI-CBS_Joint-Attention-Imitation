@@ -142,13 +142,13 @@ for i = numOfPart
   cfg         = [];
   cfg.threshold = threshold;
   
-  data_eogcomp      = JAI_corrComp(cfg, data_icacomp, data_eogchan);
+  data_eogcomp      = JAI_detEOGComp(cfg, data_icacomp, data_eogchan);
   
   clear data_eogchan
   fprintf('\n');
   
   % Verify the estimated components
-  data_eogcomp      = JAI_verifyComp(data_eogcomp, data_icacomp);
+  data_eogcomp      = JAI_selectBadComp(data_eogcomp, data_icacomp);
   
   clear data_icacomp
   fprintf('\n');
@@ -198,7 +198,7 @@ for i = numOfPart
   JAI_loadData( cfg );
   
   % remove eye artifacts
-  data_eyecor = JAI_removeEOGArt(data_eogcomp, data_preproc1);
+  data_eyecor = JAI_correctSignals(data_eogcomp, data_preproc1);
   
   clear data_eogcomp data_preproc1
   fprintf('\n');

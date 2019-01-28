@@ -1,23 +1,23 @@
-function [ data ] = JAI_removeEOGArt( data_eogcomp, data )
-% JAI_REMOVEEOGART is a function which removes eye artifacts from data
-% using in advance estimated ica components
+function [ data ] = JAI_correctSignals( data_eogcomp, data )
+% JAI_CORRECTSIGNALS is a function which removes artifacts from data
+% using previously estimated ica components
 %
 % Use as
-%   [ data ] = JAI_removeEOGArt( data_eogcomp, data )
+%   [ data ] = JAI_correctSignals( data_eogcomp, data )
 %
-% where data_eogcomp has to be the result of JAI_VERIFYCOMP or 
-% JAI_CORRCOMP and data has to be the result of JAI_PREPROCESSING
+% where data_eogcomp has to be the result of JAI_SELECTBADCOMP or 
+% JAI_DETEOGCOMP and data has to be the result of JAI_PREPROCESSING
 %
 % This function requires the fieldtrip toolbox
 %
-% See also JAI_VERIFYCOMP, JAI_CORRCOMP, JAI_PREPROCESSING,
+% See also JAI_SELECTBADCOMP, JAI_DETEOGCOMP, JAI_PREPROCESSING,
 % FT_COMPONENTANALYSIS and FT_REJECTCOMPONENT
 
-% Copyright (C) 2017, Daniel Matthes, MPI CBS
+% Copyright (C) 2017-2019, Daniel Matthes, MPI CBS
 
-fprintf('<strong>Cleanig data of participant 1 from eye-artifacts...</strong>\n');
+fprintf('<strong>Artifact correction with data of participant 1...</strong>\n');
 data.part1 = removeArtifacts(data_eogcomp.part1, data.part1);
-fprintf('<strong>Cleanig data of participant 2 from eye-artifacts...</strong>\n');
+fprintf('<strong>Artifact correction with data of participant 2...</strong>\n');
 data.part2 = removeArtifacts(data_eogcomp.part2, data.part2);
 
 end
@@ -34,7 +34,7 @@ cfg.demean        = 'no';
 cfg.showcallinfo  = 'no';
 
 ft_info off;
-dataComp = ft_componentanalysis(cfg, dataOfPart);                           % estimate components with the in previous part 3 calculated unmixing matrix
+dataComp = ft_componentanalysis(cfg, dataOfPart);                           % estimate components by using the in previous part 3 calculated unmixing matrix
 ft_info on;
 
 for i=1:length(dataEOG.elements)

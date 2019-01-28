@@ -1,31 +1,33 @@
-function [ data_eogcomp ] = JAI_verifyComp( data_eogcomp, data_icacomp )
-% JAI_VERIFYCOMP is a function to verify visually the ICA components having 
-% a high correlation with one of the measured EOG signals.
+function [ data_eogcomp ] = JAI_selectBadComp( data_eogcomp, data_icacomp )
+% JAI_SELECTBADCOMP is a function for exploring previously estimated ICA
+% components visually. Within the GUI, each component can be set to either
+% keep or reject for a later artifact correction operation. The result of
+% JAI_DETEOGCOMP are preselected, but it should be visually explored too.
 %
 % Use as
 %   [ data_eogcomp ] = JAI_verifyComp( data_eogcomp, data_icacomp )
 %
-% where the input data_eogcomp has to be the result of JAI_CORRCOMP ans 
+% where the input data_eogcomp has to be the result of JAI_DETEOGCOMP and
 % data_icacomp the result of JAI_ICA
 %
 % This function requires the fieldtrip toolbox
 %
-% See also JAI_CORRCOMP, JAI_ICA and FT_DATABROWSER
+% See also JAI_DETEOGCOMP, JAI_ICA and FT_DATABROWSER
 
-% Copyright (C) 2017, Daniel Matthes, MPI CBS
+% Copyright (C) 2017-2019, Daniel Matthes, MPI CBS
 
-fprintf('<strong>Verify EOG-correlating components at participant 1...</strong>\n');
-data_eogcomp.part1 = verifyComp(data_eogcomp.part1, data_icacomp.part1);
+fprintf('<strong>Select ICA components which shall be removed from participants 1 data...</strong>\n');
+data_eogcomp.part1 = selectComp(data_eogcomp.part1, data_icacomp.part1);
 fprintf('\n');
-fprintf('<strong>Verify EOG-correlating components at participant 2...</strong>\n');
-data_eogcomp.part2 = verifyComp(data_eogcomp.part2, data_icacomp.part2);
+fprintf('<strong>Select ICA components which shall be removed from participants 2 data...</strong>\n');
+data_eogcomp.part2 = selectComp(data_eogcomp.part2, data_icacomp.part2);
 
 end
 
 %--------------------------------------------------------------------------
 % SUBFUNCTION which does the verification of the EOG-correlating components
 %--------------------------------------------------------------------------
-function [ dataEOGComp ] = verifyComp( dataEOGComp, dataICAcomp )
+function [ dataEOGComp ] = selectComp( dataEOGComp, dataICAcomp )
 
 numOfElements = 1:length(dataEOGComp.elements);
 idx = find(ismember(dataICAcomp.label, dataEOGComp.elements))';
@@ -46,10 +48,14 @@ for i = numOfElements
   fprintf('[%d] - component %d - %2.1f %% correlation\n', i, idx(i), corrVal);
 end
 
+filepath = fileparts(mfilename('fullpath'));                                % load cap layout
+load(sprintf('%s/../layouts/mpi_customized_acticap32.mat', filepath), ...
+     'lay');
+
 cfg               = [];
 cfg.rejcomp       = idx;
 cfg.blocksize     = 30;
-cfg.layout        = 'mpi_customized_acticap32.mat';
+cfg.layout        = lay;
 cfg.colormap      = 'jet';
 cfg.showcallinfo  = 'no';
 
@@ -58,8 +64,8 @@ badComp = ft_icabrowser(cfg, dataICAcomp);
 ft_warning on;
 
 if sum(badComp) == 0
-  cprintf([1,0.5,0],'No components are selected!\n');
-  cprintf([1,0.5,0],'NOTE: The following cleaning operation will keep the data as it is!\n');
+  cprintf([1,0.5,0],'No component is selected!\n');
+  cprintf([1,0.5,0],'NOTE: The following cleaning operation will keep the data unchanged!\n');
 end
 
 dataEOGComp.elements = dataICAcomp.label(badComp);

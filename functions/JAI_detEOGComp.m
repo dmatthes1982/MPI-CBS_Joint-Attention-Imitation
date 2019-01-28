@@ -1,9 +1,9 @@
-function [ data_eogcomp ] = JAI_estimEOGComp( cfg, data_icacomp, data_sensor )
-% JAI_CORRCOMP estimates components which have a high correlation (> 80%) 
-% with the EOGV and EOGH components of the original data
+function [ data_eogcomp ] = JAI_detEOGComp( cfg, data_icacomp, data_sensor )
+% JAI_DETEOGCOMP determines components with a high correlation (> 80%) 
+% in respect of EOGV and EOGH components of the original data.
 %
 % Use as
-%   [ data_eogcomp ] = JAI_corrComp( data_icacomp, data_sensor )
+%   [ data_eogcomp ] = JAI_detEOGComp( data_icacomp, data_sensor )
 %
 % The configuration options are
 %    cfg.threshold = correlation threshold for marking eog-like components (range: 0...1, default: [0.8 0.8])
@@ -16,7 +16,7 @@ function [ data_eogcomp ] = JAI_estimEOGComp( cfg, data_icacomp, data_sensor )
 %
 % See also JAI_ICA and JAI_SELECTDATA
 
-% Copyright (C) 2017, Daniel Matthes, MPI CBS
+% Copyright (C) 2017-2019, Daniel Matthes, MPI CBS
 
 % -------------------------------------------------------------------------
 % Get and check config options
@@ -30,9 +30,9 @@ end
 % -------------------------------------------------------------------------
 % Estimate correlating components
 % -------------------------------------------------------------------------
-fprintf('<strong>Estimate EOG-correlating components at participant 1...</strong>\n');
+fprintf('<strong>Determine EOG-correlating components at participant 1...</strong>\n');
 data_eogcomp.part1 = corrComp(data_icacomp.part1, data_sensor.part1, threshold(1));
-fprintf('<strong>Estimate EOG-correlating components at participant 2...</strong>\n');
+fprintf('<strong>Determine EOG-correlating components at participant 2...</strong>\n');
 data_eogcomp.part2 = corrComp(data_icacomp.part2, data_sensor.part2, threshold(2));
 
 end
@@ -76,4 +76,3 @@ dataEOGComp.unmixing   = dataICAComp.unmixing;
 dataEOGComp.elements   = dataICAComp.label(eogvCorr | eoghCorr);
 
 end
-
