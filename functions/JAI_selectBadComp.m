@@ -16,10 +16,10 @@ function [ data_eogcomp ] = JAI_selectBadComp( data_eogcomp, data_icacomp )
 
 % Copyright (C) 2017-2019, Daniel Matthes, MPI CBS
 
-fprintf('<strong>Select ICA components which shall be removed from participants 1 data...</strong>\n');
+fprintf('<strong>Select ICA components which shall be subtracted from participants 1 data...</strong>\n');
 data_eogcomp.part1 = selectComp(data_eogcomp.part1, data_icacomp.part1);
 fprintf('\n');
-fprintf('<strong>Select ICA components which shall be removed from participants 2 data...</strong>\n');
+fprintf('<strong>Select ICA components which shall be subtracted from participants 2 data...</strong>\n');
 data_eogcomp.part2 = selectComp(data_eogcomp.part2, data_icacomp.part2);
 
 end

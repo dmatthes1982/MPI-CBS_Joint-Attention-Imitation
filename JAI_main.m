@@ -238,7 +238,7 @@ else
     fprintf('[1]  - Data import\n');
     fprintf('[2]  - Preproc I: bad channel detection, filtering\n');
     fprintf('[3]  - ICA decomposition\n');
-    fprintf('[4]  - Preproc II: eye artifacts correction, bad channel recovery, re-referencing\n');
+    fprintf('[4]  - Preproc II: ICA-based artifact correction, bad channel recovery, re-referencing\n');
     fprintf('[5]  - Automatic and manual artifact detection\n');
     fprintf('[6]  - Narrow band filtering and Hilbert transform\n'); 
     fprintf('[7]  - Estimation of Phase Locking Values (PLV)\n');
@@ -492,7 +492,7 @@ while sessionStatus == true
       selection = false;
       while selection == false
         fprintf('<strong>Continue data processing with:</strong>\n');
-        fprintf('<strong>[4] - Preproc II: eye artifacts correction, bad channel recovery, re-referencing?</strong>\n');
+        fprintf('<strong>[4] - Preproc II: ICA-based artifact correction, bad channel recovery, re-referencing?</strong>\n');
         x = input('\nSelect [y/n]: ','s');
         if strcmp('y', x)
           selection = true;
