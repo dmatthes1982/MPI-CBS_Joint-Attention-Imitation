@@ -5,7 +5,7 @@ function [ data_eogcomp ] = JAI_selectBadComp( data_eogcomp, data_icacomp )
 % JAI_DETEOGCOMP are preselected, but it should be visually explored too.
 %
 % Use as
-%   [ data_eogcomp ] = JAI_verifyComp( data_eogcomp, data_icacomp )
+%   [ data_eogcomp ] = JAI_selectBadComp( data_eogcomp, data_icacomp )
 %
 % where the input data_eogcomp has to be the result of JAI_DETEOGCOMP and
 % data_icacomp the result of JAI_ICA
@@ -25,7 +25,9 @@ data_eogcomp.part2 = selectComp(data_eogcomp.part2, data_icacomp.part2);
 end
 
 %--------------------------------------------------------------------------
-% SUBFUNCTION which does the verification of the EOG-correlating components
+% SUBFUNCTION which provides the ft_icabrowser for verification of the
+% EOG-correlating components and for the selection of further bad
+% components.
 %--------------------------------------------------------------------------
 function [ dataEOGComp ] = selectComp( dataEOGComp, dataICAcomp )
 

@@ -27,8 +27,9 @@ end
 %% part 4
 % 1. Find EOG-like ICA Components (Correlation with EOGV and EOGH, 80 %
 %    confirmity)
-% 2. Verify the estimated components by using the ft_databrowser function
-% 3. Remove eye artifacts
+% 2. Verify the estimated components by using the ft_icabrowser function
+%    and add further bad components to the selection
+% 3. Correct EEG data
 % 4. Recovery of bad channels
 % 5. Re-referencing
 
@@ -120,7 +121,7 @@ warning on;
 for i = numOfPart
   fprintf('<strong>Dyad %d</strong>\n\n', i);
 
-  %% Eye artifact correction %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  %% ICA-based artifact correction %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   fprintf('<strong>ICA-based artifact correction</strong>\n\n');
 
   cfg             = [];
@@ -147,13 +148,14 @@ for i = numOfPart
   clear data_eogchan
   fprintf('\n');
   
-  % Verify the estimated components
+  % Verify EOG-like ICA Components and add further bad components to the
+  % selection
   data_eogcomp      = JAI_selectBadComp(data_eogcomp, data_icacomp);
   
   clear data_icacomp
   fprintf('\n');
 
-  % export the determined eog components and the unmixing matrix into 
+  % export the selected ICA components and the unmixing matrix into
   % a *.mat file
   cfg             = [];
   cfg.desFolder   = strcat(desPath, '04a_eogcomp/');
@@ -168,20 +170,20 @@ for i = numOfPart
   JAI_saveData(cfg, 'data_eogcomp', data_eogcomp);
   fprintf('Data stored!\n\n');
 
-  % add eye-artifact related components to the settings file
+  % add selected ICA components to the settings file
   if isempty(data_eogcomp.part1.elements)
-    EOGcompPart1 = {'---'};
+    ICAcompPart1 = {'---'};
   else
-    EOGcompPart1 = {strjoin(data_eogcomp.part1.elements,',')};
+    ICAcompPart1 = {strjoin(data_eogcomp.part1.elements,',')};
   end
   if isempty(data_eogcomp.part2.elements)
-    EOGcompPart2 = {'---'};
+    ICAcompPart2 = {'---'};
   else
-    EOGcompPart2 = {strjoin(data_eogcomp.part2.elements,',')};
+    ICAcompPart2 = {strjoin(data_eogcomp.part2.elements,',')};
   end
   warning off;
-  T.EOGcompPart1(i) = EOGcompPart1;
-  T.EOGcompPart2(i) = EOGcompPart2;
+  T.ICAcompPart1(i) = ICAcompPart1;
+  T.ICAcompPart2(i) = ICAcompPart2;
   warning on;
 
   % store settings table
@@ -197,7 +199,7 @@ for i = numOfPart
   fprintf('Load bandpass filtered data...\n');
   JAI_loadData( cfg );
   
-  % remove eye artifacts
+  % correct EEG signals
   data_eyecor = JAI_correctSignals(data_eogcomp, data_preproc1);
   
   clear data_eogcomp data_preproc1
@@ -258,4 +260,4 @@ end
 
 %% clear workspace
 clear file_path cfg sourceList numOfSources i threshold selection x T ...
-      settings_file EOGcompPart1 EOGcompPart2 reference refchannel
+      settings_file ICAcompPart1 ICAcompPart2 reference refchannel
