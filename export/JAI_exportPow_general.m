@@ -7,8 +7,8 @@ run([filepath '/../JAI_init.m']);
 
 cprintf([0,0.6,0], '<strong>------------------------------------------------</strong>\n');
 cprintf([0,0.6,0], '<strong>Joint attention imitation project</strong>\n');
-cprintf([0,0.6,0], '<strong>Export of PSD results (general script)</strong>\n');
-cprintf([0,0.6,0], 'Copyright (C) 2017-2018, Daniel Matthes, MPI CBS\n');
+cprintf([0,0.6,0], '<strong>Export of power results (general script)</strong>\n');
+cprintf([0,0.6,0], 'Copyright (C) 2017-2019, Daniel Matthes, MPI CBS\n');
 cprintf([0,0.6,0], '<strong>------------------------------------------------</strong>\n');
 
 % -------------------------------------------------------------------------
@@ -258,7 +258,8 @@ clear data_pwelch numOfChan part selection x prompt_string
 % Generate xls file
 % -------------------------------------------------------------------------
 fprintf('<strong>Identifier specification...</strong>\n');
-desPath = [path 'DualEEG_JAI_results/PSD_export/general/' sessionStr '/'];  % destination path
+desPath = [path 'DualEEG_JAI_results/Power_export/general/' sessionStr ...  % destination path
+            '/'];
 
 if ~exist(desPath, 'dir')                                                   % generate session dir, if not exist
   mkdir(desPath);
@@ -275,7 +276,7 @@ while selection == false
     cprintf([1,0.5,0], ['Use only letters and or numbers for the file '...
                         'identifier\n']);
   else
-    xlsFile = [desPath 'PSD_general_export_' identifier{1} '_' ...          % build filename
+    xlsFile = [desPath 'Power_general_export_' identifier{1} '_' ...          % build filename
               sessionStr '.xls'];
     if exist(xlsFile, 'file')                                               % check if file already exists
       cprintf([1,0.5,0], 'A file with this identifier exists!');
@@ -388,9 +389,9 @@ clear cell_array passband condMark headline freqStr cmode fmode ...
       part_suffix part_prefix part tableLength numOfPart
 
 % -------------------------------------------------------------------------
-% Import psd values into tables
+% Import power values into tables
 % -------------------------------------------------------------------------
-fprintf('<strong>Import of PSD values...</strong>\n\n');
+fprintf('<strong>Import of power values...</strong>\n\n');
 f = waitbar(0,'Please wait...');
 
 for dyad = 1:1:numOfFiles
@@ -406,63 +407,63 @@ for dyad = 1:1:numOfFiles
                   f, 'Please wait...');
     loc_trl = ismember(data_pwelch.part1.trialinfo, condNum(trl));          % participant 1
     if any(loc_trl)
-      psdPart1 = squeeze(data_pwelch.part1.powspctrm(loc_trl, :, :));
+      powPart1 = squeeze(data_pwelch.part1.powspctrm(loc_trl, :, :));
       loc_freq = ismember(data_pwelch.part1.freq, freqNum);
       loc_chan = ismember(data_pwelch.part1.label, label);
-      psdPart1 = psdPart1(loc_chan, loc_freq);
+      powPart1 = powPart1(loc_chan, loc_freq);
       row = 2*dyad - 1;
       
       switch mode
         case 0 % average & cluster
-          psdPart1 = reshape(psdPart1, [], 1);
-          Tdata(row, trl + 1) = {nanmean(psdPart1)};
+          powPart1 = reshape(powPart1, [], 1);
+          Tdata(row, trl + 1) = {nanmean(powPart1)};
         case 1 % singleFreq & cluster
           start = (trl - 1) * numOfFreq + 2;
           stop  = start + numOfFreq - 1;
-          Tdata(row ,start:stop) = num2cell(nanmean(psdPart1, 1));
+          Tdata(row ,start:stop) = num2cell(nanmean(powPart1, 1));
         case 2 % average & singleChan
           start = (trl - 1) * numOfChan + 2;
           stop  = start + numOfChan - 1;
           Tdata(row ,start:stop) = num2cell(transpose(...
-                                            nanmean(psdPart1, 2)));
+                                            nanmean(powPart1, 2)));
         case 3 % singelFreq & singleChan
           start = (trl - 1) * (numOfChan * numOfFreq) + 2;
           stop  = start + (numOfChan * numOfFreq) - 1;
-          psdPart1 = transpose(psdPart1);
-          psdPart1 = reshape(psdPart1,[],1);
-          psdPart1 = transpose(psdPart1);
-          Tdata(row ,start:stop) = num2cell(psdPart1);
+          powPart1 = transpose(powPart1);
+          powPart1 = reshape(powPart1,[],1);
+          powPart1 = transpose(powPart1);
+          Tdata(row ,start:stop) = num2cell(powPart1);
       end
     end
     
     loc_trl = ismember(data_pwelch.part2.trialinfo, condNum(trl));          % participant 2
     if any(loc_trl)
-      psdPart2 = squeeze(data_pwelch.part2.powspctrm(loc_trl, :, :));
+      powPart2 = squeeze(data_pwelch.part2.powspctrm(loc_trl, :, :));
       loc_freq = ismember(data_pwelch.part2.freq, freqNum);
       loc_chan = ismember(data_pwelch.part2.label, label);
-      psdPart2 = psdPart2(loc_chan, loc_freq);
+      powPart2 = powPart2(loc_chan, loc_freq);
       row = 2*dyad;
       
       switch mode
         case 0 % average & cluster
-          psdPart2 = reshape(psdPart2, [], 1);
-          Tdata(row, trl + 1 ) = {nanmean(psdPart2)};
+          powPart2 = reshape(powPart2, [], 1);
+          Tdata(row, trl + 1 ) = {nanmean(powPart2)};
         case 1 % singleFreq & cluster
           start = (trl - 1) * numOfFreq + 2;
           stop  = start + numOfFreq - 1;
-          Tdata(row ,start:stop) = num2cell(nanmean(psdPart2, 1));
+          Tdata(row ,start:stop) = num2cell(nanmean(powPart2, 1));
         case 2 % average & singleChan
           start = (trl - 1) * numOfChan + 2;
           stop  = start + numOfChan - 1;
           Tdata(row ,start:stop) = num2cell(transpose(...
-                                            nanmean(psdPart2, 2)));
+                                            nanmean(powPart2, 2)));
         case 3 % singelFreq & singleChan
           start = (trl - 1) * (numOfChan * numOfFreq) + 2;
           stop  = start + (numOfChan * numOfFreq) - 1;
-          psdPart2 = transpose(psdPart2);
-          psdPart2 = reshape(psdPart2,[],1);
-          psdPart2 = transpose(psdPart2);
-          Tdata(row ,start:stop) = num2cell(psdPart2);
+          powPart2 = transpose(powPart2);
+          powPart2 = reshape(powPart2,[],1);
+          powPart2 = transpose(powPart2);
+          Tdata(row ,start:stop) = num2cell(powPart2);
       end
     end
   end
@@ -473,12 +474,12 @@ end
 close(f);
 clear f dyad numOfFiles srcPath fileList labelOrig dyads trl loc_chan ...
       numOfTrials loc_trl condNum data_pwelch loc_freq start stop mode ...
-      freqNum psdPart1 psdPart2 label row numOfChan numOfFreq
+      freqNum powPart1 powPart2 label row numOfChan numOfFreq
 
 % -------------------------------------------------------------------------
-% Export psd table into spreadsheet
+% Export power table into spreadsheet
 % -------------------------------------------------------------------------
-fprintf('<strong>Export of PSD table into a xls spreadsheet...</strong>\n');
+fprintf('<strong>Export of power table into a xls spreadsheet...</strong>\n');
 
 writetable(Tinfo, xlsFile, 'Sheet', 'info');
 writetable(Tdata, xlsFile, 'Sheet', 'data');

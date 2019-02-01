@@ -1,9 +1,9 @@
-function JAI_easyPSDplot(cfg, data)
-% JAI_EASYPSDPLOT is a function, which makes it easier to plot the power
-% spectral density within a specific condition of the JAI_DATASTRUCTURE
+function JAI_easyPowPlot(cfg, data)
+% JAI_EASYPOWPLOT is a function, which makes it easier to plot the
+% signal power within a specific condition of the JAI_DATASTRUCTURE
 %
 % Use as
-%   JAI_easyPSDplot(cfg, data)
+%   JAI_easyPowPlot(cfg, data)
 %
 % where the input data have to be a result from JAI_PWELCH.
 %
@@ -99,7 +99,7 @@ if ~ismember(avgelec, {'yes', 'no'})                                        % ch
 end
 
 % -------------------------------------------------------------------------
-% Plot power spectral density (PSD)
+% Plot power spectrum
 % -------------------------------------------------------------------------
 legend('-DynamicLegend');
 hold on;
@@ -116,9 +116,9 @@ else
 end
 
 if part == 0                                                                % set figure title
-  title(sprintf('PSD - Cond.: %d', cond));
+  title(sprintf('Power - Cond.: %d', cond));
 else
-  title(sprintf('PSD - Part.: %d - Cond.: %d', part, cond));
+  title(sprintf('Power - Part.: %d - Cond.: %d', part, cond));
 end
 
 xlabel('frequency in Hz');                                                  % set xlabel

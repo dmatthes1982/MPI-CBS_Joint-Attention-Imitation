@@ -1,9 +1,9 @@
-function  [ data_pwelchod ] = JAI_PSDoverDyads( cfg )
-% JAI_PSDOVERDYADS estimates the mean of the power spectral density values 
+function  [ data_pwelchod ] = JAI_powOverDyads( cfg )
+% JAI_POWOVERDYADS estimates the mean of the power actifity over dyads
 % for all conditions and over all participants.
 %
 % Use as
-%   [ data_pwelchod ] = JAI_PSDoverDyads( cfg )
+%   [ data_pwelchod ] = JAI_powOverDyads( cfg )
 %
 % The configuration options are
 %   cfg.path      = source path' (i.e. '/data/pt_01826/eegData/DualEEG_JAI_processedData/09b_pwelch/')
@@ -32,7 +32,7 @@ load(sprintf('%s/../general/JAI_generalDefinitions.mat', filepath), ...
 % -------------------------------------------------------------------------
 % Select dyads
 % -------------------------------------------------------------------------    
-fprintf('<strong>Averaging PSD values over dyads...</strong>\n');
+fprintf('<strong>Averaging power values over dyads...</strong>\n');
 
 dyadsList   = dir([path, sprintf('JAI_d*_09b_pwelch_%03d.mat', session)]);
 dyadsList   = struct2cell(dyadsList);
@@ -101,7 +101,7 @@ data = cellfun(@(x) shiftdim(x, 2), data, 'UniformOutput', false);
 data = cat(4, data{:});
 
 % -------------------------------------------------------------------------
-% Estimate averaged power spectral density (over dyads)
+% Estimate averaged power spectrum (over dyads)
 % -------------------------------------------------------------------------
 data = nanmean(data, 4);
 

@@ -221,7 +221,7 @@ if avgOverDyads == true
   
   data_tfrod     = JAI_TFRoverDyads( cfg );
   
-  % export the averaged PSD values into a *.mat file
+  % export the averaged TFR values into a *.mat file
   cfg             = [];
   cfg.desFolder   = strcat(desPath, '10c_tfrod/');
   cfg.filename    = 'JAI_10c_tfrod';
@@ -239,10 +239,10 @@ end
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Averaging PSD over dyads
+%% Averaging power over dyads
 choise = false;
 while choise == false
-  cprintf([0,0.6,0], 'Averaging PSD over dyads?\n');
+  cprintf([0,0.6,0], 'Averaging power over dyads?\n');
   x = input('Select [y/n]: ','s');
   if strcmp('y', x)
     choise = true;
@@ -261,9 +261,9 @@ if avgOverDyads == true
   cfg.path        = strcat(desPath, '09b_pwelch/');
   cfg.session     = str2double(sessionStr);
   
-  data_pwelchod     = JAI_PSDoverDyads( cfg );
+  data_pwelchod     = JAI_powOverDyads( cfg );
   
-  % export the averaged PSD values into a *.mat file
+  % export the averaged power spectrum into a *.mat file
   cfg             = [];
   cfg.desFolder   = strcat(desPath, '10d_pwelchod/');
   cfg.filename    = 'JAI_10d_pwelchod';
@@ -272,7 +272,7 @@ if avgOverDyads == true
   file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
                      '.mat');
                    
-  fprintf('Saving PSD values over dyads in:\n'); 
+  fprintf('Saving averaged power spectrum over dyads in:\n');
   fprintf('%s ...\n', file_path);
   JAI_saveData(cfg, 'data_pwelchod', data_pwelchod);
   fprintf('Data stored!\n');

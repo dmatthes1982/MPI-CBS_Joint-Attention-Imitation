@@ -6,7 +6,7 @@ run('../JAI_init.m');
 
 cprintf([0,0.6,0], '<strong>------------------------------------------------</strong>\n');
 cprintf([0,0.6,0], '<strong>Joint attention imitation project</strong>\n');
-cprintf([0,0.6,0], '<strong>Export of PSD results (only first baseline conditions)</strong>\n');
+cprintf([0,0.6,0], '<strong>Export of power results (only first baseline conditions)</strong>\n');
 cprintf([0,0.6,0], 'Copyright (C) 2017-2018, Daniel Matthes, MPI CBS\n');
 cprintf([0,0.6,0], '<strong>------------------------------------------------</strong>\n');
 
@@ -105,10 +105,12 @@ clear sessionNum fileListCopy y userList match filePath cmdout attrib ...
 % generate xls file (existing files will always be overwritten to avoid 
 % results with conflicts!)
 % -------------------------------------------------------------------------
-desPath = [path 'DualEEG_JAI_results/' 'PSD_export/'];                      % destination path
-xlsFile = [desPath 'PSD_begBaseline_conditions_export_' sessionStr '.xls']; % build file name
+desPath = [path 'DualEEG_JAI_results/' 'Power_export/'];                    % destination path
+xlsFile = [desPath 'Power_begBaseline_conditions_export_' sessionStr ...    % build file name
+            '.xls']; 
 
-template_file = [path 'DualEEG_JAI_templates/' 'PSD_export_template.xls'];  % template file
+template_file = [path 'DualEEG_JAI_templates/' ...                          % template file
+                  'power_export_template.xls'];
 
 [~] = copyfile(template_file, xlsFile);                                     % copy template to destination
 
@@ -145,14 +147,14 @@ clear label_111 label_2 label_3 numOfPart numOfChan cell_array ...
       sessionStr loc freq
 
 % -------------------------------------------------------------------------
-% import psd values into tables
+% import power values into tables
 % -------------------------------------------------------------------------
 condition   = [111,2,3];                                                     % conditions: SameObjectB, ViewMotionB, SameMotionB
 numOfTrials = length(condition);
 label       = {'C3','Cz','C4'};
 freq        = 8:13;
 
-fprintf('Import of PSD values...\n');
+fprintf('Import of power values...\n');
 f = waitbar(0,'Please wait...');
 for dyad=1:1:numOfFiles
   load([srcPath fileList{dyad}]);
@@ -161,7 +163,7 @@ for dyad=1:1:numOfFiles
   T.participant(2*dyad - 1) = {sprintf('%d_1', dyadNum)};                   % set participants identifier
   T.participant(2*dyad)     = {sprintf('%d_2', dyadNum)};
   
-  for trl = 1:1:numOfTrials                                                 % copy the psd results into the tables
+  for trl = 1:1:numOfTrials                                                 % copy the power results into the tables
     waitbar(((dyad-1)*numOfTrials + trl)/(numOfFiles * numOfTrials), ...
                f, 'Please wait...');
     % participant 1 -------------------------------------------------------
@@ -169,31 +171,31 @@ for dyad=1:1:numOfFiles
     loc_freq  = ismember(data_pwelch.part1.freq, freq);
     loc_label = ismember(data_pwelch.part1.label, label);
     
-    psd = squeeze(data_pwelch.part1.powspctrm(loc_trl,loc_label, ...        % extract values of desired channels and frequencies
+    pow = squeeze(data_pwelch.part1.powspctrm(loc_trl,loc_label, ...        % extract values of desired channels and frequencies
                   loc_freq));
-    psd = mean(psd, 1);                                                     % average over channels
-    T(2*dyad - 1, col{trl}) = num2cell(psd);
+    pow = mean(pow, 1);                                                     % average over channels
+    T(2*dyad - 1, col{trl}) = num2cell(pow);
     
     % participant 2 -------------------------------------------------------
     loc_trl   = ismember(data_pwelch.part2.trialinfo, condition(trl));
     loc_freq  = ismember(data_pwelch.part2.freq, freq);
     loc_label = ismember(data_pwelch.part2.label, label);
     
-    psd = squeeze(data_pwelch.part2.powspctrm(loc_trl,loc_label, ...        % extract values of desired channels and frequencies
+    pow = squeeze(data_pwelch.part2.powspctrm(loc_trl,loc_label, ...        % extract values of desired channels and frequencies
                   loc_freq));
-    psd = mean(psd, 1);                                                     % average over channels
-    T(2*dyad, col{trl}) = num2cell(psd);
+    pow = mean(pow, 1);                                                     % average over channels
+    T(2*dyad, col{trl}) = num2cell(pow);
   end
 end
 
 close(f);
 clear dyadNum condition loc_trl loc_freq loc_label col f dyad trl ...
-      numOfFiles fileList srcPath data_pwelch numOfTrials label freq psd
+      numOfFiles fileList srcPath data_pwelch numOfTrials label freq pow
 
 % -------------------------------------------------------------------------
 % export itpc table into spreadsheet
 % -------------------------------------------------------------------------
-fprintf('Export of PSD table into a xls spreadsheet...\n');
+fprintf('Export of power table into a xls spreadsheet...\n');
 
 writetable(T, xlsFile, 'Sheet', 'C3-Cz-C4');
 

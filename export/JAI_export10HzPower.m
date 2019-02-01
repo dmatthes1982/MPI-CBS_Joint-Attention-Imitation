@@ -6,7 +6,7 @@ run('../JAI_init.m');
 
 cprintf([0,0.6,0], '<strong>--------------------------------------------------------------------------</strong>\n');
 cprintf([0,0.6,0], '<strong>Joint attention imitation project</strong>\n');
-cprintf([0,0.6,0], '<strong>Export of PSD results of single and dual conditions with 10 Hz entrainment</strong>\n');
+cprintf([0,0.6,0], '<strong>Export of power results of single and dual conditions with 10 Hz entrainment</strong>\n');
 cprintf([0,0.6,0], 'Copyright (C) 2017-2018, Daniel Matthes, MPI CBS\n');
 cprintf([0,0.6,0], '<strong>--------------------------------------------------------------------------</strong>\n');
 
@@ -105,12 +105,12 @@ clear sessionNum fileListCopy y userList match filePath cmdout attrib ...
 % generate xls file (existing files will always be overwritten to avoid 
 % results with conflicts!)
 % -------------------------------------------------------------------------
-desPath = [path 'DualEEG_JAI_results/' 'PSD_export/'];                      % destination path
-xlsFile = [desPath 'PSD_10Hz_singledual_conditions_export_' ...             % build file name
+desPath = [path 'DualEEG_JAI_results/' 'Power_export/'];                    % destination path
+xlsFile = [desPath 'Power_10Hz_singledual_conditions_export_' ...           % build file name
             sessionStr '.xls'];
 
 template_file = [path 'DualEEG_JAI_templates/' ...                          % template file
-                  'PSD_10Hz_export_template.xls'];
+                  'Power_10Hz_export_template.xls'];
 
 [~] = copyfile(template_file, xlsFile);                                     % copy template to destination
 
@@ -150,7 +150,7 @@ clear T numOfPart numOfChan cell_array sessionStr freq label
 % -------------------------------------------------------------------------
 condition  = {10, [11,12]};                                                 % conditions
 
-fprintf('Import of PSD values...\n');
+fprintf('Import of power values...\n');
 f = waitbar(0,'Please wait...');  
 for dyad=1:1:numOfFiles
   load([srcPath fileList{dyad}]);
@@ -161,7 +161,7 @@ for dyad=1:1:numOfFiles
   T_dual.participant(2*dyad - 1)  = {sprintf('%d_1', dyadNum)};
   T_dual.participant(2*dyad)      = {sprintf('%d_2', dyadNum)};
 
-  waitbar(dyad/numOfFiles, f, 'Please wait...');                            % spread the psd results into the three different tables
+  waitbar(dyad/numOfFiles, f, 'Please wait...');                            % spread the power results into the three different tables
   % participant 1 -------------------------------------------------------
   % condition 10
   loc_trl = ismember(data_pwelch.part1.trialinfo, condition{1});
@@ -190,7 +190,7 @@ clear dyadNum condition loc_trl loc_freq f dyad numOfFiles fileList ...
 % -------------------------------------------------------------------------
 % export itpc table into spreadsheet
 % -------------------------------------------------------------------------
-fprintf('Export of PSD tables into a xls spreadsheet...\n');
+fprintf('Export of power tables into a xls spreadsheet...\n');
 
 writetable(T_single, xlsFile, 'Sheet', 'Single');
 writetable(T_dual, xlsFile, 'Sheet', 'Dual');
