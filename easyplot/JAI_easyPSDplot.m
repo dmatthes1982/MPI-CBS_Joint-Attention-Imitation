@@ -81,6 +81,9 @@ if isnumeric(elec)                                                          % ch
     end
   end
 else
+  if ischar(elec)
+    elec = {elec};
+  end
   tmpElec = zeros(1, length(elec));
   for i=1:length(elec)
     tmpElec(i) = find(strcmp(label, elec{i}));
