@@ -45,14 +45,15 @@ JAI_easyTotalPowerBarPlot( cfg, data_noisy );
 fig = gcf;                                                                  % default position is [560 528 560 420]
 fig.Position = [0 528 560 420];                                             % --> first figure will be placed on the left side of figure 2
 JAI_databrowser( cfg, data_raw );
-badLabel = JAI_channelCheckbox();
+cfgCC.maxchan = fix(numel(data_raw.part1.label) * 0.1);                     % estimate 10% of the total number of channels in the data
+badLabel = JAI_channelCheckbox( cfgCC );
 close(gcf);                                                                 % close also databrowser view when the channelCheckbox will be closed
 close(gcf);                                                                 % close also total power diagram when the channelCheckbox will be closed
 if any(strcmp(badLabel, 'TP10'))
   warning backtrace off;
-  warning(['You have repaired ''TP10'', accordingly selecting linked ' ...
-           'mastoid as reference in step [2] - preprocessing is not '...
-           'longer recommended.']);
+  warning(['You have rejected ''TP10'', accordingly selecting linked ' ...
+           'mastoid as reference in step [4] - Preproc II will lead '...
+           'into an error.']);
   warning backtrace on;
 end
 if length(badLabel) >= 2
@@ -82,14 +83,15 @@ JAI_easyTotalPowerBarPlot( cfg, data_noisy );
 fig = gcf;                                                                  % default position is [560 528 560 420]
 fig.Position = [0 528 560 420];                                             % --> first figure will be placed on the left side of figure 2
 JAI_databrowser( cfg, data_raw );
-badLabel = JAI_channelCheckbox();
+cfgCC.maxchan = fix(numel(data_raw.part2.label) * 0.1);                     % estimate 10% of the total number of channels in the data
+badLabel = JAI_channelCheckbox( cfgCC );
 close(gcf);                                                                 % close also databrowser view when the channelCheckbox will be closed
 close(gcf);                                                                 % close also total power diagram when the channelCheckbox will be closed
 if any(strcmp(badLabel, 'TP10'))
   warning backtrace off;
-  warning(['You have repaired ''TP10'', accordingly selecting linked ' ...
-           'mastoid as reference in step [2] - preprocessing is not '...
-           'longer recommended']);
+  warning(['You have rejected ''TP10'', accordingly selecting linked ' ...
+           'mastoid as reference in step [4] - Preproc II  will lead '...
+           'into an error.']);
   warning backtrace on;
 end
 if length(badLabel) >= 2

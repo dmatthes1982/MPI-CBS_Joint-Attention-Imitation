@@ -1,14 +1,25 @@
-function [ badLabel ] = JAI_channelCheckbox()
+function [ badLabel ] = JAI_channelCheckbox( cfg )
 % JAI_CHANNELCHECKBOX is a function, which displays a small GUI for the 
 % selection of bad channels. It returns a cell array including the labels
 % of the bad channels
 %
 % Use as
-%   [ badLabel ] = JAI_channelCheckbox()
+%   [ badLabel ]  = JAI_channelCheckbox( cfg )
+%
+% The configuration options are
+%   cfg.maxchan   = The maximum number of channels, which can marked as bad. (default: 2)
+%                   This value should not be greater than 10% of the total number of channels
+%
+% % This function requires the fieldtrip toolbox.
 %
 % SEE also UIFIGURE, UICHECKBOX, UIBUTTON, UIRESUME, UIWAIT
 
 % Copyright (C) 2018, Daniel Matthes, MPI CBS
+
+% -------------------------------------------------------------------------
+% Get and check config options
+% -------------------------------------------------------------------------
+maxchan  = ft_getopt(cfg, 'maxchan', 2);
 
 % -------------------------------------------------------------------------
 % Create GUI
@@ -114,7 +125,6 @@ Elec.CP4.Position = [205 100 80 15];
 Elec.TP10 = uicheckbox(SelectBadChannels);
 Elec.TP10.Text = 'TP10';
 Elec.TP10.Position = [285 100 80 15];
-Elec.TP10.Enable = 'off';
 % Create T8CheckBox
 Elec.T8 = uicheckbox(SelectBadChannels);
 Elec.T8.Text = 'T8';
@@ -157,36 +167,36 @@ btn.Position = [217 27 101 21];
 btn.Text = 'Save';
 
 % Create ValueChangedFcn pointers
-Elec.Fz.ValueChangedFcn = @(Fz, evt)CheckboxValueChanged(Elec, warningLabel, btn);
-Elec.F3.ValueChangedFcn = @(F3, evt)CheckboxValueChanged(Elec, warningLabel, btn);
-Elec.F7.ValueChangedFcn = @(F7, evt)CheckboxValueChanged(Elec, warningLabel, btn);
-Elec.F9.ValueChangedFcn = @(F9, evt)CheckboxValueChanged(Elec, warningLabel, btn);
-Elec.FT7.ValueChangedFcn = @(FT7, evt)CheckboxValueChanged(Elec, warningLabel, btn);
-Elec.FC3.ValueChangedFcn = @(FC3, evt)CheckboxValueChanged(Elec, warningLabel, btn);
-Elec.FC1.ValueChangedFcn = @(FC1, evt)CheckboxValueChanged(Elec, warningLabel, btn);
-Elec.Cz.ValueChangedFcn = @(Cz, evt)CheckboxValueChanged(Elec, warningLabel, btn);
-Elec.C3.ValueChangedFcn = @(C3, evt)CheckboxValueChanged(Elec, warningLabel, btn);
-Elec.T7.ValueChangedFcn = @(T7, evt)CheckboxValueChanged(Elec, warningLabel, btn);
-Elec.CP3.ValueChangedFcn = @(CP3, evt)CheckboxValueChanged(Elec, warningLabel, btn);
-Elec.Pz.ValueChangedFcn = @(Pz, evt)CheckboxValueChanged(Elec, warningLabel, btn);
-Elec.P3.ValueChangedFcn = @(P3, evt)CheckboxValueChanged(Elec, warningLabel, btn);
-Elec.P7.ValueChangedFcn = @(P7, evt)CheckboxValueChanged(Elec, warningLabel, btn);
-Elec.PO9.ValueChangedFcn = @(P09, evt)CheckboxValueChanged(Elec, warningLabel, btn);
-Elec.O1.ValueChangedFcn = @(O1, evt)CheckboxValueChanged(Elec, warningLabel, btn);
-Elec.O2.ValueChangedFcn = @(O2, evt)CheckboxValueChanged(Elec, warningLabel, btn);
-Elec.PO10.ValueChangedFcn = @(PO10, evt)CheckboxValueChanged(Elec, warningLabel, btn);
-Elec.P8.ValueChangedFcn = @(P8, evt)CheckboxValueChanged(Elec, warningLabel, btn);
-Elec.P4.ValueChangedFcn = @(P4, evt)CheckboxValueChanged(Elec, warningLabel, btn);
-Elec.CP4.ValueChangedFcn = @(CP4, evt)CheckboxValueChanged(Elec, warningLabel, btn);
-Elec.TP10.ValueChangedFcn = @(TP10, evt)CheckboxValueChanged(Elec, warningLabel, btn);
-Elec.T8.ValueChangedFcn = @(T8, evt)CheckboxValueChanged(Elec, warningLabel, btn);
-Elec.C4.ValueChangedFcn = @(C4, evt)CheckboxValueChanged(Elec, warningLabel, btn);
-Elec.FT8.ValueChangedFcn = @(FT8, evt)CheckboxValueChanged(Elec, warningLabel, btn);
-Elec.FC4.ValueChangedFcn = @(FC4, evt)CheckboxValueChanged(Elec, warningLabel, btn);
-Elec.FC2.ValueChangedFcn = @(FC2, evt)CheckboxValueChanged(Elec, warningLabel, btn);
-Elec.F4.ValueChangedFcn = @(F4, evt)CheckboxValueChanged(Elec, warningLabel, btn);
-Elec.F8.ValueChangedFcn = @(F8, evt)CheckboxValueChanged(Elec, warningLabel, btn);
-Elec.F10.ValueChangedFcn = @(F10, evt)CheckboxValueChanged(Elec, warningLabel, btn);
+Elec.Fz.ValueChangedFcn = @(Fz, evt)CheckboxValueChanged(Elec, warningLabel, btn, maxchan);
+Elec.F3.ValueChangedFcn = @(F3, evt)CheckboxValueChanged(Elec, warningLabel, btn, maxchan);
+Elec.F7.ValueChangedFcn = @(F7, evt)CheckboxValueChanged(Elec, warningLabel, btn, maxchan);
+Elec.F9.ValueChangedFcn = @(F9, evt)CheckboxValueChanged(Elec, warningLabel, btn, maxchan);
+Elec.FT7.ValueChangedFcn = @(FT7, evt)CheckboxValueChanged(Elec, warningLabel, btn, maxchan);
+Elec.FC3.ValueChangedFcn = @(FC3, evt)CheckboxValueChanged(Elec, warningLabel, btn, maxchan);
+Elec.FC1.ValueChangedFcn = @(FC1, evt)CheckboxValueChanged(Elec, warningLabel, btn, maxchan);
+Elec.Cz.ValueChangedFcn = @(Cz, evt)CheckboxValueChanged(Elec, warningLabel, btn, maxchan);
+Elec.C3.ValueChangedFcn = @(C3, evt)CheckboxValueChanged(Elec, warningLabel, btn, maxchan);
+Elec.T7.ValueChangedFcn = @(T7, evt)CheckboxValueChanged(Elec, warningLabel, btn, maxchan);
+Elec.CP3.ValueChangedFcn = @(CP3, evt)CheckboxValueChanged(Elec, warningLabel, btn, maxchan);
+Elec.Pz.ValueChangedFcn = @(Pz, evt)CheckboxValueChanged(Elec, warningLabel, btn, maxchan);
+Elec.P3.ValueChangedFcn = @(P3, evt)CheckboxValueChanged(Elec, warningLabel, btn, maxchan);
+Elec.P7.ValueChangedFcn = @(P7, evt)CheckboxValueChanged(Elec, warningLabel, btn, maxchan);
+Elec.PO9.ValueChangedFcn = @(P09, evt)CheckboxValueChanged(Elec, warningLabel, btn, maxchan);
+Elec.O1.ValueChangedFcn = @(O1, evt)CheckboxValueChanged(Elec, warningLabel, btn, maxchan);
+Elec.O2.ValueChangedFcn = @(O2, evt)CheckboxValueChanged(Elec, warningLabel, btn, maxchan);
+Elec.PO10.ValueChangedFcn = @(PO10, evt)CheckboxValueChanged(Elec, warningLabel, btn, maxchan);
+Elec.P8.ValueChangedFcn = @(P8, evt)CheckboxValueChanged(Elec, warningLabel, btn, maxchan);
+Elec.P4.ValueChangedFcn = @(P4, evt)CheckboxValueChanged(Elec, warningLabel, btn, maxchan);
+Elec.CP4.ValueChangedFcn = @(CP4, evt)CheckboxValueChanged(Elec, warningLabel, btn, maxchan);
+Elec.TP10.ValueChangedFcn = @(TP10, evt)CheckboxValueChanged(Elec, warningLabel, btn, maxchan);
+Elec.T8.ValueChangedFcn = @(T8, evt)CheckboxValueChanged(Elec, warningLabel, btn, maxchan);
+Elec.C4.ValueChangedFcn = @(C4, evt)CheckboxValueChanged(Elec, warningLabel, btn, maxchan);
+Elec.FT8.ValueChangedFcn = @(FT8, evt)CheckboxValueChanged(Elec, warningLabel, btn, maxchan);
+Elec.FC4.ValueChangedFcn = @(FC4, evt)CheckboxValueChanged(Elec, warningLabel, btn, maxchan);
+Elec.FC2.ValueChangedFcn = @(FC2, evt)CheckboxValueChanged(Elec, warningLabel, btn, maxchan);
+Elec.F4.ValueChangedFcn = @(F4, evt)CheckboxValueChanged(Elec, warningLabel, btn, maxchan);
+Elec.F8.ValueChangedFcn = @(F8, evt)CheckboxValueChanged(Elec, warningLabel, btn, maxchan);
+Elec.F10.ValueChangedFcn = @(F10, evt)CheckboxValueChanged(Elec, warningLabel, btn, maxchan);
 
 % -------------------------------------------------------------------------
 % Wait for user input and return selection after btn 'save' was pressed
@@ -229,7 +239,7 @@ function  SaveButtonPushed(SelectBadChannels)
 end
 
 % Checkbox value changed function
-function  CheckboxValueChanged(Elec, warningLabel, btn)
+function  CheckboxValueChanged(Elec, warningLabel, btn, maxchan)
   badLabel = [Elec.Fz.Value; Elec.F3.Value; Elec.F7.Value; ...              % get status of all checkboxes
               Elec.F9.Value; Elec.FT7.Value; Elec.FC3.Value; ...
               Elec.FC1.Value; Elec.Cz.Value; Elec.C3.Value; ...
@@ -241,8 +251,9 @@ function  CheckboxValueChanged(Elec, warningLabel, btn)
               Elec.FT8.Value; Elec.FC4.Value; Elec.FC2.Value; ...
               Elec.F4.Value; Elec.F8.Value; Elec.F10.Value];
   NumOfBad = sum(double(badLabel));
-  if NumOfBad > 2
-    warningLabel.Text = 'Too many channels selected! It''s only allowed to repair maximum 2 channels.';
+  if NumOfBad > maxchan
+    warningLabel.Text = sprintf(['Too many channels selected! It''s '...
+                  'only allowed to repair maximum %d channels.'], maxchan);
     btn.Enable = 'off';
   else
     warningLabel.Text = '';
