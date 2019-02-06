@@ -272,4 +272,4 @@ end
 
 %% clear workspace
 clear file_path cfg sourceList numOfSources i threshold selection x T ...
-      settings_file ICAcompPart1 ICAcompPart2 reference refchannel
+      settings_file ICAcompPart1 ICAcompPart2 reference refchannel mastoid

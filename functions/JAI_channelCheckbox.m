@@ -10,11 +10,11 @@ function [ badLabel ] = JAI_channelCheckbox( cfg )
 %   cfg.maxchan   = The maximum number of channels, which can marked as bad. (default: 2)
 %                   This value should not be greater than 10% of the total number of channels
 %
-% % This function requires the fieldtrip toolbox.
+% This function requires the fieldtrip toolbox.
 %
 % SEE also UIFIGURE, UICHECKBOX, UIBUTTON, UIRESUME, UIWAIT
 
-% Copyright (C) 2018, Daniel Matthes, MPI CBS
+% Copyright (C) 2018-2019, Daniel Matthes, MPI CBS
 
 % -------------------------------------------------------------------------
 % Get and check config options

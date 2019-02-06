@@ -96,6 +96,8 @@ while selection == false
 
       load('layouts/mpi_customized_acticap32.mat', 'lay')
       label = lay.label(1:end-2);
+      loc   = ~ismember(label, {'V1', 'V2', 'F9', 'F10'});                  % remove EOG-related electrodes from options to avoid errors
+      label = label(loc);
 
       sel = listdlg('PromptString', ...                                     % open the dialog window --> the user can select the channels wich are not of interest
               'Which channels are NOT of interest...', ...
@@ -111,7 +113,7 @@ while selection == false
       noichanStr = cellfun(@(x) strcat('-', x), noichan, ...
                           'UniformOutput', false);
       noichanStr = {strjoin(noichanStr,',')};
-
+      clear channels label loc sel
     otherwise
       cprintf([1,0.5,0], 'Wrong input!\n');
   end

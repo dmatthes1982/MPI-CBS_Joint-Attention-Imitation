@@ -15,7 +15,7 @@ function [ data_badchan ] = JAI_selectBadChan( data_raw, data_noisy )
 %
 % SEE also JAI_DATABROWSER, JAI_ESTNOISYCHAN and JAI_CHANNELCHECKBOX
 
-% Copyright (C) 2018, Daniel Matthes, MPI CBS
+% Copyright (C) 2018-2019, Daniel Matthes, MPI CBS
 
 % -------------------------------------------------------------------------
 % Check data
@@ -51,9 +51,9 @@ close(gcf);                                                                 % cl
 close(gcf);                                                                 % close also total power diagram when the channelCheckbox will be closed
 if any(strcmp(badLabel, 'TP10'))
   warning backtrace off;
-  warning(['You have rejected ''TP10'', accordingly selecting linked ' ...
-           'mastoid as reference in step [4] - Preproc II will lead '...
-           'into an error.']);
+  warning(['You have rejected ''TP10'', accordingly selecting linked '...
+           'mastoid as reference in step [4] - Preproc II is not '...
+           'longer recommended.']);
   warning backtrace on;
 end
 if length(badLabel) >= 2
@@ -89,9 +89,9 @@ close(gcf);                                                                 % cl
 close(gcf);                                                                 % close also total power diagram when the channelCheckbox will be closed
 if any(strcmp(badLabel, 'TP10'))
   warning backtrace off;
-  warning(['You have rejected ''TP10'', accordingly selecting linked ' ...
-           'mastoid as reference in step [4] - Preproc II  will lead '...
-           'into an error.']);
+  warning(['You have rejected ''TP10'', accordingly selecting linked '...
+           'mastoid as reference in step [4] - Preproc II is not '...
+           'longer recommended.']);
   warning backtrace on;
 end
 if length(badLabel) >= 2

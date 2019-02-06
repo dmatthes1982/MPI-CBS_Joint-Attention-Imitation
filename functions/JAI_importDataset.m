@@ -22,7 +22,7 @@ function [ data ] = JAI_importDataset(cfg)
 %
 % See also FT_PREPROCESSING, JAI_DATASTRUCTURE
 
-% Copyright (C) 2017, Daniel Matthes, MPI CBS
+% Copyright (C) 2017-2019, Daniel Matthes, MPI CBS
 
 % -------------------------------------------------------------------------
 % Get and check config options
