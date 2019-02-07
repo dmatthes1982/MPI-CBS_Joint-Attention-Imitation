@@ -13,6 +13,9 @@ function JAI_easyPowPlot(cfg, data)
 %                     1 - plot data of participant 1
 %                     2 - plot data of participant 2   
 %   cfg.condition   = condition (default: 111 or 'SameObjectB', see JAI_DATASTRUCTURE)
+%   cfg.baseline    = baseline condition (default: [], can by any valid condition)
+%                     the values of the baseline condition will be subtracted
+%                     from the values of the selected condition (cfg.condition)
 %   cfg.electrode   = number of electrodes (default: {'Cz'} repsectively [8])
 %                     examples: {'Cz'}, {'F3', 'Fz', 'F4'}, [8] or [2, 1, 28]
 %   cfg.avgelec     = plot average over selected electrodes, options: 'yes' or 'no' (default: 'no')
@@ -21,15 +24,16 @@ function JAI_easyPowPlot(cfg, data)
 %
 % See also JAI_PWELCH, JAI_DATASTRUCTURE
 
-% Copyright (C) 2018, Daniel Matthes, MPI CBS
+% Copyright (C) 2018-2019, Daniel Matthes, MPI CBS
 
 % -------------------------------------------------------------------------
 % Get and check config options
 % -------------------------------------------------------------------------
-part    = ft_getopt(cfg, 'part', 1);
-cond    = ft_getopt(cfg, 'condition', 111);
-elec    = ft_getopt(cfg, 'electrode', {'Cz'});
-avgelec = ft_getopt(cfg, 'avgelec', 'no');
+part      = ft_getopt(cfg, 'part', 1);
+condition = ft_getopt(cfg, 'condition', 111);
+baseline  = ft_getopt(cfg, 'baseline', []);
+elec      = ft_getopt(cfg, 'electrode', {'Cz'});
+avgelec   = ft_getopt(cfg, 'avgelec', 'no');
 
 filepath = fileparts(mfilename('fullpath'));                                % add utilities folder to path
 addpath(sprintf('%s/../utilities', filepath));
@@ -67,12 +71,22 @@ end
 trialinfo = data.trialinfo;                                                 % get trialinfo
 label     = data.label;                                                     % get labels 
 
-cond    = JAI_checkCondition( cond );                                       % check cfg.condition definition    
-if isempty(find(trialinfo == cond, 1))
-  error('The selected dataset contains no condition %d.', cond);
+condition    = JAI_checkCondition( condition );                             % check cfg.condition definition
+if isempty(find(trialinfo == condition, 1))
+  error('The selected dataset contains no condition %d.', condition);
 else
-  trialNum = ismember(trialinfo, cond);
+  trialNum = ismember(trialinfo, condition);
 end
+
+if ~isempty(baseline)
+  baseline    = JAI_checkCondition( baseline );                             % check cfg.baseline definition
+  if isempty(find(trialinfo == baseline, 1))
+    error('The selected dataset contains no condition %d.', baseline);
+  else
+    baseNum = ismember(trialinfo, baseline);
+  end
+end
+
 
 if isnumeric(elec)                                                          % check cfg.electrode
   for i=1:length(elec)
@@ -104,21 +118,36 @@ end
 legend('-DynamicLegend');
 hold on;
 
+if isempty(baseline)                                                        % extract the powerspctrm matrix
+  powData = squeeze(data.powspctrm(trialNum,:,:));
+else
+  powData = squeeze(data.powspctrm(trialNum,:,:)) - ...                     % subtract baseline condition
+            squeeze(data.powspctrm(baseNum,:,:));
+end
+
 if strcmp(avgelec, 'no')
   for i = 1:1:length(elec)
-    plot(data.freq, squeeze(data.powspctrm(trialNum, elec(i),:)), ...
+    plot(data.freq, powData(elec(i),:), ...
         'DisplayName', data.label{elec(i)});
   end
 else
   labelString = strjoin(data.label(elec), ',');
-  plot(data.freq, mean(squeeze(data.powspctrm(trialNum, elec,:)), 1), ...
-        'DisplayName', labelString);
+  plot(data.freq, mean(powData(elec,:), 1), 'DisplayName', labelString);
 end
 
 if part == 0                                                                % set figure title
-  title(sprintf('Power - Cond.: %d', cond));
+  if isempty(baseline)
+    title(sprintf('Power - Cond.: %d', condition));
+  else
+    title(sprintf('Power - Cond.: %d-%d', condition, baseline));
+  end
 else
-  title(sprintf('Power - Part.: %d - Cond.: %d', part, cond));
+  if isempty(baseline)
+    title(sprintf('Power - Part.: %d - Cond.: %d', part, condition));
+  else
+    title(sprintf('Power - Part.: %d - Cond.: %d-%d', part, condition, ...
+                  baseline));
+  end
 end
 
 xlabel('frequency in Hz');                                                  % set xlabel

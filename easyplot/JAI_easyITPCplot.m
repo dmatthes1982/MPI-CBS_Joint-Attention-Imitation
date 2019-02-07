@@ -14,6 +14,8 @@ function JAI_easyITPCplot(cfg, data)
 %                     1 - plot data of participant 1
 %                     2 - plot data of participant 2   
 %   cfg.condition   = condition (default: 7 or 'Single_2Hz', see JAI_DATASTRUCTURE)
+%   cfg.freqlim     = [begin end] (default: [1 48])
+%   cfg.timelim     = [begin end] (default: [0.2 9.8])
 %   cfg.electrode   = number of electrodes (default: {'Cz'} repsectively [8])
 %                     examples: {'Cz'}, {'F3', 'Fz', 'F4'}, [8] or [2, 1, 28] 
 %  
@@ -28,6 +30,8 @@ function JAI_easyITPCplot(cfg, data)
 % -------------------------------------------------------------------------
 part    = ft_getopt(cfg, 'part', 1);
 cond    = ft_getopt(cfg, 'condition', 7);
+freqlim = ft_getopt(cfg, 'freqlim', [1 48]);
+timelim = ft_getopt(cfg, 'timelim', [0.2 9.8]);
 elec    = ft_getopt(cfg, 'electrode', {'Cz'});
 
 filepath = fileparts(mfilename('fullpath'));                                % add utilities folder to path
@@ -91,10 +95,22 @@ else
 end
 
 % -------------------------------------------------------------------------
+% estimate actual limits
+% -------------------------------------------------------------------------
+time = data.time{trialNum};
+freq = data.freq;
+
+[~, idxf1] = min(abs(freq-freqlim(1)));                                     % estimate frequency range
+[~, idxf2] = min(abs(freq-freqlim(2)));
+
+[~, idxt1] = min(abs(time-timelim(1)));                                     % estimate time range
+[~, idxt2] = min(abs(time-timelim(2)));
+
+% -------------------------------------------------------------------------
 % Inter-trial phase coherence representation
 % -------------------------------------------------------------------------
-imagesc(data.time{trialNum}(2:end), data.freq, ...
-        squeeze(mean(data.itpc{trialNum}(elec,:,2:end),1)));
+imagesc(data.time{trialNum}(idxt1:idxt2), data.freq(idxf1:idxf2), ...
+        squeeze(mean(data.itpc{trialNum}(elec, idxf1:idxf2, idxt1:idxt2),1)));
 labelString = strjoin(data.label(elec), ',');
 if part == 0
   title(sprintf('ITPC - Cond.: %d - Elec.: %s', cond, labelString));

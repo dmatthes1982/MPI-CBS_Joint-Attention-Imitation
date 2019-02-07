@@ -68,9 +68,7 @@ load(sprintf('%s/../general/JAI_generalDefinitions.mat', filepath), ...
      'generalDefinitions');    
 trialinfo     = unique(data_in.trialinfo, 'stable');                        % extract trialinfo
 tf            = ismember(generalDefinitions.condNumITPC, trialinfo);        % bring trials into a correct order
-idx           = 1:length(generalDefinitions.condNumITPC);
-idx           = idx(tf);
-trialinfo     = generalDefinitions.condNumITPC(idx)';
+trialinfo     = generalDefinitions.condNumITPC(tf)';
 
 % -------------------------------------------------------------------------
 % Calculate spectrum

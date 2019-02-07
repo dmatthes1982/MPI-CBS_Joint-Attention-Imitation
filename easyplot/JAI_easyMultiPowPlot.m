@@ -13,6 +13,9 @@ function JAI_easyMultiPowPlot(cfg, data)
 %                     1 - plot data of participant 1
 %                     2 - plot data of participant 2   
 %   cfg.condition   = condition (default: 111 or 'SameObjectB', see JAI_DATASTRUCTURE)
+%   cfg.baseline    = baseline condition (default: [], can by any valid condition)
+%                     the values of the baseline condition will be subtracted
+%                     from the values of the selected condition (cfg.condition)
 %
 % This function requires the fieldtrip toolbox
 %
@@ -23,8 +26,9 @@ function JAI_easyMultiPowPlot(cfg, data)
 % -------------------------------------------------------------------------
 % Get and check config options
 % -------------------------------------------------------------------------
-cfg.part    = ft_getopt(cfg, 'part', 1);
-cfg.cond    = ft_getopt(cfg, 'condition', 111);
+cfg.part      = ft_getopt(cfg, 'part', 1);
+cfg.condition = ft_getopt(cfg, 'condition', 111);
+cfg.baseline  = ft_getopt(cfg, 'baseline', []);
 
 if ~ismember(cfg.part, [0,1,2])                                             % check cfg.part definition
   error('cfg.part has to either 0, 1 or 2');
@@ -62,11 +66,20 @@ end
 
 trialinfo = dataPlot.trialinfo;                                             % get trialinfo
 
-cfg.cond = JAI_checkCondition( cfg.cond );                                  % check cfg.condition definition    
-if isempty(find(trialinfo == cfg.cond, 1))
-  error('The selected dataset contains no condition %d.', cfg.cond);
+cfg.condition = JAI_checkCondition( cfg.condition );                        % check cfg.condition definition
+if isempty(find(trialinfo == cfg.condition, 1))
+  error('The selected dataset contains no condition %d.', cfg.condition);
 else
-  trialNum = find(ismember(trialinfo, cfg.cond));
+  trialNum = find(ismember(trialinfo, cfg.condition));
+end
+
+if ~isempty(cfg.baseline)
+  cfg.baseline    = JAI_checkCondition( cfg.baseline );                     % check cfg.baseline definition
+  if isempty(find(trialinfo == cfg.baseline, 1))
+    error('The selected dataset contains no condition %d.', cfg.baseline);
+  else
+    baseNum = ismember(trialinfo, cfg.baseline);
+  end
 end
 
 % -------------------------------------------------------------------------
@@ -86,12 +99,22 @@ chanHeight        = lay.height(sellay);
 % -------------------------------------------------------------------------
 % Multi power plot
 % -------------------------------------------------------------------------
-datamatrix  = squeeze(dataPlot.powspctrm(trialNum, selchan, :));            %#ok<FNDSB> % extract the powerspctrm matrix    
+if isempty(cfg.baseline)                                                    % extract the powerspctrm matrix
+  datamatrix = squeeze(dataPlot.powspctrm(trialNum,selchan,:));
+else
+  datamatrix = squeeze(dataPlot.powspctrm(trialNum,selchan,:)) - ...        % subtract baseline condition
+                squeeze(dataPlot.powspctrm(baseNum,selchan,:));
+end
+
 xval        = dataPlot.freq;                                                % extract the freq vector
 xmax        = max(xval);                                                    % determine the frequency maximum
 val         = ~ismember(selchan, eogvchan);                                 
-ymaxchan    = selchan(val);
-ymax        = max(max(datamatrix(ymaxchan, 1:48)));                         % determine the power maximum of all channels expect V1 und V2
+ychan       = selchan(val);
+ymin        = min(min(datamatrix(ychan, 1:48)));                            % determine the power minimum of all channels expect V1 und V2
+if(ymin > 0)
+  ymin = 0;
+end
+ymax        = max(max(datamatrix(ychan, 1:48)));                            % determine the power maximum of all channels expect V1 und V2
 
 hold on;                                                                    % hold the figure
 cla;                                                                        % clear all axis
@@ -105,18 +128,18 @@ ft_plot_lay(lay, 'box', 0, 'label', 0, 'outline', 1, 'point', 'no', ...
 % plot the channels
 for k=1:length(selchan) 
   yval = datamatrix(k, :);
-  setChanBackground([0 xmax], [0 ymax], chanX(k), chanY(k), ...             % set background of the channel boxes to white
+  setChanBackground([0 xmax], [ymin ymax], chanX(k), chanY(k), ...             % set background of the channel boxes to white
                     chanWidth(k), chanHeight(k));
   ft_plot_vector(xval, yval, 'width', chanWidth(k), 'height', chanHeight(k),...
                 'hpos', chanX(k), 'vpos', chanY(k), 'hlim', [0 xmax], ...
-                'vlim', [0 ymax], 'box', 0);
+                'vlim', [ymin ymax], 'box', 0);
 end
 
 % add the comment field
 k = find(strcmp('COMNT', lay.label));
 comment = date;
 comment = sprintf('%0s\nxlim=[%.3g %.3g]', comment, 0, xmax);
-comment = sprintf('%0s\nylim=[%.3g %.3g]', comment, 0, ymax);
+comment = sprintf('%0s\nylim=[%.3g %.3g]', comment, ymin, ymax);
 
 ft_plot_text(lay.pos(k, 1), lay.pos(k, 2), sprintf(comment), ...
              'FontSize', 8, 'FontWeight', []);
@@ -126,14 +149,24 @@ k = find(strcmp('SCALE', lay.label));
 if ~isempty(k)
   x = lay.pos(k,1);
   y = lay.pos(k,2);
-  plotScales([0 xmax], [0 ymax], x, y, chanWidth(1), chanHeight(1));
+  plotScales([0 xmax], [ymin ymax], x, y, chanWidth(1), chanHeight(1));
 end
 
 % set figure title
-if cfg.part == 0
-  title(sprintf('Power - Cond.: %d', cfg.cond));
+if cfg.part == 0                                                                % set figure title
+  if isempty(cfg.baseline)
+    title(sprintf('Power - Cond.: %d', cfg.condition));
+  else
+    title(sprintf('Power - Cond.: %d-%d', cfg.condition, cfg.baseline));
+  end
 else
-  title(sprintf('Power - Part.: %d - Cond.: %d', cfg.part, cfg.cond));
+  if isempty(cfg.baseline)
+    title(sprintf('Power - Part.: %d - Cond.: %d', cfg.part, ...
+                    cfg.condition));
+  else
+    title(sprintf('Power - Part.: %d - Cond.: %d-%d', cfg.part, ...
+                    cfg.condition,cfg.baseline));
+  end
 end
 
 axis tight;                                                                 % format the layout

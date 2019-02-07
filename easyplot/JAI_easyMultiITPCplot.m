@@ -14,8 +14,8 @@ function JAI_easyMultiITPCplot(cfg, data)
 %                     1 - plot data of participant 1
 %                     2 - plot data of participant 2
 %   cfg.condition   = condition (default: 7 or 'Single_2Hz', see JAI_DATASTRUCTURE)
-%   cfg.freqlimits  = [begin end] (default: [1 48])
-%   cfg.timelimits  = [begin end] (default: [0.2 9.8])
+%   cfg.freqlim     = [begin end] (default: [1 48])
+%   cfg.timelim     = [begin end] (default: [0.2 9.8])
 %  
 % This function requires the fieldtrip toolbox
 %
@@ -28,8 +28,8 @@ function JAI_easyMultiITPCplot(cfg, data)
 % -------------------------------------------------------------------------
 cfg.part    = ft_getopt(cfg, 'part', 1);
 cfg.cond    = ft_getopt(cfg, 'condition', 7);
-freqlim = ft_getopt(cfg, 'freqlimits', [1 48]);
-timelim = ft_getopt(cfg, 'timelimits', [0.2 9.8]);
+cfg.freqlim = ft_getopt(cfg, 'freqlim', [1 48]);
+cfg.timelim = ft_getopt(cfg, 'timelim', [0.2 9.8]);
 
 filepath = fileparts(mfilename('fullpath'));                                % add utilities folder to path
 addpath(sprintf('%s/../utilities', filepath));
@@ -65,11 +65,11 @@ switch cfg.part                                                             % ch
     dataPlot = data.part2;
 end
 
-if length(freqlim) ~= 2                                                     % check cfg.freqlimits definition
+if length(cfg.freqlim) ~= 2                                                 % check cfg.freqlim definition
   error('cfg.freqlimits has to be a 1x2 vector: [begin end]');
 end
 
-if length(timelim) ~= 2                                                     % check cfg.timelimits definition
+if length(cfg.timelim) ~= 2                                                 % check cfg.timelim definition
   error('cfg.timelimits has to be a 1x2 vector: [begin end]');
 end
 
@@ -88,16 +88,16 @@ end
 time = dataPlot.time{trialNum};
 freq = dataPlot.freq;
 
-[~, idxf1] = min(abs(freq-freqlim(1)));                                     % estimate frequency range 
+[~, idxf1] = min(abs(freq-cfg.freqlim(1)));                                 % estimate frequency range
 freqlim(1) = freq(idxf1);
 
-[~, idxf2] = min(abs(freq-freqlim(2)));
+[~, idxf2] = min(abs(freq-cfg.freqlim(2)));
 freqlim(2) = freq(idxf2);
 
-[~, idxt1] = min(abs(time-timelim(1)));                                     % estimate time range
+[~, idxt1] = min(abs(time-cfg.timelim(1)));                                 % estimate time range
 timelim(1) = time(idxt1);
 
-[~, idxt2] = min(abs(time-timelim(2)));
+[~, idxt2] = min(abs(time-cfg.timelim(2)));
 timelim(2) = time(idxt2);
 
 itpcMin = nanmin(dataPlot.itpc{trialNum}(:));                               % estimate itpc limits

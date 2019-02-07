@@ -13,7 +13,10 @@ function JAI_easyTopoplot(cfg , data)
 %                     1 - plot data of participant 1
 %                     2 - plot data of participant 2   
 %   cfg.condition   = condition (default: 111 or 'SameObjectB', see JAI_DATASTRUCTURE)
-%   cfg.freqrange   = limits for frequency in Hz (e.g. [6 9] or 10) (default: 10) 
+%   cfg.baseline    = baseline condition (default: [], can by any valid condition)
+%                     the values of the baseline condition will be subtracted
+%                     from the values of the selected condition (cfg.condition)
+%   cfg.freqlim     = limits for frequency in Hz (e.g. [6 9] or 10) (default: 10)
 %
 % This function requires the fieldtrip toolbox
 %
@@ -24,9 +27,10 @@ function JAI_easyTopoplot(cfg , data)
 % -------------------------------------------------------------------------
 % Get and check config options
 % -------------------------------------------------------------------------
-part        = ft_getopt(cfg, 'part', 1);
-condition   = ft_getopt(cfg, 'condition', 111);
-freqrange   = ft_getopt(cfg, 'freqrange', 10);
+part      = ft_getopt(cfg, 'part', 1);
+condition = ft_getopt(cfg, 'condition', 111);
+baseline  = ft_getopt(cfg, 'baseline', []);
+freqlim   = ft_getopt(cfg, 'freqlim', 10);
 
 filepath = fileparts(mfilename('fullpath'));                                % add utilities folder to path
 addpath(sprintf('%s/../utilities', filepath));
@@ -63,15 +67,24 @@ end
 
 trialinfo = data.trialinfo;                                                 % get trialinfo
 
-condition = JAI_checkCondition( condition );                                % check cfg.condition definition    
+condition = JAI_checkCondition( condition );                                % check cfg.condition definition
 if isempty(find(trialinfo == condition, 1))
   error('The selected dataset contains no condition %d.', condition);
 else
   trialNum = ismember(trialinfo, condition);
 end
 
-if numel(freqrange) == 1
-  freqrange = [freqrange freqrange];
+if ~isempty(baseline)
+  baseline    = JAI_checkCondition( baseline );                             % check cfg.baseline definition
+  if isempty(find(trialinfo == baseline, 1))
+    error('The selected dataset contains no condition %d.', baseline);
+  else
+    baseNum = ismember(trialinfo, baseline);
+  end
+end
+
+if numel(freqlim) == 1
+  freqlim = [freqlim freqlim];
 end
 
 % -------------------------------------------------------------------------
@@ -81,7 +94,7 @@ load(sprintf('%s/../layouts/mpi_customized_acticap32.mat', filepath), 'lay');
 
 cfg               = [];
 cfg.parameter     = 'powspctrm';
-cfg.xlim          = freqrange;
+cfg.xlim          = freqlim;
 cfg.zlim          = 'maxmin';
 cfg.trials        = trialNum;
 cfg.colormap      = 'jet';
@@ -92,14 +105,29 @@ cfg.gridscale     = 200;                                                    % gr
 cfg.layout        = lay;
 cfg.showcallinfo  = 'no';
 
+if ~isempty(baseline)                                                       % subtract baseline condition
+  data.powspctrm(trialNum,:,:) = data.powspctrm(trialNum,:,:) - ...
+                                  data.powspctrm(baseNum,:,:);
+end
+
 ft_topoplotER(cfg, data);
 
-if part ~= 0
-  title(sprintf('Power - Participant %d - Condition %d - Freqrange [%d %d]', ...
-                part, condition, freqrange));
+if part == 0                                                                % set figure title
+  if isempty(baseline)
+    title(sprintf('Power - Condition %d - Freqrange [%d %d]', ...
+                condition, freqlim));
+  else
+    title(sprintf('Power - Condition %d-%d - Freqrange [%d %d]', ...
+                condition, baseline, freqlim));
+  end
 else
-  title(sprintf('Power - Condition %d - Freqrange [%d %d]', ...
-                condition, freqrange));
+  if isempty(baseline)
+    title(sprintf(['Power - Participant %d - Condition %d - Freqrange '...
+              '[%d %d]'], part, condition, freqlim));
+  else
+    title(sprintf(['Power - Participant %d - Condition %d-%d - '...
+              'Freqrange [%d %d]'], part, condition, baseline, freqlim));
+  end
 end
 
 set(gcf, 'Position', [0, 0, 750, 550]);
