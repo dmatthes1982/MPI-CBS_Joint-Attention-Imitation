@@ -53,7 +53,7 @@ if tfr == true
   for i = numOfPart
     fprintf('<strong>Dyad %d</strong>\n', i);
 
-    cfg             = [];                                                     % load EOG-artifact corrected data
+    cfg             = [];                                                   % load EOG-artifact corrected data
     cfg.srcFolder   = strcat(desPath, '04c_preproc2/');
     cfg.sessionStr  = sessionStr;
     cfg.filename    = sprintf('JAI_d%02d_04c_preproc2', i);
@@ -62,8 +62,8 @@ if tfr == true
     JAI_loadData( cfg );
 
     cfg         = [];
-    cfg.foi     = 2:1:50;                                                     % frequency of interest
-    cfg.toi     = 4:0.5:176;                                                  % time of interest
+    cfg.foi     = 2:1:50;                                                   % frequency of interest
+    cfg.toi     = 4:0.5:296;                                                % time of interest
 
     data_tfr = JAI_timeFreqanalysis( cfg, data_preproc2 );
 
