@@ -11,6 +11,8 @@ function [ data ] = JAI_preprocessing( cfg, data )
 %   cfg.bpfreq            = passband range [begin end] (default: [0.1 48])
 %   cfg.bpfilttype        = bandpass filter type, 'but' or 'fir' (default: fir')
 %   cfg.bpinstabilityfix  = deal with filter instability, 'no' or 'split' (default: 'no')
+%   cfg.dftfilter         = 'no' or 'yes'  line noise removal using discrete fourier transform (default = 'no')
+%   cfg.dftfreq           = line noise frequencies in Hz for DFT filter (default = [50 100 150])
 %   cfg.part1BadChan      = bad channels of participant 1 which should be excluded (default: [])
 %   cfg.part2BadChan      = bad channels of participant 2 which should be excluded (default: [])
 %
@@ -27,6 +29,8 @@ function [ data ] = JAI_preprocessing( cfg, data )
 bpfreq            = ft_getopt(cfg, 'bpfreq', [0.1 48]);
 bpfilttype        = ft_getopt(cfg, 'bpfilttype', 'fir');
 bpinstabilityfix  = ft_getopt(cfg, 'bpinstabilityfix', 'no');
+dftfilter         = ft_getopt(cfg, 'dftfilter', 'no');
+dftfreq           = ft_getopt(cfg, 'dftfreq', [50 100 150]);
 part1BadChan      = ft_getopt(cfg, 'part1BadChan', []);
 part2BadChan      = ft_getopt(cfg, 'part2BadChan', []);
 
@@ -55,6 +59,8 @@ cfg.bpfilter          = 'yes';                                              % us
 cfg.bpfreq            = bpfreq;                                             % bandpass range
 cfg.bpfilttype        = bpfilttype;                                         % bandpass filter type
 cfg.bpinstabilityfix  = bpinstabilityfix;                                   % deal with filter instability
+cfg.dftfilter         = dftfilter;                                          % dft filter for line noise removal
+cfg.dftfreq           = dftfreq;                                            % line noise frequencies
 cfg.trials            = 'all';                                              % use all trials
 cfg.feedback          = 'no';                                               % feedback should not be presented
 cfg.showcallinfo      = 'no';                                               % prevent printing the time and memory after each function call

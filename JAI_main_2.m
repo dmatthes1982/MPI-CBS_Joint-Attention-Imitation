@@ -31,6 +31,100 @@ end
 cprintf([0,0.6,0], '<strong>[2] - Preproc I: bad channel detection, filtering</strong>\n');
 fprintf('\n');
 
+selection = false;
+while selection == false
+  cprintf([0,0.6,0], 'Please select your favoured bandpass for preprocessing:\n');
+  fprintf('[1] - Regular bandpass 1...48 Hz \n');
+  fprintf('[2] - Regular bandpass 0.3...48 Hz \n');
+  fprintf('[3] - Extended bandpass 1...98 Hz with dft filter for line noise removal\n');
+  fprintf('[4] - Manual selection\n');
+  x = input('Option: ');
+
+  switch x
+    case 1
+      selection = true;
+      bpRange = [1 48];
+      bandpass = {'[1 48]'};
+      lnRemoval = 'no';
+      lineNoiseFilt = {'n'};
+    case 2
+      selection = true;
+      bpRange = [0.3 48];
+      bandpass = {'[0.3 48]'};
+      lnRemoval = 'no';
+      lineNoiseFilt = {'n'};
+    case 3
+      selection = true;
+      bpRange = [1 98];
+      bandpass = {'[1 98]'};
+      lnRemoval = 'yes';
+      lineNoiseFilt = {'y'};
+    case 4
+      selection = true;
+       bpRange = [];
+    otherwise
+      cprintf([1,0.5,0], 'Wrong input!\n');
+  end
+end
+fprintf('\n');
+
+if isempty(bpRange)                                                         % manual bandpass selection
+  fig = uifigure( 'Position',[0 0 400 175],...
+                  'Name','Select Bandpass');
+  movegui(fig, 'center');
+
+  uilabel(fig,...
+          'Position',[50 125 300 25],...
+          'Text','Click the save button when you''re done.',...
+          'HorizontalAlignment','center');
+
+  hp = uieditfield( fig,'numeric',...
+                    'Value', 0.1,...
+                    'ValueDisplayFormat','%.2f',...
+                    'Limits', [0.1 48],...
+                    'Position',[75 95 100 25]);
+
+  lp = uieditfield( fig,'numeric',...
+                    'Value', 48,...
+                    'Limits', [0.1 48],...
+                    'ValueDisplayFormat','%.2f',...
+                    'Position',[225 95 100 25]);
+
+  hp.ValueChangedFcn = @(hp,event)hpChanged(hp,lp);
+  lp.ValueChangedFcn = @(lp,event)lpChanged(hp,lp);
+
+  notch = uicheckbox( fig,...
+                      'Position',[148 60 110 25],...
+                      'Text', '50 Hz notch filter');
+
+  save = uibutton(fig,...
+                   'Position',[150 25 100 25],...
+                   'Text','Save');
+
+  save.ButtonPushedFcn = @(save,event)SaveButtonPushed(fig);
+
+  uiwait(fig);
+
+  if ishandle(fig)
+    bpRange = [hp.Value lp.Value];
+    bandpass = { sprintf('[%g %g]', bpRange)};
+    if notch.Value == true
+      lnRemoval = 'yes';
+      lineNoiseFilt = {'y'};
+    else
+      lnRemoval = 'no';
+      lineNoiseFilt = {'n'};
+    end
+    delete(fig);
+  else
+    bpRange = [0.1 48];
+    bandpass = {'[0.1 48]'};
+    lnRemoval = 'no';
+    lineNoiseFilt = {'n'};
+  end
+clear fig txt hp lp save
+end
+
 % Create settings file if not existing
 settings_file = [desPath '00_settings/' ...
                   sprintf('settings_%s', sessionStr) '.xls'];
@@ -45,6 +139,10 @@ end
 
 % Load settings file
 T = readtable(settings_file);
+warning off;
+T.bandpass(numOfPart) = bandpass;
+T.lineNoiseFilt(numOfPart) = lineNoiseFilt;
+warning on;
 
 for i = numOfPart
   fprintf('<strong>Dyad %d</strong>\n\n', i);
@@ -113,9 +211,11 @@ for i = numOfPart
   fprintf('<strong>Basic preprocessing of good channels</strong>\n');
   
   cfg                   = [];
-  cfg.bpfreq            = [1 48];                                           % passband from 1 to 48 Hz
+  cfg.bpfreq            = bpRange;                                          % passband from 1 to 48 Hz or other selection
   cfg.bpfilttype        = 'but';
   cfg.bpinstabilityfix  = 'split';
+  cfg.dftfilter         = lnRemoval;                                        % dft filter for additional line noise removal
+  cfg.dftfreq           = [50 100 150];
   cfg.part1BadChan      = data_badchan.part1.badChan';
   cfg.part2BadChan      = data_badchan.part2.badChan';
   
@@ -139,5 +239,19 @@ for i = numOfPart
 end
 
 %% clear workspace
-clear file_path cfg sourceList numOfSources i selection badChanPart1 ...
-      badChanPart2 T settings_file
+clear file_path cfg sourceList numOfSources i selection x T  bandpass ...
+      bpRange lineNoiseFilt lnRemoval badChanPart1 badChanPart2 ...
+      settings_file
+
+%% callback functions
+function hpChanged(hp,lp)
+  lp.Limit = [hp.Value 48];
+end
+
+function lpChanged(hp,lp)
+  hp.Limit = [0.1 lp.Value];
+end
+
+function SaveButtonPushed(fig)
+  uiresume(fig);
+end
