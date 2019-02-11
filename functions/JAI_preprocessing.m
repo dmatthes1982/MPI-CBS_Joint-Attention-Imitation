@@ -46,7 +46,7 @@ part2BadChan = cellfun(@(x) sprintf('-%s', x), part2BadChan, ...
                       'UniformOutput', false);
 end
 
-part1Chan = [{'all'} part1BadChan];                                         % do bandpassfiltering only with good channels and remove the bad once
+part1Chan = [{'all'} part1BadChan];                                         % do bandpass filtering only with good channels and remove the bad once
 part2Chan = [{'all'} part2BadChan];
 
 % -------------------------------------------------------------------------
@@ -61,6 +61,8 @@ cfg.bpfilttype        = bpfilttype;                                         % ba
 cfg.bpinstabilityfix  = bpinstabilityfix;                                   % deal with filter instability
 cfg.dftfilter         = dftfilter;                                          % dft filter for line noise removal
 cfg.dftfreq           = dftfreq;                                            % line noise frequencies
+cfg.dftreplace        = 'neighbour';
+cfg.dftbandwidth      = [0.2 0.4 0.6];
 cfg.trials            = 'all';                                              % use all trials
 cfg.feedback          = 'no';                                               % feedback should not be presented
 cfg.showcallinfo      = 'no';                                               % prevent printing the time and memory after each function call

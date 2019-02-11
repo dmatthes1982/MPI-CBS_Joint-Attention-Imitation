@@ -35,7 +35,7 @@ selection = false;
 while selection == false
   cprintf([0,0.6,0], 'Please select your favoured bandpass for preprocessing:\n');
   fprintf('[1] - Regular bandpass 1...48 Hz \n');
-  fprintf('[2] - Regular bandpass 0.3...48 Hz \n');
+  fprintf('[2] - Extended bandpass 0.3...48 Hz \n');
   fprintf('[3] - Extended bandpass 1...98 Hz with dft filter for line noise removal\n');
   fprintf('[4] - Manual selection\n');
   x = input('Option: ');
@@ -73,10 +73,10 @@ if isempty(bpRange)                                                         % ma
                   'Name','Select Bandpass');
   movegui(fig, 'center');
 
-  uilabel(fig,...
-          'Position',[50 125 300 25],...
-          'Text','Click the save button when you''re done.',...
-          'HorizontalAlignment','center');
+  txt = uilabel(fig,...
+                'Position',[50 125 300 25],...
+                'Text','Click the save button when you''re done.',...
+                'HorizontalAlignment','center');                            %#ok<NASGU>
 
   hp = uieditfield( fig,'numeric',...
                     'Value', 0.1,...
@@ -115,14 +115,14 @@ if isempty(bpRange)                                                         % ma
       lnRemoval = 'no';
       lineNoiseFilt = {'n'};
     end
-    delete(fig);
+    close(fig);
   else
     bpRange = [0.1 48];
     bandpass = {'[0.1 48]'};
     lnRemoval = 'no';
     lineNoiseFilt = {'n'};
   end
-clear fig txt hp lp save
+clear fig txt hp lp save notch
 end
 
 % Create settings file if not existing
@@ -245,11 +245,11 @@ clear file_path cfg sourceList numOfSources i selection x T  bandpass ...
 
 %% callback functions
 function hpChanged(hp,lp)
-  lp.Limit = [hp.Value 48];
+  lp.Limits = [hp.Value 48];
 end
 
 function lpChanged(hp,lp)
-  hp.Limit = [0.1 lp.Value];
+  hp.Limits = [0.1 lp.Value];
 end
 
 function SaveButtonPushed(fig)
