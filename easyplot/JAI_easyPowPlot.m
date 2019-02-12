@@ -19,6 +19,7 @@ function JAI_easyPowPlot(cfg, data)
 %   cfg.electrode   = number of electrodes (default: {'Cz'} repsectively [8])
 %                     examples: {'Cz'}, {'F3', 'Fz', 'F4'}, [8] or [2, 1, 28]
 %   cfg.avgelec     = plot average over selected electrodes, options: 'yes' or 'no' (default: 'no')
+%   cfg.log         = use a logarithmic scale for the y axis, options: 'yes' or 'no' (default: 'no')
 %
 % This function requires the fieldtrip toolbox
 %
@@ -34,6 +35,7 @@ condition = ft_getopt(cfg, 'condition', 111);
 baseline  = ft_getopt(cfg, 'baseline', []);
 elec      = ft_getopt(cfg, 'electrode', {'Cz'});
 avgelec   = ft_getopt(cfg, 'avgelec', 'no');
+log       = ft_getopt(cfg, 'log', 'no');
 
 filepath = fileparts(mfilename('fullpath'));                                % add utilities folder to path
 addpath(sprintf('%s/../utilities', filepath));
@@ -125,6 +127,10 @@ else
             squeeze(data.powspctrm(baseNum,:,:));
 end
 
+if strcmp(log, 'yes')
+  powData = 10 * log10( powData );
+end
+
 if strcmp(avgelec, 'no')
   for i = 1:1:length(elec)
     plot(data.freq, powData(elec(i),:), ...
@@ -151,7 +157,11 @@ else
 end
 
 xlabel('frequency in Hz');                                                  % set xlabel
-ylabel('power in uV^2');                                                    % set ylabel
+if strcmp(log, 'yes')
+  ylabel('power in dB');                                                    % set ylabel
+else
+  ylabel('power in uV^2');
+end
 
 hold off;
 
