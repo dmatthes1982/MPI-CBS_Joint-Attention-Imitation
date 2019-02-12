@@ -11,7 +11,7 @@ function [ cfgArtifacts ] = JAI_databrowser( cfg, data )
 % The configuration options are
 %   cfg.dyad        = number of dyad (no default value)
 %   cfg.part        = number of participant (default: 1)
-%   cfg.artifact    = Nx2 matrix with artifact segments (default: [])
+%   cfg.artifact    = structure with artifact specification, e.g. output of FT_ARTIFACT_THRESHOLD (default: [])
 %   cfg.channel     = channels of interest (default: 'all')
 %   cfg.ylim        = vertical scaling (default: [-100 100]);
 %   cfg.blocksize   = duration in seconds for cutting the data up (default: [])
@@ -73,7 +73,7 @@ cfg                               = [];
 cfg.ylim                          = ylim;
 cfg.blocksize                     = blocksize;
 cfg.viewmode                      = 'vertical';
-cfg.artfctdef.threshold.artifact  = artifact;
+cfg.artfctdef                     = artifact;
 cfg.continuous                    = 'no';
 cfg.channel                       = channel;
 cfg.plotevents                    = plotevents;

@@ -40,7 +40,7 @@ cfgAllArt.part2 = [];
 
 fprintf('\n<strong>Search for artifacts with participant 1...</strong>\n');
 cfg.part = 1;
-cfg.artifact = artifact.part1.artfctdef.threshold.artifact;
+cfg.artifact = artifact.part1.artfctdef;
 ft_warning off;
 JAI_easyArtfctmapPlot(cfg, artifact);                                       % plot artifact map
 fig = gcf;                                                                  % default position is [560 528 560 420]
@@ -51,7 +51,7 @@ cfgAllArt.part1 = keepfields(cfgAllArt.part1, {'artfctdef', 'showcallinfo'});
   
 fprintf('\n<strong>Search for artifacts with participant 2...</strong>\n');
 cfg.part = 2;
-cfg.artifact = artifact.part2.artfctdef.threshold.artifact;
+cfg.artifact = artifact.part2.artfctdef;
 ft_warning off;
 JAI_easyArtfctmapPlot(cfg, artifact);                                       % plot artifact map
 fig = gcf;                                                                  % default position is [560 528 560 420]
