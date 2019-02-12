@@ -32,7 +32,7 @@ part      = ft_getopt(cfg, 'part', 1);
 condition = ft_getopt(cfg, 'condition', 111);
 baseline  = ft_getopt(cfg, 'baseline', []);
 freqlim   = ft_getopt(cfg, 'freqlim', 10);
-zlim      = ft_getopt(cfg, 'zlim', 10);
+zlim      = ft_getopt(cfg, 'zlim', 'maxmin');
 
 filepath = fileparts(mfilename('fullpath'));                                % add utilities folder to path
 addpath(sprintf('%s/../utilities', filepath));
