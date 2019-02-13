@@ -17,6 +17,7 @@ function JAI_easyMultiPowPlot(cfg, data)
 %                     the values of the baseline condition will be subtracted
 %                     from the values of the selected condition (cfg.condition)
 %   cfg.log         = use a logarithmic scale for the y axis, options: 'yes' or 'no' (default: 'no')
+%   cfg.powlim      = limits for power dimension, 'maxmin' or [pmin pmax] (default = 'maxmin')
 %
 % This function requires the fieldtrip toolbox
 %
@@ -31,6 +32,7 @@ cfg.part      = ft_getopt(cfg, 'part', 1);
 cfg.condition = ft_getopt(cfg, 'condition', 111);
 cfg.baseline  = ft_getopt(cfg, 'baseline', []);
 cfg.log       = ft_getopt(cfg, 'log', 'no');
+powlim        = ft_getopt(cfg, 'powlim', 'maxmin');
 
 if ~ismember(cfg.part, [0,1,2])                                             % check cfg.part definition
   error('cfg.part has to either 0, 1 or 2');
@@ -114,13 +116,30 @@ end
 
 xval        = dataPlot.freq;                                                % extract the freq vector
 xmax        = max(xval);                                                    % determine the frequency maximum
+
 val         = ~ismember(selchan, eogvchan);                                 
 ychan       = selchan(val);
-ymin        = min(min(datamatrix(ychan, 1:48)));                            % determine the power minimum of all channels expect V1 und V2
-if(ymin > 0)
-  ymin = 0;
+if ischar(powlim)
+  if strcmp(powlim, 'maxmin')
+    ymin        = min(min(datamatrix(ychan, 1:48)));                        % determine the power minimum of all channels expect V1 und V2
+    if(ymin > 0)
+      ymin = 0;
+    end
+    ymax        = max(max(datamatrix(ychan, 1:48)));                        % determine the power maximum of all channels expect V1 und V2
+  else
+    error('cfg.powlim has to be either ''maxmin'' or [pmin pmax].');
+  end
+else
+  if numel(powlim) == 2 && isnumeric(powlim)
+    ymin = powlim(1);
+    ymax = powlim(2);
+  else
+    error('cfg.powlim has to be either ''maxmin'' or [pmin pmax].');
+  end
 end
-ymax        = max(max(datamatrix(ychan, 1:48)));                            % determine the power maximum of all channels expect V1 und V2
+
+mask = datamatrix > ymax;                                                   % set outliers to NaN
+datamatrix(mask) = NaN;
 
 hold on;                                                                    % hold the figure
 cla;                                                                        % clear all axis
