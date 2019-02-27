@@ -18,6 +18,7 @@ function JAI_easyTopoplot(cfg , data)
 %                     from the values of the selected condition (cfg.condition)
 %   cfg.freqlim     = limits for frequency in Hz (e.g. [6 9] or 10) (default: 10)
 %   cfg.zlim        = limits for color dimension, 'maxmin', 'maxabs', 'zeromax', 'minzero', or [zmin zmax] (default = 'maxmin')
+%   cfg.showeogv    = 'yes' or 'no' (default: 'no'), show vertical eye electrodes in topoplot
 %
 % This function requires the fieldtrip toolbox
 %
@@ -33,6 +34,7 @@ condition = ft_getopt(cfg, 'condition', 111);
 baseline  = ft_getopt(cfg, 'baseline', []);
 freqlim   = ft_getopt(cfg, 'freqlim', 10);
 zlim      = ft_getopt(cfg, 'zlim', 'maxmin');
+showeogv  = ft_getopt(cfg, 'showeogv', 'no');
 
 filepath = fileparts(mfilename('fullpath'));                                % add utilities folder to path
 addpath(sprintf('%s/../utilities', filepath));
@@ -93,6 +95,14 @@ end
 % Generate topoplot
 % -------------------------------------------------------------------------
 load(sprintf('%s/../layouts/mpi_customized_acticap32.mat', filepath), 'lay');
+
+if strcmp(showeogv, 'no')
+  tf = ~ismember(lay.label, {'V1','V2'});                                   %#ok<NODEF>
+  lay.pos     = lay.pos(tf,:);
+  lay.label   = lay.label(tf);
+  lay.width   = lay.width(tf);
+  lay.height  = lay.height(tf);
+end
 
 cfg               = [];
 cfg.parameter     = 'powspctrm';
