@@ -1,8 +1,8 @@
 %% check if basic variables are defined
 if ~exist('sessionStr', 'var')
   cfg           = [];
-  cfg.subFolder = '011_raw/';
-  cfg.filename  = 'JAI_d01_011_raw';
+  cfg.subFolder = '01_raw/';
+  cfg.filename  = 'JAI_d01_01_raw';
   sessionNum    = JAI_getSessionNum( cfg );
   if sessionNum == 0
     sessionNum = 1;

@@ -267,7 +267,7 @@ for i = numOfPart
   fprintf('%s ...\n', file_path);
   JAI_saveData(cfg, 'data_preproc2', data_preproc2);
   fprintf('Data stored!\n\n');
-  clear data_preproc2 data_eyecor data_badchan
+  clear data_preproc2 data_eyecor
 end
 
 %% clear workspace

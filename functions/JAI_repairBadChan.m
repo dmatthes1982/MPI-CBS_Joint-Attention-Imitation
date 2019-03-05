@@ -49,7 +49,7 @@ else
   data.part1 = removefields(data.part1, {'elec'});
   fprintf('\n');
 end
-label = [lay.label; {'REF'; 'EOGV'; 'EOGH'}];
+label = [lay.label; {'EOGV'; 'EOGH'}];
 data.part1 = correctChanOrder( data.part1, label);
 
 cfg.missingchannel    = data_badchan.part2.badChan;

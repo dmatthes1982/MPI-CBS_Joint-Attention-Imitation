@@ -12,7 +12,7 @@ function [ data_eogcomp ] = JAI_selectBadComp( data_eogcomp, data_icacomp )
 %
 % This function requires the fieldtrip toolbox
 %
-% See also JAI_DETEOGCOMP, JAI_ICA and FT_DATABROWSER
+% See also JAI_DETEOGCOMP, JAI_ICA and FT_ICABROWSER
 
 % Copyright (C) 2017-2019, Daniel Matthes, MPI CBS
 
@@ -58,6 +58,7 @@ cfg               = [];
 cfg.rejcomp       = idx;
 cfg.blocksize     = 30;
 cfg.layout        = lay;
+cfg.zlim          = 'maxabs';
 cfg.colormap      = 'jet';
 cfg.showcallinfo  = 'no';
 
