@@ -35,123 +35,34 @@ end
 fprintf('\n');
 
 if avgOverDyads == true
-  cfg               = [];
-  cfg.path          = strcat(desPath, '07b_mplv/');
-  cfg.session       = str2double(sessionStr);
-  cfg.passband      = '2Hz';
+  % passband specifications
+  [pbSpec(1:6).fileSuffix]  = deal('2Hz','Theta','Alpha','20Hz','Beta','Gamma');
+  [pbSpec(1:6).name]        = deal('2Hz','theta','alpha','20Hz','beta','gamma');
 
-  data_mplvod_2Hz   = JAI_mPLVoverDyads( cfg );
+  for i = 1:1:numel(pbSpec)
+    cfg               = [];
+    cfg.path          = strcat(desPath, '07b_mplv/');
+    cfg.session       = str2double(sessionStr);
+    cfg.passband      = pbSpec(i).name;
 
-  cfg.passband      = 'theta';
+    data_mplvod   = JAI_mPLVoverDyads( cfg );
 
-  data_mplvod_theta = JAI_mPLVoverDyads( cfg );
-  
-  cfg.passband      = 'alpha';
+    % export the averaged PLVs into a *.mat file
+    cfg             = [];
+    cfg.desFolder   = strcat(desPath, '10a_mplvod/');
+    cfg.filename    = sprintf('JAI_10a_mplvod%s', pbSpec(i).fileSuffix);
+    cfg.sessionStr  = sessionStr;
 
-  data_mplvod_alpha = JAI_mPLVoverDyads( cfg );
-  
-  cfg.passband      = '20Hz';
-
-  data_mplvod_20Hz  = JAI_mPLVoverDyads( cfg );
-  
-  cfg.passband      = 'beta';
-
-  data_mplvod_beta  = JAI_mPLVoverDyads( cfg );
-  
-  cfg.passband      = 'gamma';
-
-  data_mplvod_gamma = JAI_mPLVoverDyads( cfg );
-
-  % export the averaged PLVs into a *.mat file
-  % 2Hz
-  cfg             = [];
-  cfg.desFolder   = strcat(desPath, '10a_mplvod/');
-  cfg.filename    = 'JAI_10a_mplvod2Hz';
-  cfg.sessionStr  = sessionStr;
-
-  file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
-                     '.mat');
+    file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
+                      '.mat');
                    
-  fprintf('Saving mean PLVs over dyads at 2Hz in:\n'); 
-  fprintf('%s ...\n', file_path);
-  JAI_saveData(cfg, 'data_mplvod_2Hz', data_mplvod_2Hz);
-  fprintf('Data stored!\n');
-  clear data_mplvod_2Hz
-
-  % theta
-  cfg             = [];
-  cfg.desFolder   = strcat(desPath, '10a_mplvod/');
-  cfg.filename    = 'JAI_10a_mplvodTheta';
-  cfg.sessionStr  = sessionStr;
-
-  file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
-                     '.mat');
-                   
-  fprintf('Saving mean PLVs over dyads at theta (4-7Hz) in:\n'); 
-  fprintf('%s ...\n', file_path);
-  JAI_saveData(cfg, 'data_mplvod_theta', data_mplvod_theta);
-  fprintf('Data stored!\n');
-  clear data_mplvod_theta
-  
-  % alpha
-  cfg             = [];
-  cfg.desFolder   = strcat(desPath, '10a_mplvod/');
-  cfg.filename    = 'JAI_10a_mplvodAlpha';
-  cfg.sessionStr  = sessionStr;
-
-  file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
-                     '.mat');
-                   
-  fprintf('Saving mean PLVs over dyads at alpha (8-12Hz) in:\n'); 
-  fprintf('%s ...\n', file_path);
-  JAI_saveData(cfg, 'data_mplvod_alpha', data_mplvod_alpha);
-  fprintf('Data stored!\n');
-  clear data_mplvod_alpha
-  
-  % 20Hz
-  cfg             = [];
-  cfg.desFolder   = strcat(desPath, '10a_mplvod/');
-  cfg.filename    = 'JAI_10a_mplvod20Hz';
-  cfg.sessionStr  = sessionStr;
-
-  file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
-                     '.mat');
-                   
-  fprintf('Saving mean PLVs over dyads at 20Hz in:\n'); 
-  fprintf('%s ...\n', file_path);
-  JAI_saveData(cfg, 'data_mplvod_20Hz', data_mplvod_20Hz);
-  fprintf('Data stored!\n');
-  clear data_mplvod_20Hz
-  
-  % beta
-  cfg             = [];
-  cfg.desFolder   = strcat(desPath, '10a_mplvod/');
-  cfg.filename    = 'JAI_10a_mplvodBeta';
-  cfg.sessionStr  = sessionStr;
-
-  file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
-                     '.mat');
-                   
-  fprintf('Saving mean PLVs over dyads at beta (13-30Hz) in:\n'); 
-  fprintf('%s ...\n', file_path);
-  JAI_saveData(cfg, 'data_mplvod_beta', data_mplvod_beta);
-  fprintf('Data stored!\n');
-  clear data_mplvod_beta
-  
-  % gamma
-  cfg             = [];
-  cfg.desFolder   = strcat(desPath, '10a_mplvod/');
-  cfg.filename    = 'JAI_10a_mplvodGamma';
-  cfg.sessionStr  = sessionStr;
-
-  file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
-                     '.mat');
-                   
-  fprintf('Saving mean PLVs over dyads at gamma (31.48Hz) in:\n'); 
-  fprintf('%s ...\n', file_path);
-  JAI_saveData(cfg, 'data_mplvod_gamma', data_mplvod_gamma);
-  fprintf('Data stored!\n\n');
-  clear data_mplvod_gamma
+    fprintf('Saving mean PLVs over dyads at %s (%g-%gHz) in:\n', ...
+              pbSpec(i).name, data_mplvod.bpFreq);
+    fprintf('%s ...\n', file_path);
+    JAI_saveData(cfg, 'data_mplvod', data_mplvod);
+    fprintf('Data stored!\n\n');
+    clear data_mplvod
+  end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -280,4 +191,4 @@ if avgOverDyads == true
 end
 
 %% clear workspace
-clear cfg file_path avgOverDyads x choise
+clear cfg file_path avgOverDyads x choise i pbSpec
