@@ -29,9 +29,38 @@ end
 cprintf([0,0.6,0], '<strong>[6] - Narrow band filtering and Hilbert transform</strong>\n');
 fprintf('\n');
 
+% option to define passbands manually
+selection = false;
+while selection == false
+  cprintf([0,0.6,0], 'Do you want to use the default passbands?\n');
+  cprintf([0,0.6,0], '-------------------\n');
+  cprintf([0,0.6,0], '2Hz:    1.9 - 2.1 Hz\n');
+  cprintf([0,0.6,0], 'theta:  4 - 7 Hz\n');
+  cprintf([0,0.6,0], 'alpha:  8 - 12 Hz\n');
+  cprintf([0,0.6,0], 'beta:   13 - 30 Hz\n');
+  cprintf([0,0.6,0], '20Hz:   19 - 21 Hz\n');
+  cprintf([0,0.6,0], 'gamma:  31 - 48 Hz\n');
+  cprintf([0,0.6,0], '-------------------\n');
+  x = input('Select [y/n]: ','s');
+  if strcmp('y', x)
+    selection = true;
+    passband = true;
+  elseif strcmp('n', x)
+    selection = true;
+    passband = false;
+  else
+    selection = false;
+  end
+end
+fprintf('\n');
 
 %% passband specifications
-[pbSpec(1:6).freqRange]     = deal([1.9 2.1],[4 7],[8 12],[19 21],[13 30],[31 48]);
+if passband == true
+  [pbSpec(1:6).freqRange]   = deal([1.9 2.1],[4 7],[8 12],[19 21],[13 30],[31 48]);
+else
+  passband = JAI_pbSelectbox();
+  [pbSpec(1:6).freqRange]   = deal(passband{:});
+end
 [pbSpec(1:6).fileSuffix]    = deal('2Hz','Theta','Alpha','20Hz','Beta','Gamma');
 [pbSpec(1:6).name]          = deal('2Hz','theta','alpha','20Hz','beta','gamma');
 [pbSpec(1:6).filtOrdBase]   = deal(500, 500, 250, 250, 250, 250);
@@ -121,4 +150,5 @@ for i = numOfPart
 end
 
 %% clear workspace
-clear cfg file_path numOfSources sourceList i filtCoeffDiv pbSpec j
+clear cfg file_path numOfSources sourceList i filtCoeffDiv pbSpec j ...
+      passband
