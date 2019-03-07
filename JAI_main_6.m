@@ -151,4 +151,4 @@ end
 
 %% clear workspace
 clear cfg file_path numOfSources sourceList i filtCoeffDiv pbSpec j ...
-      passband
+      passband selection x
