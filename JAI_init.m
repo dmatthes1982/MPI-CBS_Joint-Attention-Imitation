@@ -1,6 +1,8 @@
 % -------------------------------------------------------------------------
 % Add directory and subfolders to path
 % -------------------------------------------------------------------------
+clear;
+clc;
 
 filepath = fileparts(mfilename('fullpath'));
 addpath(sprintf(['%s/:%s/easyplot:%s/elecorder:%s/export:%s/functions'...

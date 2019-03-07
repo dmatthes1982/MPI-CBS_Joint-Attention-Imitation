@@ -1,7 +1,7 @@
 % -------------------------------------------------------------------------
-% Add directory and subfolders to path
+% Add directory and subfolders to path, clear workspace, clear command
+% windwow
 % -------------------------------------------------------------------------
-clc;
 JAI_init;
 
 cprintf([0,0.6,0], '<strong>------------------------------------------------</strong>\n');

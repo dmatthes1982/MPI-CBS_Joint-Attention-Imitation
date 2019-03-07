@@ -1,14 +1,14 @@
 % -------------------------------------------------------------------------
-% Add directory and subfolders to path
+% Add directory and subfolders to path, clear workspace, clear command
+% windwow
 % -------------------------------------------------------------------------
-clc;
 filepath = fileparts(mfilename('fullpath'));
 run([filepath '/../JAI_init.m']);
 
 cprintf([0,0.6,0], '<strong>------------------------------------------------</strong>\n');
 cprintf([0,0.6,0], '<strong>Joint attention imitation project</strong>\n');
 cprintf([0,0.6,0], '<strong>Export of ITPC results (general script)</strong>\n');
-cprintf([0,0.6,0], 'Copyright (C) 2017-2018, Daniel Matthes, MPI CBS\n');
+cprintf([0,0.6,0], 'Copyright (C) 2017-2019, Daniel Matthes, MPI CBS\n');
 cprintf([0,0.6,0], '<strong>------------------------------------------------</strong>\n');
 
 % -------------------------------------------------------------------------

@@ -1,7 +1,8 @@
 % -------------------------------------------------------------------------
-% Add directory and subfolders to path
+% Add directory and subfolders to path, clear workspace, clear command
+% windwow
 % -------------------------------------------------------------------------
-clc;
+JAI_init;
 filepath = fileparts(mfilename('fullpath'));
 run([filepath '/../JAI_init.m']);
 
