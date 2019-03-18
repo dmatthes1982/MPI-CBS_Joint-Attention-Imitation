@@ -233,7 +233,7 @@ clear data_mplv numOfChan connMatrix row col part i label_x label_y ...
 % -------------------------------------------------------------------------
 % Import data
 % -------------------------------------------------------------------------
-fprintf('<strong>Import of PLV values...</strong>\n\n');
+fprintf('<strong>Import of PLV values...</strong>\n');
 f = waitbar(0,'Please wait...');
 
 cnt               = 0;
@@ -259,8 +259,8 @@ for dyad = 1:1:numOfFiles
   
   tf = ismember(data_mplv.dyad.trialinfo, condNum);                         % check if selected conditions are exisiting
   if(sum(tf) ~=2)
-    cprintf([1.5 1 0], ['At least one condition is missing. Dyad %d ' ...
-                        'will not be considered'], dyad);
+    cprintf([1,0.5,0], sprintf(['At least one condition is missing. ' ...
+                        'Dyad %d will not be considered.\n'], dyad));
   else                                                                      % extract PLV values
     cnt       = cnt + 1;
     mPLVtemp  = data_mplv.dyad.mPLV(tf);
@@ -281,7 +281,9 @@ close(f);
 data_stat.goodDyadsNum = data_stat.goodDyadsNum(1:cnt);
 data_stat.trialinfo    = data_stat.trialinfo(1:2*cnt);
 data_stat.mPLV         = data_stat.mPLV(1:2*cnt);
-numOfgoodDyads         = numel(data_stat.goodDyadsNum);
+numOfGoodDyads         = numel(data_stat.goodDyadsNum);
+
+fprintf('\n');
 
 clear f cnt mPLVtemp tf dyad connections connMatrixBool dyads fileList ...
       passband label numOfFiles
@@ -309,6 +311,8 @@ else
   fprintf('The t-test result is NOT significant: %s=%g\n', ...
           char(945), data_stat.stat.p);
   fprintf('Skip permutation test...\n\n');
+  clear cond1 cond2 h p ci stats condNum datastorepath numOfGoodDyads ...
+        sessionStr srcPath
   return                                                                    % return if result is non-signifikant
 end
 
@@ -319,25 +323,37 @@ clear cond1 cond2 h p ci stats
 % -------------------------------------------------------------------------
 fprintf('<strong>Run permutation test...</strong>\n');
 
-design(:,1) = 1:2:2*numOfgoodDyads;                                         % specify permutation design
-design(:,2) = 2:2:2*numOfgoodDyads;
-design = mat2cell(design,ones(1,numOfgoodDyads), 2);
+design(:,1) = 1:2:2*numOfGoodDyads;                                         % specify permutation design
+design(:,2) = 2:2:2*numOfGoodDyads;
+design = mat2cell(design,ones(1,numOfGoodDyads), 2);
 design = design';
 
-numOfPerm = 2000;                                                           % specify number of permutations
-resample = zeros(numOfPerm, 2*numOfgoodDyads);
+numOfPerm = 2500;                                                           % specify number of permutations (500 more than required)
+resample = zeros(numOfPerm, 2*numOfGoodDyads);
 hasDuplicates    = true;
 
 fprintf('Generate permutation matrix...\n');
 while hasDuplicates
   for i=1:numOfPerm
-    for j=1:numOfgoodDyads
+    for j=1:numOfGoodDyads
       resample(i, design{j}) = design{j}(randperm(2));
     end
   end
 
-u = unique(resample, 'rows', 'first');                                      % test for duplicates
-hasDuplicates = size(u,1) < size(resample,1);
+  [u, loc] = unique(resample, 'rows', 'first');                             % test for duplicates
+  hasDuplicates = size(u,1) < size(resample,1);
+  if(hasDuplicates)
+    loc = sort(loc);
+    resample = resample(loc, :);
+    if(size(resample,1) > numOfPerm - 500)
+      numOfPerm = numOfPerm - 500;
+      resample  = resample(1:numOfPerm,:);
+      hasDuplicates = false;
+    end
+  else
+    numOfPerm = numOfPerm - 500;
+    resample  = resample(1:numOfPerm, :);
+  end
 end
 
 fprintf('Run test...\n');
@@ -357,8 +373,8 @@ data_stat.pPerm = sum(abs(data_stat.tstatPerm) > ...
                       abs(data_stat.stat.tstat)) / numOfPerm;
 data_stat.numOfPerm = numOfPerm;
 
-clear design numOfPerm resample hasDuplicates i j u cond1 cond2 ...
-      tmptrialinfo stats condNum numOfgoodDyads
+clear design numOfPerm resample hasDuplicates i j u loc cond1 cond2 ...
+      tmptrialinfo stats condNum numOfGoodDyads
 
 % -------------------------------------------------------------------------
 % Test result

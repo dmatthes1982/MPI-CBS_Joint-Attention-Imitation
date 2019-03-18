@@ -4,10 +4,9 @@
 clear;
 clc;
 
+filepath = fileparts(mfilename('fullpath'));                                % determine current path
+addpath(genpath(filepath));                                                 % add all subdirectories to path
 filepath = fileparts(mfilename('fullpath'));
-addpath(sprintf(['%s/:%s/easyplot:%s/elecorder:%s/export:%s/functions'...
-                ':%s/general:%s/layouts:%s/stats:%s/utilities'], ...
-        filepath, filepath, filepath, filepath, filepath, filepath, ...
-        filepath, filepath, filepath));
+rmpath(genpath(fullfile(filepath,'.git')));                                 % remove git related folders
 
 clear filepath
