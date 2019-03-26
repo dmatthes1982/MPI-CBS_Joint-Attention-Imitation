@@ -260,7 +260,7 @@ for dyad = 1:1:numOfFiles
   tf = ismember(data_mplv.dyad.trialinfo, condNum);                         % check if selected conditions are exisiting
   if(sum(tf) ~=2)
     cprintf([1,0.5,0], sprintf(['At least one condition is missing. ' ...
-                        'Dyad %d will not be considered.\n'], dyad));
+                      'Dyad %d will not be considered.\n'], dyads(dyad)));
   else                                                                      % extract PLV values
     cnt       = cnt + 1;
     mPLVtemp  = data_mplv.dyad.mPLV(tf);
