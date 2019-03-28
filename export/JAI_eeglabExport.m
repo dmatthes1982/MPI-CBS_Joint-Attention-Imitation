@@ -135,7 +135,7 @@ fprintf('%s\n\n', y);
 % Load general definitions
 % -------------------------------------------------------------------------
 filepath = fileparts(mfilename('fullpath'));
-load(sprintf('%s/general/JAI_generalDefinitions.mat', filepath), ...
+load(sprintf('%s/../general/JAI_generalDefinitions.mat', filepath), ...
      'generalDefinitions');
 
 % -------------------------------------------------------------------------
@@ -208,8 +208,8 @@ for dyad = numOfPart
       
       fprintf('The converted data of participant %d in dyad %d in condition %s will be saved in:\n', ...
               part, dyad, condString);
-      fprintf('%s ...\n', [EEG.filepath '/' EEG.filename]);      
-      save([EEG.filepath '/' EEG.filename], 'EEG');
+      fprintf('%s ...\n', [EEG.filepath EEG.filename]);
+      save([EEG.filepath EEG.filename], 'EEG');
       fprintf('Data stored!\n\n');
     end
   end
