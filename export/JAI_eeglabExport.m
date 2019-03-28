@@ -49,9 +49,9 @@ end
 % -------------------------------------------------------------------------
 selection = false;
 
-tmpPath = strcat(srcPath, '04b_eyecor/');
+tmpPath = strcat(srcPath, '04c_preproc2/');
 
-sessionList     = dir([tmpPath, 'JAI_d*_04b_eyecor_*.mat']);
+sessionList     = dir([tmpPath, 'JAI_d*_04c_preproc2_*.mat']);
 sessionList     = struct2cell(sessionList);
 sessionList     = sessionList(1,:);
 numOfSessions   = length(sessionList);
@@ -60,7 +60,7 @@ sessionNum      = zeros(1, numOfSessions);
 sessionListCopy = sessionList;
 
 for i=1:1:numOfSessions
-  sessionListCopy{i} = strsplit(sessionList{i}, '04b_eyecor_');
+  sessionListCopy{i} = strsplit(sessionList{i}, '04c_preproc2_');
   sessionListCopy{i} = sessionListCopy{i}{end};
   sessionNum(i) = sscanf(sessionListCopy{i}, '%d.mat');
 end
@@ -115,7 +115,7 @@ clear tmpPath sessionListCopy userList match filePath cmdout attrib ...
 % -------------------------------------------------------------------------
 % Dyad list
 % -------------------------------------------------------------------------
-sourceList    = dir([strcat(srcPath, '04b_eyecor/'), ...
+sourceList    = dir([strcat(srcPath, '04c_preproc2/'), ...
                      strcat('*_', sessionStr, '.mat')]);
 sourceList    = struct2cell(sourceList);
 sourceList    = sourceList(1,:);
@@ -124,7 +124,7 @@ numOfPart     = zeros(1, numOfSources);
 
 for i=1:1:numOfSources
   numOfPart(i)     = sscanf(sourceList{i}, ...
-                   strcat('JAI_d%d_04b_eyecor_', sessionStr, '.mat'));
+                   strcat('JAI_d%d_04c_preproc2_', sessionStr, '.mat'));
 end
 
 y = sprintf('%d ', numOfPart);
@@ -147,8 +147,8 @@ for dyad = numOfPart
   fprintf('<strong>Dyad %d</strong>\n\n', dyad);
   
   cfg             = [];
-  cfg.srcFolder   = strcat(srcPath, '04b_eyecor/');
-  cfg.filename    = sprintf('JAI_d%02d_04b_eyecor', dyad);
+  cfg.srcFolder   = strcat(srcPath, '04c_preproc2/');
+  cfg.filename    = sprintf('JAI_d%02d_04c_preproc2', dyad);
   cfg.sessionStr  = sessionStr;
     
   fprintf('Load eye-artifact corrected data...\n\n');
