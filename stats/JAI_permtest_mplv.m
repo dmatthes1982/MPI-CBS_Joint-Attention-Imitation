@@ -1,3 +1,17 @@
+% JAI_PERMTEST_MPLV - Using this script one can test if the difference of
+% one connection (e.g. Cz-Cz) or one cluster of connections is significant
+% between two conditions. First, a paired-sample t-test is conducted. If
+% this test shows a significant result, a permutation test follows. Here,
+% the permutation is done on the level of averaged PLV values. Since our
+% null hypothesis says that we expect no difference between conditions but
+% a difference between dyads, the permutation is done only by randomly
+% interchanging the values of the two conditions within the dyads. It is
+% highly recommended to only use this script, if the number of PLV segments
+% is nearly the same in both conditions for single dyads. Otherwise one
+% should use JAI_PERMTEST_PLV
+%
+% See also JAI_PERMTEST_PLV
+
 % -------------------------------------------------------------------------
 % Add directory and subfolders to path, clear workspace, clear command
 % windwow
@@ -304,7 +318,7 @@ data_stat.stat.df     = stats.df;
 data_stat.stat.sd     = stats.sd;
 
 
-if data_stat.stat.p < 0.05                                                  % check if result is signifikant
+if data_stat.stat.p < 0.05                                                  % check if result is significant
   fprintf('The t-test result is significant: %s=%g\n\n', ...
           char(945), data_stat.stat.p);
 else
@@ -313,7 +327,7 @@ else
   fprintf('Skip permutation test...\n\n');
   clear cond1 cond2 h p ci stats condNum datastorepath numOfGoodDyads ...
         sessionStr srcPath
-  return                                                                    % return if result is non-signifikant
+  return                                                                    % return if result is non-significant
 end
 
 clear cond1 cond2 h p ci stats

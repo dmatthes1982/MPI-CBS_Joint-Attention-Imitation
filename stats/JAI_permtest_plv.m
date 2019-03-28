@@ -1,3 +1,15 @@
+% JAI_PERMTEST_PLV - Using this script one can test if the difference of
+% one connection (e.g. Cz-Cz) or one cluster of connections is significant
+% between two conditions. First, a paired-sample t-test on the level of
+% averaged PLV values is conducted. If this test shows a significant
+% result, a permutation test follows. Here, the permutation is done on the
+% level of single PLV values. All values from both conditions of one dyad
+% are collected in a single set. Afterwards the conditions will be
+% recovered by randomly drawing PLV values from the combined set.
+% The number of drawn PLV values per condition for each permutation will
+% always be the same and will be kept identically with the original
+% distribution.
+
 % -------------------------------------------------------------------------
 % Add directory and subfolders to path, clear workspace, clear command
 % windwow
@@ -284,12 +296,12 @@ for row = 1:cnt
 end
 PLV.data = datatmp;
 
-mPLVtemp = cellfun(@(x) mean(x), PLV.data, 'UniformOutput', false);
+mPLVtemp = cellfun(@(x) mean(x), PLV.data, 'UniformOutput', false);         % estimate averaged PLV values (averaging ove condition)
 mPLVtemp = cell2mat(mPLVtemp);
 mPLVtemp = mean(mPLVtemp, 3);
 mPLVtemp = reshape(mPLVtemp', 1, []);
 
-data_stat.mPLV         = mPLVtemp;
+data_stat.mPLV         = mPLVtemp;                                          % add averaged PLV values to the output structure
 data_stat.goodDyadsNum = data_stat.goodDyadsNum(1:cnt);
 data_stat.trialinfo    = data_stat.trialinfo(1:2*cnt);
 numOfGoodDyads         = numel(data_stat.goodDyadsNum);
@@ -315,7 +327,7 @@ data_stat.stat.df     = stats.df;
 data_stat.stat.sd     = stats.sd;
 
 
-if data_stat.stat.p < 0.05                                                  % check if result is signifikant
+if data_stat.stat.p < 0.05                                                  % check if result is significant
   fprintf('The t-test result is significant: %s=%g\n\n', ...
           char(945), data_stat.stat.p);
 else
@@ -324,7 +336,7 @@ else
   fprintf('Skip permutation test...\n\n');
   clear cond1 cond2 h p ci stats condNum datastorepath numOfGoodDyads ...
         sessionStr srcPath
-  return                                                                    % return if result is non-signifikant
+  return                                                                    % return if result is non-significant
 end
 
 clear cond1 cond2 h p ci stats
@@ -336,7 +348,7 @@ fprintf('<strong>Run permutation test...</strong>\n');
 
 PLV.numel = cellfun(@(x) numel(x), PLV.data(:,:,1), 'UniformOutput', false);
 
-for row = 1:numOfGoodDyads
+for row = 1:numOfGoodDyads                                                  % concatenate data of both conditions within a dyad
   for z = 1:numOfConn
     PLV.data{row, 1, z} = [PLV.data{row,:,z}];
   end
@@ -350,7 +362,7 @@ PLV.resample = cellfun(@(x) zeros(numOfPerm, numel(x)), PLV.data(:,1,1),...
 
 fprintf('Generate permutation matrix...\n');
 
-for i = 1:numOfGoodDyads                                                    % generate permutation matricies
+for i = 1:numOfGoodDyads                                                    % generate seperate permutation matricies for all dyads
   hasDuplicates    = true;
   while hasDuplicates
     for j = 1:numOfPerm
@@ -372,13 +384,13 @@ for i = 1:numOfGoodDyads                                                    % ge
   end
 end
 
-numOfPerm = numOfPerm - 500;
+numOfPerm = numOfPerm - 500;                                                % reduce number of permutations after cleaning the permutation matrix from duplicates
 
 fprintf('Run test...\n');
 data_stat.tstatPerm = zeros(1, numOfPerm);
 
 for i=1:numOfPerm
-  mPLVtemp = cell(numOfGoodDyads, numel(condNum), numOfConn);
+  mPLVtemp = cell(numOfGoodDyads, numel(condNum), numOfConn);               % estimate averaged PLV values using permuted data
   for row = 1:numOfGoodDyads
     for z = 1:numOfConn
       mPLVtemp{row, 1, z} = PLV.data{row,z}(PLV.resample{row}...
@@ -394,7 +406,7 @@ for i=1:numOfPerm
   
   cond1 = ismember(data_stat.trialinfo, condNum(1));
   cond2 = ismember(data_stat.trialinfo, condNum(2));
-  [~,~,~,stats] = ttest(mPLVtemp(cond1), mPLVtemp(cond2));
+  [~,~,~,stats] = ttest(mPLVtemp(cond1), mPLVtemp(cond2));                  % run paired-sample t-test
   data_stat.tstatPerm(i) = stats.tstat;
 end
 
