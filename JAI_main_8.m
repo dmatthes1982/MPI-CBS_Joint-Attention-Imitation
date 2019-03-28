@@ -79,13 +79,18 @@ for i = numOfPart
   fprintf('Load preprocessed data...\n\n');
   JAI_loadData( cfg );
   
+  % Load general definitions
+  file_path = fileparts(mfilename('fullpath'));
+  load(sprintf('%s/general/JAI_generalDefinitions.mat', file_path), ...
+     'generalDefinitions');
+
   % Keep only necessary conditions in the dataset
   cfg         = [];
   cfg.channel = 'all';
-  cfg.trials  = [2,3,4,5,6,7,8,9,10,11,12,20,21,22,100,101,102,111];
-  
+  cfg.trials  = generalDefinitions.condNumITPC;
+
   data_preproc2 = JAI_selectdata( cfg, data_preproc2 );
-  
+
   % Segmentation of the preprocessed trials for ITPC estimation %%%%%%%%%%%
   % split the data of every condition into subtrials with a length of 10
   % seconds
@@ -181,4 +186,4 @@ end
 
 %% clear workspace
 clear file_path file_num cfg dyads dyadsNew i cfg_allArt artifactRejection ...
-      x choise T
+      x choise T generalDefinitons
