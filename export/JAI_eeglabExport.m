@@ -151,11 +151,12 @@ for dyad = numOfPart
   cfg.filename    = sprintf('JAI_d%02d_04c_preproc2', dyad);
   cfg.sessionStr  = sessionStr;
     
-  fprintf('Load eye-artifact corrected data...\n\n');
+  fprintf('Load preprocessed and cleaned data...\n\n');
   JAI_loadData( cfg );
   
   trialinfo = [111, 2, 3, 4, 5, 6];
-  trialinfo = trialinfo(ismember(trialinfo, data_eyecor.part1.trialinfo));  % Note: data of part 1 and part 2 were recorded synchronously 
+  trialinfo = trialinfo(ismember(trialinfo, ...                             % Note: data of part 1 and part 2 were recorded synchronously
+                                          data_preproc2.part1.trialinfo));
   numOfTrials = length(trialinfo);
   
   for part = 1:1:2
@@ -171,7 +172,7 @@ for dyad = numOfPart
       cfg.channel = 'all';
       cfg.trials  = condNum;
   
-      data = JAI_selectdata( cfg, data_eyecor );
+      data = JAI_selectdata( cfg, data_preproc2 );
       eval(sprintf('data = data.part%d;', part));
       
       % Generate eeglab EEG structure
@@ -214,7 +215,7 @@ for dyad = numOfPart
     end
   end
   
-  clear data_eyecor
+  clear data_preproc2
   
 end
 
