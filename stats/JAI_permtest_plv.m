@@ -226,6 +226,8 @@ part = listdlg('PromptString', prompt_string, ...                           % op
                 'ListSize', [220, 300] );
 
 row = mod(part, numOfChan);
+tf = (row == 0);
+row(tf) = numOfChan;
 col = ceil(part/numOfChan);
 
 connMatrixBool = false(numOfChan, numOfChan);
@@ -241,7 +243,7 @@ cellfun(@(x) fprintf('%s, ', x), connections, 'UniformOutput', false);      % sh
 fprintf('\b\b.\n\n');
               
 clear data_plv numOfChan connMatrix row col part i label_x label_y ...
-      selection x prompt_string
+      selection x prompt_string tf
 
 % -------------------------------------------------------------------------
 % Import data
